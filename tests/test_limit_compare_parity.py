@@ -45,7 +45,7 @@ def as_expected(diff: DiffResult) -> dict[str, Any]:
                 "key": r.key,
                 "category": r.category,
                 "matchMethod": r.match_method,
-                "tsTicker": r.client.ts_ticker if r.client else None,
+                "ticker": r.client.ticker if r.client else None,
                 "family": r.system.family if r.system else None,
                 "account": r.account,
                 "maxPosition": cell(r.max_position),
@@ -59,19 +59,19 @@ def as_expected(diff: DiffResult) -> dict[str, Any]:
 
 def test_reading_and_column_detection() -> None:
     client_raw, system_raw, c_map, s_map = inputs()
-    assert client_raw.headers == EXPECTED["qe_client_raw"]["headers"]
-    assert client_raw.rows == EXPECTED["qe_client_raw"]["rows"]
-    assert system_raw.headers == EXPECTED["qe_system_raw"]["headers"]
-    assert c_map == EXPECTED["qe_mappings"]["client"]
-    assert s_map == EXPECTED["qe_mappings"]["system"]
+    assert client_raw.headers == EXPECTED["universe_client_raw"]["headers"]
+    assert client_raw.rows == EXPECTED["universe_client_raw"]["rows"]
+    assert system_raw.headers == EXPECTED["universe_system_raw"]["headers"]
+    assert c_map == EXPECTED["universe_mappings"]["client"]
+    assert s_map == EXPECTED["universe_mappings"]["system"]
 
 
 def test_normalised_records() -> None:
     client_raw, system_raw, c_map, s_map = inputs()
     clients = normalize_client(client_raw, c_map)
-    want = EXPECTED["qe_clients"]
-    assert [(c.ts_ticker, c.type, c.not_supported, c.idx) for c in clients] == [
-        (w["tsTicker"], w["type"], w["notSupported"], w["idx"]) for w in want
+    want = EXPECTED["universe_clients"]
+    assert [(c.ticker, c.type, c.not_supported, c.idx) for c in clients] == [
+        (w["ticker"], w["type"], w["notSupported"], w["idx"]) for w in want
     ]
     assert [
         (c.req_max_position, c.req_max_order_qty_outright, c.req_max_order_qty_spreads)
@@ -86,14 +86,14 @@ def test_normalised_records() -> None:
     ] == [
         (w["account"], w["family"], w["type"], w["curMaxPosition"], w["curMaxOrderQty"],
          w["curSpreadMaxOrderQty"])
-        for w in EXPECTED["qe_systems"]
+        for w in EXPECTED["universe_systems"]
     ]  # fmt: skip
 
 
 def test_diff_without_symbol_map() -> None:
     client_raw, system_raw, c_map, s_map = inputs()
     diff = compute_diff(normalize_client(client_raw, c_map), normalize_system(system_raw, s_map))
-    assert as_expected(diff) == EXPECTED["qe_diff"]["no_map"]
+    assert as_expected(diff) == EXPECTED["universe_diff"]["no_map"]
 
 
 def test_diff_with_symbol_map() -> None:
@@ -105,11 +105,11 @@ def test_diff_with_symbol_map() -> None:
     diff = compute_diff(
         normalize_client(client_raw, c_map), normalize_system(system_raw, s_map), symbol_map
     )
-    assert as_expected(diff) == EXPECTED["qe_diff"]["with_map"]
+    assert as_expected(diff) == EXPECTED["universe_diff"]["with_map"]
 
 
 def test_parse_limit() -> None:
-    for case in EXPECTED["qe_parse_limit"]:
+    for case in EXPECTED["universe_parse_limit"]:
         assert parse_limit(case["text"]) == case["value"], case["text"]
 
 

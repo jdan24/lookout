@@ -5,9 +5,9 @@ Two kinds of requested-limit sheet are accepted, as in limit_compare:
 * a RIC sheet (Ric Root, Max Order, Max Net, optional Exchange / Description): each
   row is first matched to a TT exchange + symbol (``checks.ric_mapping``), then
   compared on exchange + symbol;
-* a product universe (TS Ticker, Type, Max Position, Max Order Quantity (Outright)
+* a product universe (Ticker, Type, Max Position, Max Order Quantity (Outright)
   and (Spreads), optional Supported): compared on symbol + type, with an optional
-  symbol map, exactly as QE Limit update does.
+  symbol map, exactly as limit_compare's product-universe tool does.
 
 The "current" side is the product limit rows of one account in the snapshot.
 """
@@ -46,7 +46,7 @@ FORMAT_FIELDS: dict[SheetFormat, tuple[FieldSpec, ...]] = {
 }
 FORMAT_NAMES: dict[SheetFormat, str] = {
     "ric": "RIC sheet (Ric Root, Max Order, Max Net)",
-    "universe": "Product universe (TS Ticker, Type, Max Position, Max Order Quantities)",
+    "universe": "Product universe (Ticker, Type, Max Position, Max Order Quantities)",
 }
 
 # TT productTypeId -> name. Only Future (34) is confirmed.
@@ -147,7 +147,7 @@ def _ric_requests(enriched: EnrichedResult, cols: dict[str, str]) -> list[Client
 
     return [
         ClientProduct(
-            ts_ticker=row.tt_symbol,
+            ticker=row.tt_symbol,
             type="Future",
             exchange=row.tt_exchange,
             req_max_position=parse_limit(cell(row, "maxNet")),
@@ -184,7 +184,7 @@ def _product_label(diff_row: DiffRow, ric_row: EnrichedRow | None) -> str:
     if ric_row is not None:
         return f"{ric_row.ric_root} → {ric_row.tt_exchange} {ric_row.tt_symbol}"
     if diff_row.client is not None:
-        return f"{diff_row.client.ts_ticker} ({diff_row.client.type})"
+        return f"{diff_row.client.ticker} ({diff_row.client.type})"
     system = diff_row.system
     assert system is not None
     return f"{system.family} ({system.exchange})"
@@ -335,11 +335,7 @@ def _to_result_rows(
             tt_name = (
                 f"{diff_row.system.family} ({diff_row.system.exchange})"
                 if diff_row.system is not None
-                else (
-                    f"{client.ts_ticker} ({client.exchange})"
-                    if client.exchange
-                    else client.ts_ticker
-                )
+                else (f"{client.ticker} ({client.exchange})" if client.exchange else client.ticker)
             )
             guessed = ric_row is not None and ric_row.status == "check"
             rows.extend(_metric_rows(node, account, label, tt_name, diff_row, guessed))

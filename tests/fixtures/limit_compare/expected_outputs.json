@@ -3957,436 +3957,481 @@
  "ric_real_world": {
   "rows": [
    {
-    "Exch": "AEX",
-    "RIC": "AEX",
-    "Description": "AEX Index",
-    "Max Order": "7",
-    "Max Net": "14",
-    "Expected TT Exchange": "Euronext",
-    "Expected TT Symbol": "kFTI"
-   },
-   {
-    "Exch": "CBF",
-    "RIC": "VX",
-    "Description": "Cboe Volatility Index",
-    "Max Order": "7",
-    "Max Net": "14",
-    "Expected TT Exchange": "CFE",
-    "Expected TT Symbol": "VX"
-   },
-   {
     "Exch": "CBT",
-    "RIC": "BO",
-    "Description": "Soybean Oil",
+    "RIC": "YM",
+    "Description": "E-mini Dow Jones Industrial Average",
     "Max Order": "7",
     "Max Net": "14",
     "Expected TT Exchange": "CME",
-    "Expected TT Symbol": "ZL"
+    "Expected TT Symbol": "YM"
    },
    {
     "Exch": "CBT",
-    "RIC": "C",
-    "Description": "Corn",
+    "RIC": "O",
+    "Description": "Oats",
     "Max Order": "7",
     "Max Net": "14",
     "Expected TT Exchange": "CME",
-    "Expected TT Symbol": "ZC"
+    "Expected TT Symbol": "ZO"
    },
    {
     "Exch": "CBT",
-    "RIC": "FV",
-    "Description": "5Yr US T-Notes",
+    "RIC": "RR",
+    "Description": "Rough Rice",
     "Max Order": "7",
     "Max Net": "14",
     "Expected TT Exchange": "CME",
-    "Expected TT Symbol": "ZF"
+    "Expected TT Symbol": "ZR"
    },
    {
     "Exch": "CBT",
-    "RIC": "KW",
-    "Description": "KC Hard Red Winter Wheat",
+    "RIC": "FF",
+    "Description": "30 Day Federal Funds",
     "Max Order": "7",
     "Max Net": "14",
     "Expected TT Exchange": "CME",
-    "Expected TT Symbol": "KE"
+    "Expected TT Symbol": "ZQ"
    },
    {
-    "Exch": "CBT",
-    "RIC": "SM",
-    "Description": "Soybean Meal",
+    "Exch": "IMM",
+    "RIC": "SRA",
+    "Description": "Three-Month SOFR",
     "Max Order": "7",
     "Max Net": "14",
     "Expected TT Exchange": "CME",
-    "Expected TT Symbol": "ZM"
-   },
-   {
-    "Exch": "CBT",
-    "RIC": "TU",
-    "Description": "2Yr US T-Notes",
-    "Max Order": "7",
-    "Max Net": "14",
-    "Expected TT Exchange": "CME",
-    "Expected TT Symbol": "ZT"
-   },
-   {
-    "Exch": "CBT",
-    "RIC": "TY",
-    "Description": "10Yr US T-Notes",
-    "Max Order": "7",
-    "Max Net": "14",
-    "Expected TT Exchange": "CME",
-    "Expected TT Symbol": "ZN"
-   },
-   {
-    "Exch": "CBT",
-    "RIC": "US",
-    "Description": "30Yr US Treasury Bond",
-    "Max Order": "7",
-    "Max Net": "14",
-    "Expected TT Exchange": "CME",
-    "Expected TT Symbol": "ZB"
-   },
-   {
-    "Exch": "CBT",
-    "RIC": "TN",
-    "Description": "Ultra 10Yr US T-Note",
-    "Max Order": "7",
-    "Max Net": "14",
-    "Expected TT Exchange": "CME",
-    "Expected TT Symbol": "TN"
-   },
-   {
-    "Exch": "CBT",
-    "RIC": "W",
-    "Description": "Chicago SRW Wheat",
-    "Max Order": "7",
-    "Max Net": "14",
-    "Expected TT Exchange": "CME",
-    "Expected TT Symbol": "ZW"
-   },
-   {
-    "Exch": "CBT",
-    "RIC": "AUL",
-    "Description": "Ultra Long Term US Treasury Bond",
-    "Max Order": "7",
-    "Max Net": "14",
-    "Expected TT Exchange": "CME",
-    "Expected TT Symbol": "UB"
-   },
-   {
-    "Exch": "CBT",
-    "RIC": "S",
-    "Description": "Soybeans",
-    "Max Order": "7",
-    "Max Net": "14",
-    "Expected TT Exchange": "CME",
-    "Expected TT Symbol": "ZS"
+    "Expected TT Symbol": "SR3"
    },
    {
     "Exch": "CME",
-    "RIC": "FC",
-    "Description": "Feeder Cattle",
+    "RIC": "ES",
+    "Description": "E-mini S&P 500",
     "Max Order": "7",
     "Max Net": "14",
     "Expected TT Exchange": "CME",
-    "Expected TT Symbol": "GF"
+    "Expected TT Symbol": "ES"
    },
    {
     "Exch": "CME",
-    "RIC": "LC",
-    "Description": "Live Cattle",
+    "RIC": "NQ",
+    "Description": "E-mini Nasdaq-100",
     "Max Order": "7",
     "Max Net": "14",
     "Expected TT Exchange": "CME",
-    "Expected TT Symbol": "LE"
+    "Expected TT Symbol": "NQ"
    },
    {
     "Exch": "CME",
-    "RIC": "LH",
-    "Description": "Lean Hog",
+    "RIC": "RTY",
+    "Description": "E-mini Russell 2000",
     "Max Order": "7",
     "Max Net": "14",
     "Expected TT Exchange": "CME",
-    "Expected TT Symbol": "HE"
+    "Expected TT Symbol": "RTY"
+   },
+   {
+    "Exch": "CME",
+    "RIC": "EMD",
+    "Description": "E-mini S&P MidCap 400",
+    "Max Order": "7",
+    "Max Net": "14",
+    "Expected TT Exchange": "CME",
+    "Expected TT Symbol": "EMD"
+   },
+   {
+    "Exch": "CME",
+    "RIC": "NIY",
+    "Description": "Nikkei 225 Yen denominated",
+    "Max Order": "7",
+    "Max Net": "14",
+    "Expected TT Exchange": "CME",
+    "Expected TT Symbol": "NIY"
+   },
+   {
+    "Exch": "CME",
+    "RIC": "NKD",
+    "Description": "Nikkei 225 Dollar denominated",
+    "Max Order": "7",
+    "Max Net": "14",
+    "Expected TT Exchange": "CME",
+    "Expected TT Symbol": "NKD"
+   },
+   {
+    "Exch": "IMM",
+    "RIC": "URO",
+    "Description": "Euro FX",
+    "Max Order": "7",
+    "Max Net": "14",
+    "Expected TT Exchange": "CME",
+    "Expected TT Symbol": "6E"
+   },
+   {
+    "Exch": "IMM",
+    "RIC": "JY",
+    "Description": "Japanese Yen",
+    "Max Order": "7",
+    "Max Net": "14",
+    "Expected TT Exchange": "CME",
+    "Expected TT Symbol": "6J"
+   },
+   {
+    "Exch": "IMM",
+    "RIC": "SF",
+    "Description": "Swiss Franc",
+    "Max Order": "7",
+    "Max Net": "14",
+    "Expected TT Exchange": "CME",
+    "Expected TT Symbol": "6S"
+   },
+   {
+    "Exch": "IMM",
+    "RIC": "NE",
+    "Description": "New Zealand Dollar",
+    "Max Order": "7",
+    "Max Net": "14",
+    "Expected TT Exchange": "CME",
+    "Expected TT Symbol": "6N"
+   },
+   {
+    "Exch": "IMM",
+    "RIC": "RA",
+    "Description": "South African Rand",
+    "Max Order": "7",
+    "Max Net": "14",
+    "Expected TT Exchange": "CME",
+    "Expected TT Symbol": "6Z"
+   },
+   {
+    "Exch": "IMM",
+    "RIC": "BR",
+    "Description": "Brazilian Real",
+    "Max Order": "7",
+    "Max Net": "14",
+    "Expected TT Exchange": "CME",
+    "Expected TT Symbol": "6L"
+   },
+   {
+    "Exch": "CME",
+    "RIC": "MES",
+    "Description": "Micro E-mini S&P 500",
+    "Max Order": "7",
+    "Max Net": "14",
+    "Expected TT Exchange": "CME",
+    "Expected TT Symbol": "MES"
+   },
+   {
+    "Exch": "CME",
+    "RIC": "MNQ",
+    "Description": "Micro E-mini Nasdaq-100",
+    "Max Order": "7",
+    "Max Net": "14",
+    "Expected TT Exchange": "CME",
+    "Expected TT Symbol": "MNQ"
+   },
+   {
+    "Exch": "NYM",
+    "RIC": "CL",
+    "Description": "Light Sweet Crude Oil",
+    "Max Order": "7",
+    "Max Net": "14",
+    "Expected TT Exchange": "CME",
+    "Expected TT Symbol": "CL"
+   },
+   {
+    "Exch": "NYM",
+    "RIC": "NG",
+    "Description": "Henry Hub Natural Gas",
+    "Max Order": "7",
+    "Max Net": "14",
+    "Expected TT Exchange": "CME",
+    "Expected TT Symbol": "NG"
+   },
+   {
+    "Exch": "NYM",
+    "RIC": "HO",
+    "Description": "NY Harbor ULSD",
+    "Max Order": "7",
+    "Max Net": "14",
+    "Expected TT Exchange": "CME",
+    "Expected TT Symbol": "HO"
+   },
+   {
+    "Exch": "NYM",
+    "RIC": "RB",
+    "Description": "RBOB Gasoline",
+    "Max Order": "7",
+    "Max Net": "14",
+    "Expected TT Exchange": "CME",
+    "Expected TT Symbol": "RB"
+   },
+   {
+    "Exch": "NYM",
+    "RIC": "PL",
+    "Description": "Platinum",
+    "Max Order": "7",
+    "Max Net": "14",
+    "Expected TT Exchange": "CME",
+    "Expected TT Symbol": "PL"
+   },
+   {
+    "Exch": "NYM",
+    "RIC": "PA",
+    "Description": "Palladium",
+    "Max Order": "7",
+    "Max Net": "14",
+    "Expected TT Exchange": "CME",
+    "Expected TT Symbol": "PA"
    },
    {
     "Exch": "CMX",
-    "RIC": "GC",
-    "Description": "Gold",
+    "RIC": "MGC",
+    "Description": "Micro Gold",
     "Max Order": "7",
     "Max Net": "14",
     "Expected TT Exchange": "CME",
-    "Expected TT Symbol": "GC"
-   },
-   {
-    "Exch": "CMX",
-    "RIC": "HG",
-    "Description": "Copper",
-    "Max Order": "7",
-    "Max Net": "14",
-    "Expected TT Exchange": "CME",
-    "Expected TT Symbol": "HG"
-   },
-   {
-    "Exch": "CMX",
-    "RIC": "SI",
-    "Description": "Silver",
-    "Max Order": "7",
-    "Max Net": "14",
-    "Expected TT Exchange": "CME",
-    "Expected TT Symbol": "SI"
-   },
-   {
-    "Exch": "EDX",
-    "RIC": "TFMBM",
-    "Description": "Dutch TTF Nat Gas Base Load Monthly",
-    "Max Order": "7",
-    "Max Net": "14",
-    "Expected TT Exchange": "ICE",
-    "Expected TT Symbol": "TFM"
+    "Expected TT Symbol": "MGC"
    },
    {
     "Exch": "EUX",
-    "RIC": "FSMI",
-    "Description": "Swiss Market (SMI) Index",
+    "RIC": "FDXM",
+    "Description": "Mini-DAX",
     "Max Order": "7",
     "Max Net": "14",
     "Expected TT Exchange": "Eurex",
-    "Expected TT Symbol": "FSMI"
+    "Expected TT Symbol": "FDXM"
    },
    {
     "Exch": "EUX",
-    "RIC": "FBTS",
-    "Description": "Short-Term Euro-BTP Bond",
+    "RIC": "FVS",
+    "Description": "VSTOXX Mini",
     "Max Order": "7",
     "Max Net": "14",
     "Expected TT Exchange": "Eurex",
-    "Expected TT Symbol": "FBTS"
+    "Expected TT Symbol": "FVS"
    },
    {
     "Exch": "EUX",
-    "RIC": "FESB",
-    "Description": "EuroStoxx Banks Index",
+    "RIC": "CONF",
+    "Description": "Swiss Confederation Bond",
     "Max Order": "7",
     "Max Net": "14",
     "Expected TT Exchange": "Eurex",
-    "Expected TT Symbol": "FESB"
-   },
-   {
-    "Exch": "EUX",
-    "RIC": "FGBS",
-    "Description": "Euro-Schatz Bond",
-    "Max Order": "7",
-    "Max Net": "14",
-    "Expected TT Exchange": "Eurex",
-    "Expected TT Symbol": "FGBS"
-   },
-   {
-    "Exch": "EUX",
-    "RIC": "FDX",
-    "Description": "DAX Index",
-    "Max Order": "7",
-    "Max Net": "14",
-    "Expected TT Exchange": "Eurex",
-    "Expected TT Symbol": "FDAX"
-   },
-   {
-    "Exch": "EUX",
-    "RIC": "FBTP",
-    "Description": "Long-Term Euro-BTP Bond",
-    "Max Order": "7",
-    "Max Net": "14",
-    "Expected TT Exchange": "Eurex",
-    "Expected TT Symbol": "FBTP"
-   },
-   {
-    "Exch": "EUX",
-    "RIC": "FOAT",
-    "Description": "Euro-OAT Bond",
-    "Max Order": "7",
-    "Max Net": "14",
-    "Expected TT Exchange": "Eurex",
-    "Expected TT Symbol": "FOAT"
-   },
-   {
-    "Exch": "EUX",
-    "RIC": "FGBM",
-    "Description": "Euro-Bobl Bond",
-    "Max Order": "7",
-    "Max Net": "14",
-    "Expected TT Exchange": "Eurex",
-    "Expected TT Symbol": "FGBM"
-   },
-   {
-    "Exch": "EUX",
-    "RIC": "FGBL",
-    "Description": "Euro-Bund Bond",
-    "Max Order": "7",
-    "Max Net": "14",
-    "Expected TT Exchange": "Eurex",
-    "Expected TT Symbol": "FGBL"
-   },
-   {
-    "Exch": "EUX",
-    "RIC": "FXXP",
-    "Description": "Stoxx Europe 600 Index",
-    "Max Order": "7",
-    "Max Net": "14",
-    "Expected TT Exchange": "Eurex",
-    "Expected TT Symbol": "FXXP"
-   },
-   {
-    "Exch": "EUX",
-    "RIC": "FGBX",
-    "Description": "Euro-Buxl Bond",
-    "Max Order": "7",
-    "Max Net": "14",
-    "Expected TT Exchange": "Eurex",
-    "Expected TT Symbol": "FGBX"
-   },
-   {
-    "Exch": "EUX",
-    "RIC": "STXE",
-    "Description": "EuroStoxx 50 Index",
-    "Max Order": "7",
-    "Max Net": "14",
-    "Expected TT Exchange": "Eurex",
-    "Expected TT Symbol": "FESX"
-   },
-   {
-    "Exch": "GEM",
-    "RIC": "MP",
-    "Description": "MXN/USD Cross Currency",
-    "Max Order": "7",
-    "Max Net": "14",
-    "Expected TT Exchange": "CME",
-    "Expected TT Symbol": "6M"
-   },
-   {
-    "Exch": "HFE",
-    "RIC": "HHTI",
-    "Description": "Hang Seng Tech Index",
-    "Max Order": "7",
-    "Max Net": "14",
-    "Expected TT Exchange": "HKEX",
-    "Expected TT Symbol": "HTI"
-   },
-   {
-    "Exch": "HFE",
-    "RIC": "HCEI",
-    "Description": "Hang Seng China Enterprises Index",
-    "Max Order": "7",
-    "Max Net": "14",
-    "Expected TT Exchange": "HKEX",
-    "Expected TT Symbol": "HHI"
-   },
-   {
-    "Exch": "HFE",
-    "RIC": "HSI",
-    "Description": "Hang Seng Index",
-    "Max Order": "7",
-    "Max Net": "14",
-    "Expected TT Exchange": "HKEX",
-    "Expected TT Symbol": "HSI"
+    "Expected TT Symbol": "CONF"
    },
    {
     "Exch": "IEU",
-    "RIC": "LCC",
-    "Description": "London Cocoa",
-    "Max Order": "7",
-    "Max Net": "14",
-    "Expected TT Exchange": "ICE",
-    "Expected TT Symbol": "C"
-   },
-   {
-    "Exch": "IEU",
-    "RIC": "FEI",
-    "Description": "3Mth Euribor",
+    "RIC": "FMG",
+    "Description": "Medium Gilt",
     "Max Order": "7",
     "Max Net": "14",
     "Expected TT Exchange": "ICE_L",
-    "Expected TT Symbol": "I"
+    "Expected TT Symbol": "H"
    },
    {
     "Exch": "IEU",
-    "RIC": "FLG",
-    "Description": "Long Gilt UK Bond",
+    "RIC": "FSG",
+    "Description": "Short Gilt",
     "Max Order": "7",
     "Max Net": "14",
     "Expected TT Exchange": "ICE_L",
-    "Expected TT Symbol": "R"
-   },
-   {
-    "Exch": "IEU",
-    "RIC": "SON3",
-    "Description": "3M SONIA Index",
-    "Max Order": "7",
-    "Max Net": "14",
-    "Expected TT Exchange": "ICE_L",
-    "Expected TT Symbol": "SO3"
-   },
-   {
-    "Exch": "IEU",
-    "RIC": "FFI",
-    "Description": "FTSE 100 Index",
-    "Max Order": "7",
-    "Max Net": "14",
-    "Expected TT Exchange": "ICE_L",
-    "Expected TT Symbol": "Z"
-   },
-   {
-    "Exch": "IEU",
-    "RIC": "LCO",
-    "Description": "Brent Crude Monthly",
-    "Max Order": "7",
-    "Max Net": "14",
-    "Expected TT Exchange": "ICE",
-    "Expected TT Symbol": "BRN"
-   },
-   {
-    "Exch": "IEU",
-    "RIC": "WTCL",
-    "Description": "WTI Crude Oil Monthly",
-    "Max Order": "7",
-    "Max Net": "14",
-    "Expected TT Exchange": "ICE",
-    "Expected TT Symbol": "WBS"
-   },
-   {
-    "Exch": "IEU",
-    "RIC": "LGO",
-    "Description": "Low Sulphur Gasoil Monthly",
-    "Max Order": "7",
-    "Max Net": "14",
-    "Expected TT Exchange": "ICE",
     "Expected TT Symbol": "G"
    },
    {
-    "Exch": "IMM",
-    "RIC": "AD",
-    "Description": "AUD/USD Cross Currency",
+    "Exch": "IEU",
+    "RIC": "LSU",
+    "Description": "White Sugar",
     "Max Order": "7",
     "Max Net": "14",
-    "Expected TT Exchange": "CME",
-    "Expected TT Symbol": "6A"
+    "Expected TT Exchange": "ICE",
+    "Expected TT Symbol": "W"
    },
    {
-    "Exch": "IMM",
-    "RIC": "BP",
-    "Description": "GBP/USD Cross Currency",
+    "Exch": "IEU",
+    "RIC": "LRC",
+    "Description": "Robusta Coffee",
     "Max Order": "7",
     "Max Net": "14",
-    "Expected TT Exchange": "CME",
-    "Expected TT Symbol": "6B"
+    "Expected TT Exchange": "ICE",
+    "Expected TT Symbol": "RC"
    },
    {
-    "Exch": "IMM",
-    "RIC": "CD",
-    "Description": "CAD/USD Cross Currency",
+    "Exch": "NYB",
+    "RIC": "KC",
+    "Description": "Coffee C",
     "Max Order": "7",
     "Max Net": "14",
-    "Expected TT Exchange": "CME",
-    "Expected TT Symbol": "6C"
+    "Expected TT Exchange": "ICE",
+    "Expected TT Symbol": "KC"
+   },
+   {
+    "Exch": "NYB",
+    "RIC": "SB",
+    "Description": "Sugar No. 11",
+    "Max Order": "7",
+    "Max Net": "14",
+    "Expected TT Exchange": "ICE",
+    "Expected TT Symbol": "SB"
+   },
+   {
+    "Exch": "NYB",
+    "RIC": "CT",
+    "Description": "Cotton No. 2",
+    "Max Order": "7",
+    "Max Net": "14",
+    "Expected TT Exchange": "ICE",
+    "Expected TT Symbol": "CT"
+   },
+   {
+    "Exch": "NYB",
+    "RIC": "CC",
+    "Description": "Cocoa",
+    "Max Order": "7",
+    "Max Net": "14",
+    "Expected TT Exchange": "ICE",
+    "Expected TT Symbol": "CC"
+   },
+   {
+    "Exch": "NYB",
+    "RIC": "DX",
+    "Description": "US Dollar Index",
+    "Max Order": "7",
+    "Max Net": "14",
+    "Expected TT Exchange": "ICE",
+    "Expected TT Symbol": "DX"
+   },
+   {
+    "Exch": "HFE",
+    "RIC": "MHI",
+    "Description": "Mini Hang Seng Index",
+    "Max Order": "7",
+    "Max Net": "14",
+    "Expected TT Exchange": "HKEX",
+    "Expected TT Symbol": "MHI"
+   },
+   {
+    "Exch": "OSE",
+    "RIC": "JNI",
+    "Description": "Nikkei 225",
+    "Max Order": "7",
+    "Max Net": "14",
+    "Expected TT Exchange": "JPX",
+    "Expected TT Symbol": "225"
+   },
+   {
+    "Exch": "OSE",
+    "RIC": "JNM",
+    "Description": "Nikkei 225 Mini",
+    "Max Order": "7",
+    "Max Net": "14",
+    "Expected TT Exchange": "JPX",
+    "Expected TT Symbol": "225M"
+   },
+   {
+    "Exch": "OSE",
+    "RIC": "JTI",
+    "Description": "TOPIX",
+    "Max Order": "7",
+    "Max Net": "14",
+    "Expected TT Exchange": "JPX",
+    "Expected TT Symbol": "TPX"
+   },
+   {
+    "Exch": "OSE",
+    "RIC": "JGB",
+    "Description": "10 Year JGB",
+    "Max Order": "7",
+    "Max Net": "14",
+    "Expected TT Exchange": "JPX",
+    "Expected TT Symbol": "JBL"
+   },
+   {
+    "Exch": "SGX",
+    "RIC": "SSI",
+    "Description": "SGX Nikkei 225 Index",
+    "Max Order": "7",
+    "Max Net": "14",
+    "Expected TT Exchange": "SGX",
+    "Expected TT Symbol": "NK"
+   },
+   {
+    "Exch": "SGX",
+    "RIC": "SFC",
+    "Description": "FTSE China A50 Index",
+    "Max Order": "7",
+    "Max Net": "14",
+    "Expected TT Exchange": "SGX",
+    "Expected TT Symbol": "CN"
+   },
+   {
+    "Exch": "SFE",
+    "RIC": "YAP",
+    "Description": "SPI 200 Index",
+    "Max Order": "7",
+    "Max Net": "14",
+    "Expected TT Exchange": "ASX",
+    "Expected TT Symbol": "AP"
+   },
+   {
+    "Exch": "SFE",
+    "RIC": "YBA",
+    "Description": "90 Day Bank Bills",
+    "Max Order": "7",
+    "Max Net": "14",
+    "Expected TT Exchange": "ASX",
+    "Expected TT Symbol": "IR"
+   },
+   {
+    "Exch": "MON",
+    "RIC": "SXF",
+    "Description": "S&P/TSX 60 Index",
+    "Max Order": "7",
+    "Max Net": "14",
+    "Expected TT Exchange": "MX",
+    "Expected TT Symbol": "SXF"
+   },
+   {
+    "Exch": "MON",
+    "RIC": "CRA",
+    "Description": "Three-Month CORRA",
+    "Max Order": "7",
+    "Max Net": "14",
+    "Expected TT Exchange": "MX",
+    "Expected TT Symbol": "CRA"
+   },
+   {
+    "Exch": "PAR",
+    "RIC": "FCE",
+    "Description": "CAC 40 Index",
+    "Max Order": "7",
+    "Max Net": "14",
+    "Expected TT Exchange": "Euronext",
+    "Expected TT Symbol": "jFCE"
+   },
+   {
+    "Exch": "MIL",
+    "RIC": "FMIB",
+    "Description": "FTSE MIB Index",
+    "Max Order": "7",
+    "Max Net": "14",
+    "Expected TT Exchange": "Euronext",
+    "Expected TT Symbol": "iFIB"
+   },
+   {
+    "Exch": "PAR",
+    "RIC": "EBM",
+    "Description": "Milling Wheat",
+    "Max Order": "7",
+    "Max Net": "14",
+    "Expected TT Exchange": "Euronext",
+    "Expected TT Symbol": "yEBM"
+   },
+   {
+    "Exch": "KFE",
+    "RIC": "KS",
+    "Description": "KOSPI 200",
+    "Max Order": "7",
+    "Max Net": "14",
+    "Expected TT Exchange": "KRX",
+    "Expected TT Symbol": "K2I"
    }
   ],
   "mapping": {
@@ -4411,395 +4456,435 @@
    ],
    "counts": {
     "mapped": 0,
-    "known": 48,
-    "direct": 0,
+    "known": 49,
+    "direct": 4,
     "check": 0,
     "unmatched": 0,
     "noTt": 0
    },
    "rows": [
     {
-     "ricRoot": "AEX",
-     "exchange": "AEX",
-     "status": "known",
-     "ttExchange": "Euronext",
-     "ttSymbol": "kFTI",
-     "candidates": []
-    },
-    {
-     "ricRoot": "VX",
-     "exchange": "CBF",
-     "status": "known",
-     "ttExchange": "CFE",
-     "ttSymbol": "VX",
-     "candidates": []
-    },
-    {
-     "ricRoot": "BO",
+     "ricRoot": "YM",
      "exchange": "CBT",
      "status": "known",
      "ttExchange": "CME",
-     "ttSymbol": "ZL",
+     "ttSymbol": "YM",
      "candidates": []
     },
     {
-     "ricRoot": "C",
+     "ricRoot": "O",
      "exchange": "CBT",
      "status": "known",
      "ttExchange": "CME",
-     "ttSymbol": "ZC",
+     "ttSymbol": "ZO",
      "candidates": []
     },
     {
-     "ricRoot": "FV",
+     "ricRoot": "RR",
      "exchange": "CBT",
      "status": "known",
      "ttExchange": "CME",
-     "ttSymbol": "ZF",
+     "ttSymbol": "ZR",
      "candidates": []
     },
     {
-     "ricRoot": "KW",
+     "ricRoot": "FF",
      "exchange": "CBT",
      "status": "known",
      "ttExchange": "CME",
-     "ttSymbol": "KE",
+     "ttSymbol": "ZQ",
      "candidates": []
     },
     {
-     "ricRoot": "SM",
-     "exchange": "CBT",
+     "ricRoot": "SRA",
+     "exchange": "IMM",
      "status": "known",
      "ttExchange": "CME",
-     "ttSymbol": "ZM",
+     "ttSymbol": "SR3",
      "candidates": []
     },
     {
-     "ricRoot": "TU",
-     "exchange": "CBT",
-     "status": "known",
-     "ttExchange": "CME",
-     "ttSymbol": "ZT",
-     "candidates": []
-    },
-    {
-     "ricRoot": "TY",
-     "exchange": "CBT",
-     "status": "known",
-     "ttExchange": "CME",
-     "ttSymbol": "ZN",
-     "candidates": []
-    },
-    {
-     "ricRoot": "US",
-     "exchange": "CBT",
-     "status": "known",
-     "ttExchange": "CME",
-     "ttSymbol": "ZB",
-     "candidates": []
-    },
-    {
-     "ricRoot": "TN",
-     "exchange": "CBT",
-     "status": "known",
-     "ttExchange": "CME",
-     "ttSymbol": "TN",
-     "candidates": []
-    },
-    {
-     "ricRoot": "W",
-     "exchange": "CBT",
-     "status": "known",
-     "ttExchange": "CME",
-     "ttSymbol": "ZW",
-     "candidates": []
-    },
-    {
-     "ricRoot": "AUL",
-     "exchange": "CBT",
-     "status": "known",
-     "ttExchange": "CME",
-     "ttSymbol": "UB",
-     "candidates": []
-    },
-    {
-     "ricRoot": "S",
-     "exchange": "CBT",
-     "status": "known",
-     "ttExchange": "CME",
-     "ttSymbol": "ZS",
-     "candidates": []
-    },
-    {
-     "ricRoot": "FC",
+     "ricRoot": "ES",
      "exchange": "CME",
      "status": "known",
      "ttExchange": "CME",
-     "ttSymbol": "GF",
+     "ttSymbol": "ES",
      "candidates": []
     },
     {
-     "ricRoot": "LC",
+     "ricRoot": "NQ",
      "exchange": "CME",
      "status": "known",
      "ttExchange": "CME",
-     "ttSymbol": "LE",
+     "ttSymbol": "NQ",
      "candidates": []
     },
     {
-     "ricRoot": "LH",
+     "ricRoot": "RTY",
      "exchange": "CME",
      "status": "known",
      "ttExchange": "CME",
-     "ttSymbol": "HE",
+     "ttSymbol": "RTY",
      "candidates": []
     },
     {
-     "ricRoot": "GC",
+     "ricRoot": "EMD",
+     "exchange": "CME",
+     "status": "known",
+     "ttExchange": "CME",
+     "ttSymbol": "EMD",
+     "candidates": []
+    },
+    {
+     "ricRoot": "NIY",
+     "exchange": "CME",
+     "status": "known",
+     "ttExchange": "CME",
+     "ttSymbol": "NIY",
+     "candidates": []
+    },
+    {
+     "ricRoot": "NKD",
+     "exchange": "CME",
+     "status": "known",
+     "ttExchange": "CME",
+     "ttSymbol": "NKD",
+     "candidates": []
+    },
+    {
+     "ricRoot": "URO",
+     "exchange": "IMM",
+     "status": "known",
+     "ttExchange": "CME",
+     "ttSymbol": "6E",
+     "candidates": []
+    },
+    {
+     "ricRoot": "JY",
+     "exchange": "IMM",
+     "status": "known",
+     "ttExchange": "CME",
+     "ttSymbol": "6J",
+     "candidates": []
+    },
+    {
+     "ricRoot": "SF",
+     "exchange": "IMM",
+     "status": "known",
+     "ttExchange": "CME",
+     "ttSymbol": "6S",
+     "candidates": []
+    },
+    {
+     "ricRoot": "NE",
+     "exchange": "IMM",
+     "status": "known",
+     "ttExchange": "CME",
+     "ttSymbol": "6N",
+     "candidates": []
+    },
+    {
+     "ricRoot": "RA",
+     "exchange": "IMM",
+     "status": "known",
+     "ttExchange": "CME",
+     "ttSymbol": "6Z",
+     "candidates": []
+    },
+    {
+     "ricRoot": "BR",
+     "exchange": "IMM",
+     "status": "known",
+     "ttExchange": "CME",
+     "ttSymbol": "6L",
+     "candidates": []
+    },
+    {
+     "ricRoot": "MES",
+     "exchange": "CME",
+     "status": "direct",
+     "ttExchange": "CME",
+     "ttSymbol": "MES",
+     "candidates": []
+    },
+    {
+     "ricRoot": "MNQ",
+     "exchange": "CME",
+     "status": "direct",
+     "ttExchange": "CME",
+     "ttSymbol": "MNQ",
+     "candidates": []
+    },
+    {
+     "ricRoot": "CL",
+     "exchange": "NYM",
+     "status": "known",
+     "ttExchange": "CME",
+     "ttSymbol": "CL",
+     "candidates": []
+    },
+    {
+     "ricRoot": "NG",
+     "exchange": "NYM",
+     "status": "known",
+     "ttExchange": "CME",
+     "ttSymbol": "NG",
+     "candidates": []
+    },
+    {
+     "ricRoot": "HO",
+     "exchange": "NYM",
+     "status": "known",
+     "ttExchange": "CME",
+     "ttSymbol": "HO",
+     "candidates": []
+    },
+    {
+     "ricRoot": "RB",
+     "exchange": "NYM",
+     "status": "known",
+     "ttExchange": "CME",
+     "ttSymbol": "RB",
+     "candidates": []
+    },
+    {
+     "ricRoot": "PL",
+     "exchange": "NYM",
+     "status": "known",
+     "ttExchange": "CME",
+     "ttSymbol": "PL",
+     "candidates": []
+    },
+    {
+     "ricRoot": "PA",
+     "exchange": "NYM",
+     "status": "known",
+     "ttExchange": "CME",
+     "ttSymbol": "PA",
+     "candidates": []
+    },
+    {
+     "ricRoot": "MGC",
      "exchange": "CMX",
-     "status": "known",
+     "status": "direct",
      "ttExchange": "CME",
-     "ttSymbol": "GC",
+     "ttSymbol": "MGC",
      "candidates": []
     },
     {
-     "ricRoot": "HG",
-     "exchange": "CMX",
-     "status": "known",
-     "ttExchange": "CME",
-     "ttSymbol": "HG",
-     "candidates": []
-    },
-    {
-     "ricRoot": "SI",
-     "exchange": "CMX",
-     "status": "known",
-     "ttExchange": "CME",
-     "ttSymbol": "SI",
-     "candidates": []
-    },
-    {
-     "ricRoot": "TFMBM",
-     "exchange": "EDX",
-     "status": "known",
-     "ttExchange": "ICE",
-     "ttSymbol": "TFM",
-     "candidates": []
-    },
-    {
-     "ricRoot": "FSMI",
+     "ricRoot": "FDXM",
      "exchange": "EUX",
      "status": "known",
      "ttExchange": "Eurex",
-     "ttSymbol": "FSMI",
+     "ttSymbol": "FDXM",
      "candidates": []
     },
     {
-     "ricRoot": "FBTS",
+     "ricRoot": "FVS",
      "exchange": "EUX",
      "status": "known",
      "ttExchange": "Eurex",
-     "ttSymbol": "FBTS",
+     "ttSymbol": "FVS",
      "candidates": []
     },
     {
-     "ricRoot": "FESB",
+     "ricRoot": "CONF",
      "exchange": "EUX",
-     "status": "known",
+     "status": "direct",
      "ttExchange": "Eurex",
-     "ttSymbol": "FESB",
+     "ttSymbol": "CONF",
      "candidates": []
     },
     {
-     "ricRoot": "FGBS",
-     "exchange": "EUX",
-     "status": "known",
-     "ttExchange": "Eurex",
-     "ttSymbol": "FGBS",
-     "candidates": []
-    },
-    {
-     "ricRoot": "FDX",
-     "exchange": "EUX",
-     "status": "known",
-     "ttExchange": "Eurex",
-     "ttSymbol": "FDAX",
-     "candidates": []
-    },
-    {
-     "ricRoot": "FBTP",
-     "exchange": "EUX",
-     "status": "known",
-     "ttExchange": "Eurex",
-     "ttSymbol": "FBTP",
-     "candidates": []
-    },
-    {
-     "ricRoot": "FOAT",
-     "exchange": "EUX",
-     "status": "known",
-     "ttExchange": "Eurex",
-     "ttSymbol": "FOAT",
-     "candidates": []
-    },
-    {
-     "ricRoot": "FGBM",
-     "exchange": "EUX",
-     "status": "known",
-     "ttExchange": "Eurex",
-     "ttSymbol": "FGBM",
-     "candidates": []
-    },
-    {
-     "ricRoot": "FGBL",
-     "exchange": "EUX",
-     "status": "known",
-     "ttExchange": "Eurex",
-     "ttSymbol": "FGBL",
-     "candidates": []
-    },
-    {
-     "ricRoot": "FXXP",
-     "exchange": "EUX",
-     "status": "known",
-     "ttExchange": "Eurex",
-     "ttSymbol": "FXXP",
-     "candidates": []
-    },
-    {
-     "ricRoot": "FGBX",
-     "exchange": "EUX",
-     "status": "known",
-     "ttExchange": "Eurex",
-     "ttSymbol": "FGBX",
-     "candidates": []
-    },
-    {
-     "ricRoot": "STXE",
-     "exchange": "EUX",
-     "status": "known",
-     "ttExchange": "Eurex",
-     "ttSymbol": "FESX",
-     "candidates": []
-    },
-    {
-     "ricRoot": "MP",
-     "exchange": "GEM",
-     "status": "known",
-     "ttExchange": "CME",
-     "ttSymbol": "6M",
-     "candidates": []
-    },
-    {
-     "ricRoot": "HHTI",
-     "exchange": "HFE",
-     "status": "known",
-     "ttExchange": "HKEX",
-     "ttSymbol": "HTI",
-     "candidates": []
-    },
-    {
-     "ricRoot": "HCEI",
-     "exchange": "HFE",
-     "status": "known",
-     "ttExchange": "HKEX",
-     "ttSymbol": "HHI",
-     "candidates": []
-    },
-    {
-     "ricRoot": "HSI",
-     "exchange": "HFE",
-     "status": "known",
-     "ttExchange": "HKEX",
-     "ttSymbol": "HSI",
-     "candidates": []
-    },
-    {
-     "ricRoot": "LCC",
-     "exchange": "IEU",
-     "status": "known",
-     "ttExchange": "ICE",
-     "ttSymbol": "C",
-     "candidates": []
-    },
-    {
-     "ricRoot": "FEI",
+     "ricRoot": "FMG",
      "exchange": "IEU",
      "status": "known",
      "ttExchange": "ICE_L",
-     "ttSymbol": "I",
+     "ttSymbol": "H",
      "candidates": []
     },
     {
-     "ricRoot": "FLG",
+     "ricRoot": "FSG",
      "exchange": "IEU",
      "status": "known",
      "ttExchange": "ICE_L",
-     "ttSymbol": "R",
-     "candidates": []
-    },
-    {
-     "ricRoot": "SON3",
-     "exchange": "IEU",
-     "status": "known",
-     "ttExchange": "ICE_L",
-     "ttSymbol": "SO3",
-     "candidates": []
-    },
-    {
-     "ricRoot": "FFI",
-     "exchange": "IEU",
-     "status": "known",
-     "ttExchange": "ICE_L",
-     "ttSymbol": "Z",
-     "candidates": []
-    },
-    {
-     "ricRoot": "LCO",
-     "exchange": "IEU",
-     "status": "known",
-     "ttExchange": "ICE",
-     "ttSymbol": "BRN",
-     "candidates": []
-    },
-    {
-     "ricRoot": "WTCL",
-     "exchange": "IEU",
-     "status": "known",
-     "ttExchange": "ICE",
-     "ttSymbol": "WBS",
-     "candidates": []
-    },
-    {
-     "ricRoot": "LGO",
-     "exchange": "IEU",
-     "status": "known",
-     "ttExchange": "ICE",
      "ttSymbol": "G",
      "candidates": []
     },
     {
-     "ricRoot": "AD",
-     "exchange": "IMM",
+     "ricRoot": "LSU",
+     "exchange": "IEU",
      "status": "known",
-     "ttExchange": "CME",
-     "ttSymbol": "6A",
+     "ttExchange": "ICE",
+     "ttSymbol": "W",
      "candidates": []
     },
     {
-     "ricRoot": "BP",
-     "exchange": "IMM",
+     "ricRoot": "LRC",
+     "exchange": "IEU",
      "status": "known",
-     "ttExchange": "CME",
-     "ttSymbol": "6B",
+     "ttExchange": "ICE",
+     "ttSymbol": "RC",
      "candidates": []
     },
     {
-     "ricRoot": "CD",
-     "exchange": "IMM",
+     "ricRoot": "KC",
+     "exchange": "NYB",
      "status": "known",
-     "ttExchange": "CME",
-     "ttSymbol": "6C",
+     "ttExchange": "ICE",
+     "ttSymbol": "KC",
+     "candidates": []
+    },
+    {
+     "ricRoot": "SB",
+     "exchange": "NYB",
+     "status": "known",
+     "ttExchange": "ICE",
+     "ttSymbol": "SB",
+     "candidates": []
+    },
+    {
+     "ricRoot": "CT",
+     "exchange": "NYB",
+     "status": "known",
+     "ttExchange": "ICE",
+     "ttSymbol": "CT",
+     "candidates": []
+    },
+    {
+     "ricRoot": "CC",
+     "exchange": "NYB",
+     "status": "known",
+     "ttExchange": "ICE",
+     "ttSymbol": "CC",
+     "candidates": []
+    },
+    {
+     "ricRoot": "DX",
+     "exchange": "NYB",
+     "status": "known",
+     "ttExchange": "ICE",
+     "ttSymbol": "DX",
+     "candidates": []
+    },
+    {
+     "ricRoot": "MHI",
+     "exchange": "HFE",
+     "status": "known",
+     "ttExchange": "HKEX",
+     "ttSymbol": "MHI",
+     "candidates": []
+    },
+    {
+     "ricRoot": "JNI",
+     "exchange": "OSE",
+     "status": "known",
+     "ttExchange": "JPX",
+     "ttSymbol": "225",
+     "candidates": []
+    },
+    {
+     "ricRoot": "JNM",
+     "exchange": "OSE",
+     "status": "known",
+     "ttExchange": "JPX",
+     "ttSymbol": "225M",
+     "candidates": []
+    },
+    {
+     "ricRoot": "JTI",
+     "exchange": "OSE",
+     "status": "known",
+     "ttExchange": "JPX",
+     "ttSymbol": "TPX",
+     "candidates": []
+    },
+    {
+     "ricRoot": "JGB",
+     "exchange": "OSE",
+     "status": "known",
+     "ttExchange": "JPX",
+     "ttSymbol": "JBL",
+     "candidates": []
+    },
+    {
+     "ricRoot": "SSI",
+     "exchange": "SGX",
+     "status": "known",
+     "ttExchange": "SGX",
+     "ttSymbol": "NK",
+     "candidates": []
+    },
+    {
+     "ricRoot": "SFC",
+     "exchange": "SGX",
+     "status": "known",
+     "ttExchange": "SGX",
+     "ttSymbol": "CN",
+     "candidates": []
+    },
+    {
+     "ricRoot": "YAP",
+     "exchange": "SFE",
+     "status": "known",
+     "ttExchange": "ASX",
+     "ttSymbol": "AP",
+     "candidates": []
+    },
+    {
+     "ricRoot": "YBA",
+     "exchange": "SFE",
+     "status": "known",
+     "ttExchange": "ASX",
+     "ttSymbol": "IR",
+     "candidates": []
+    },
+    {
+     "ricRoot": "SXF",
+     "exchange": "MON",
+     "status": "known",
+     "ttExchange": "MX",
+     "ttSymbol": "SXF",
+     "candidates": []
+    },
+    {
+     "ricRoot": "CRA",
+     "exchange": "MON",
+     "status": "known",
+     "ttExchange": "MX",
+     "ttSymbol": "CRA",
+     "candidates": []
+    },
+    {
+     "ricRoot": "FCE",
+     "exchange": "PAR",
+     "status": "known",
+     "ttExchange": "Euronext",
+     "ttSymbol": "jFCE",
+     "candidates": []
+    },
+    {
+     "ricRoot": "FMIB",
+     "exchange": "MIL",
+     "status": "known",
+     "ttExchange": "Euronext",
+     "ttSymbol": "iFIB",
+     "candidates": []
+    },
+    {
+     "ricRoot": "EBM",
+     "exchange": "PAR",
+     "status": "known",
+     "ttExchange": "Euronext",
+     "ttSymbol": "yEBM",
+     "candidates": []
+    },
+    {
+     "ricRoot": "KS",
+     "exchange": "KFE",
+     "status": "known",
+     "ttExchange": "KRX",
+     "ttSymbol": "K2I",
      "candidates": []
     }
    ]
@@ -4819,601 +4904,591 @@
    "counts": {
     "mapped": 0,
     "known": 0,
-    "direct": 16,
-    "check": 32,
+    "direct": 25,
+    "check": 28,
     "unmatched": 0,
     "noTt": 0
    },
    "rows": [
     {
-     "ricRoot": "AEX",
-     "exchange": "AEX",
-     "status": "check",
-     "ttExchange": "Euronext",
-     "ttSymbol": "kFTI",
-     "candidates": [
-      "Euronext kFTI",
-      "Euronext kAXF",
-      "Euronext kMFA",
-      "Euronext k1FT",
-      "Euronext k2FT",
-      "Euronext k4FT"
-     ]
-    },
-    {
-     "ricRoot": "VX",
-     "exchange": "CBF",
+     "ricRoot": "YM",
+     "exchange": "CBT",
      "status": "direct",
-     "ttExchange": "CFE",
-     "ttSymbol": "VX",
+     "ttExchange": "CME",
+     "ttSymbol": "YM",
      "candidates": []
     },
     {
-     "ricRoot": "BO",
+     "ricRoot": "O",
      "exchange": "CBT",
      "status": "check",
      "ttExchange": "CME",
-     "ttSymbol": "ZL",
+     "ttSymbol": "ZO",
      "candidates": [
-      "CME ZL",
-      "CME ZLT",
-      "CME ZS",
+      "CME ZO"
+     ]
+    },
+    {
+     "ricRoot": "RR",
+     "exchange": "CBT",
+     "status": "check",
+     "ttExchange": "CME",
+     "ttSymbol": "ZR",
+     "candidates": [
+      "CME ZR"
+     ]
+    },
+    {
+     "ricRoot": "FF",
+     "exchange": "CBT",
+     "status": "check",
+     "ttExchange": "CME",
+     "ttSymbol": "ZQ",
+     "candidates": [
+      "CME ZQ"
+     ]
+    },
+    {
+     "ricRoot": "SRA",
+     "exchange": "IMM",
+     "status": "check",
+     "ttExchange": "CME",
+     "ttSymbol": "SR3",
+     "candidates": [
+      "CME SR3",
+      "CME SR1",
+      "CME HQ",
+      "CME AY",
+      "CME MO",
+      "CME V7"
+     ]
+    },
+    {
+     "ricRoot": "ES",
+     "exchange": "CME",
+     "status": "direct",
+     "ttExchange": "CME",
+     "ttSymbol": "ES",
+     "candidates": []
+    },
+    {
+     "ricRoot": "NQ",
+     "exchange": "CME",
+     "status": "direct",
+     "ttExchange": "CME",
+     "ttSymbol": "NQ",
+     "candidates": []
+    },
+    {
+     "ricRoot": "RTY",
+     "exchange": "CME",
+     "status": "direct",
+     "ttExchange": "CME",
+     "ttSymbol": "RTY",
+     "candidates": []
+    },
+    {
+     "ricRoot": "EMD",
+     "exchange": "CME",
+     "status": "direct",
+     "ttExchange": "CME",
+     "ttSymbol": "EMD",
+     "candidates": []
+    },
+    {
+     "ricRoot": "NIY",
+     "exchange": "CME",
+     "status": "direct",
+     "ttExchange": "CME",
+     "ttSymbol": "NIY",
+     "candidates": []
+    },
+    {
+     "ricRoot": "NKD",
+     "exchange": "CME",
+     "status": "direct",
+     "ttExchange": "CME",
+     "ttSymbol": "NKD",
+     "candidates": []
+    },
+    {
+     "ricRoot": "URO",
+     "exchange": "IMM",
+     "status": "check",
+     "ttExchange": "CME",
+     "ttSymbol": "6E",
+     "candidates": [
+      "CME 6E",
+      "CME E7",
+      "CME RF",
+      "CME RP",
+      "CME RY",
+      "CME EAD"
+     ]
+    },
+    {
+     "ricRoot": "JY",
+     "exchange": "IMM",
+     "status": "check",
+     "ttExchange": "CME",
+     "ttSymbol": "6J",
+     "candidates": [
+      "CME 6J",
+      "CME RY",
+      "CME AJY",
+      "CME CJY",
+      "CME PJY",
+      "CME SJY"
+     ]
+    },
+    {
+     "ricRoot": "SF",
+     "exchange": "IMM",
+     "status": "check",
+     "ttExchange": "CME",
+     "ttSymbol": "6S",
+     "candidates": [
+      "CME 6S",
+      "CME RF",
+      "CME PSF",
+      "CME SJY",
+      "CME MSF"
+     ]
+    },
+    {
+     "ricRoot": "NE",
+     "exchange": "IMM",
+     "status": "check",
+     "ttExchange": "CME",
+     "ttSymbol": "6N",
+     "candidates": [
+      "CME 6N",
+      "CME ANE",
+      "CME 6A",
+      "CME 6C",
+      "CME H4",
+      "CME ACD"
+     ]
+    },
+    {
+     "ricRoot": "RA",
+     "exchange": "IMM",
+     "status": "check",
+     "ttExchange": "CME",
+     "ttSymbol": "6Z",
+     "candidates": [
+      "CME 6Z"
+     ]
+    },
+    {
+     "ricRoot": "BR",
+     "exchange": "IMM",
+     "status": "check",
+     "ttExchange": "CME",
+     "ttSymbol": "6L",
+     "candidates": [
+      "CME 6L",
+      "CME RX",
+      "CME XAR"
+     ]
+    },
+    {
+     "ricRoot": "MES",
+     "exchange": "CME",
+     "status": "direct",
+     "ttExchange": "CME",
+     "ttSymbol": "MES",
+     "candidates": []
+    },
+    {
+     "ricRoot": "MNQ",
+     "exchange": "CME",
+     "status": "direct",
+     "ttExchange": "CME",
+     "ttSymbol": "MNQ",
+     "candidates": []
+    },
+    {
+     "ricRoot": "CL",
+     "exchange": "NYM",
+     "status": "check",
+     "ttExchange": "CME",
+     "ttSymbol": "GSW",
+     "candidates": [
+      "CME GSW",
       "CME CL",
-      "CME ZM",
-      "CME FCPO"
+      "CME FCPO",
+      "CME OQD",
+      "CME FEPO",
+      "CME ADB"
      ]
     },
     {
-     "ricRoot": "C",
-     "exchange": "CBT",
-     "status": "check",
-     "ttExchange": "CME",
-     "ttSymbol": "ZC",
-     "candidates": [
-      "CME ZC",
-      "CME XC",
-      "CME ZCT"
-     ]
-    },
-    {
-     "ricRoot": "FV",
-     "exchange": "CBT",
-     "status": "check",
-     "ttExchange": "CME",
-     "ttSymbol": "ZF",
-     "candidates": [
-      "CME ZF",
-      "CME ZFT",
-      "CME ZB",
-      "CME ZN",
-      "CME ZT",
-      "CME Z3N"
-     ]
-    },
-    {
-     "ricRoot": "KW",
-     "exchange": "CBT",
-     "status": "check",
-     "ttExchange": "CME",
-     "ttSymbol": "KE",
-     "candidates": [
-      "CME KE",
-      "CME KET",
-      "CME MKC",
-      "CME KC7",
-      "CME HRS",
-      "CME KW"
-     ]
-    },
-    {
-     "ricRoot": "SM",
-     "exchange": "CBT",
-     "status": "check",
-     "ttExchange": "CME",
-     "ttSymbol": "ZM",
-     "candidates": [
-      "CME ZM",
-      "CME ZMT",
-      "CME ZS",
-      "CME ZL",
-      "CME SAS",
-      "CME XK"
-     ]
-    },
-    {
-     "ricRoot": "TU",
-     "exchange": "CBT",
-     "status": "check",
-     "ttExchange": "CME",
-     "ttSymbol": "ZT",
-     "candidates": [
-      "CME ZT",
-      "CME ZTT",
-      "CME ZB",
-      "CME ZF",
-      "CME ZN",
-      "CME Z3N"
-     ]
-    },
-    {
-     "ricRoot": "TY",
-     "exchange": "CBT",
-     "status": "check",
-     "ttExchange": "CME",
-     "ttSymbol": "ZN",
-     "candidates": [
-      "CME ZN",
-      "CME TN",
-      "CME ZNS",
-      "CME MTN",
-      "CME ZB",
-      "CME ZF"
-     ]
-    },
-    {
-     "ricRoot": "US",
-     "exchange": "CBT",
-     "status": "check",
-     "ttExchange": "CME",
-     "ttSymbol": "ZB",
-     "candidates": [
-      "CME ZB",
-      "CME TWE",
-      "CME UB",
-      "CME ZBT",
-      "CME ZF",
-      "CME ZN"
-     ]
-    },
-    {
-     "ricRoot": "TN",
-     "exchange": "CBT",
+     "ricRoot": "NG",
+     "exchange": "NYM",
      "status": "direct",
      "ttExchange": "CME",
-     "ttSymbol": "TN",
+     "ttSymbol": "NG",
      "candidates": []
     },
     {
-     "ricRoot": "W",
-     "exchange": "CBT",
-     "status": "check",
+     "ricRoot": "HO",
+     "exchange": "NYM",
+     "status": "direct",
      "ttExchange": "CME",
-     "ttSymbol": "ZW",
-     "candidates": [
-      "CME ZW",
-      "CME H2",
-      "CME HRS",
-      "CME 4C",
-      "CME CU",
-      "CME K2"
-     ]
+     "ttSymbol": "HO",
+     "candidates": []
     },
     {
-     "ricRoot": "AUL",
-     "exchange": "CBT",
-     "status": "check",
+     "ricRoot": "RB",
+     "exchange": "NYM",
+     "status": "direct",
      "ttExchange": "CME",
-     "ttSymbol": "UB",
-     "candidates": [
-      "CME UB",
-      "CME ZB",
-      "CME MWN",
-      "CME UBT",
-      "CME ZBT",
-      "CME TWE"
-     ]
+     "ttSymbol": "RB",
+     "candidates": []
     },
     {
-     "ricRoot": "S",
-     "exchange": "CBT",
-     "status": "check",
+     "ricRoot": "PL",
+     "exchange": "NYM",
+     "status": "direct",
      "ttExchange": "CME",
-     "ttSymbol": "ZS",
-     "candidates": [
-      "CME ZS",
-      "CME ZL",
-      "CME ZM",
-      "CME SAS",
-      "CME XK",
-      "CME SBT"
-     ]
+     "ttSymbol": "PL",
+     "candidates": []
     },
     {
-     "ricRoot": "FC",
-     "exchange": "CME",
-     "status": "check",
+     "ricRoot": "PA",
+     "exchange": "NYM",
+     "status": "direct",
      "ttExchange": "CME",
-     "ttSymbol": "GF",
-     "candidates": [
-      "CME GF",
-      "CME GFT",
-      "CME LE",
-      "CME LET"
-     ]
+     "ttSymbol": "PA",
+     "candidates": []
     },
     {
-     "ricRoot": "LC",
-     "exchange": "CME",
-     "status": "check",
-     "ttExchange": "CME",
-     "ttSymbol": "LE",
-     "candidates": [
-      "CME LE",
-      "CME LET",
-      "CME GF",
-      "CME GFT"
-     ]
-    },
-    {
-     "ricRoot": "LH",
-     "exchange": "CME",
-     "status": "check",
-     "ttExchange": "CME",
-     "ttSymbol": "HE",
-     "candidates": [
-      "CME HE",
-      "CME HET"
-     ]
-    },
-    {
-     "ricRoot": "GC",
+     "ricRoot": "MGC",
      "exchange": "CMX",
      "status": "direct",
      "ttExchange": "CME",
-     "ttSymbol": "GC",
+     "ttSymbol": "MGC",
      "candidates": []
     },
     {
-     "ricRoot": "HG",
-     "exchange": "CMX",
-     "status": "direct",
-     "ttExchange": "CME",
-     "ttSymbol": "HG",
-     "candidates": []
-    },
-    {
-     "ricRoot": "SI",
-     "exchange": "CMX",
-     "status": "direct",
-     "ttExchange": "CME",
-     "ttSymbol": "SI",
-     "candidates": []
-    },
-    {
-     "ricRoot": "TFMBM",
-     "exchange": "EDX",
-     "status": "check",
-     "ttExchange": "ICE",
-     "ttSymbol": "TFM",
-     "candidates": [
-      "ICE TFM",
-      "ICE TFN",
-      "ICE TFO",
-      "ICE ZZR",
-      "ICE DPB",
-      "ICE TFE"
-     ]
-    },
-    {
-     "ricRoot": "FSMI",
+     "ricRoot": "FDXM",
      "exchange": "EUX",
      "status": "direct",
      "ttExchange": "Eurex",
-     "ttSymbol": "FSMI",
+     "ttSymbol": "FDXM",
      "candidates": []
     },
     {
-     "ricRoot": "FBTS",
+     "ricRoot": "FVS",
      "exchange": "EUX",
      "status": "direct",
      "ttExchange": "Eurex",
-     "ttSymbol": "FBTS",
+     "ttSymbol": "FVS",
      "candidates": []
     },
     {
-     "ricRoot": "FESB",
+     "ricRoot": "CONF",
      "exchange": "EUX",
      "status": "direct",
      "ttExchange": "Eurex",
-     "ttSymbol": "FESB",
+     "ttSymbol": "CONF",
      "candidates": []
     },
     {
-     "ricRoot": "FGBS",
-     "exchange": "EUX",
-     "status": "direct",
-     "ttExchange": "Eurex",
-     "ttSymbol": "FGBS",
-     "candidates": []
-    },
-    {
-     "ricRoot": "FDX",
-     "exchange": "EUX",
-     "status": "check",
-     "ttExchange": "Eurex",
-     "ttSymbol": "FDAX",
-     "candidates": [
-      "Eurex FDAX",
-      "Eurex FDXM",
-      "Eurex FDXS",
-      "Eurex EXSF",
-      "Eurex FSDX"
-     ]
-    },
-    {
-     "ricRoot": "FBTP",
-     "exchange": "EUX",
-     "status": "direct",
-     "ttExchange": "Eurex",
-     "ttSymbol": "FBTP",
-     "candidates": []
-    },
-    {
-     "ricRoot": "FOAT",
-     "exchange": "EUX",
-     "status": "direct",
-     "ttExchange": "Eurex",
-     "ttSymbol": "FOAT",
-     "candidates": []
-    },
-    {
-     "ricRoot": "FGBM",
-     "exchange": "EUX",
-     "status": "direct",
-     "ttExchange": "Eurex",
-     "ttSymbol": "FGBM",
-     "candidates": []
-    },
-    {
-     "ricRoot": "FGBL",
-     "exchange": "EUX",
-     "status": "direct",
-     "ttExchange": "Eurex",
-     "ttSymbol": "FGBL",
-     "candidates": []
-    },
-    {
-     "ricRoot": "FXXP",
-     "exchange": "EUX",
-     "status": "direct",
-     "ttExchange": "Eurex",
-     "ttSymbol": "FXXP",
-     "candidates": []
-    },
-    {
-     "ricRoot": "FGBX",
-     "exchange": "EUX",
-     "status": "direct",
-     "ttExchange": "Eurex",
-     "ttSymbol": "FGBX",
-     "candidates": []
-    },
-    {
-     "ricRoot": "STXE",
-     "exchange": "EUX",
-     "status": "check",
-     "ttExchange": "Eurex",
-     "ttSymbol": "FESX",
-     "candidates": [
-      "Eurex FESX",
-      "Eurex FES1",
-      "Eurex EVAR",
-      "Eurex FESQ",
-      "Eurex FEXD",
-      "Eurex FSSX"
-     ]
-    },
-    {
-     "ricRoot": "MP",
-     "exchange": "GEM",
-     "status": "check",
-     "ttExchange": "CME",
-     "ttSymbol": "6M",
-     "candidates": [
-      "CME 6M",
-      "CME TIE"
-     ]
-    },
-    {
-     "ricRoot": "HHTI",
-     "exchange": "HFE",
-     "status": "check",
-     "ttExchange": "HKEX",
-     "ttSymbol": "HTI",
-     "candidates": [
-      "HKEX HTI",
-      "HKEX HSI",
-      "HKEX HBI",
-      "HKEX MBI",
-      "HKEX MHI",
-      "HKEX HCF"
-     ]
-    },
-    {
-     "ricRoot": "HCEI",
-     "exchange": "HFE",
-     "status": "check",
-     "ttExchange": "HKEX",
-     "ttSymbol": "HCF",
-     "candidates": [
-      "HKEX HCF",
-      "HKEX HSI",
-      "HKEX HBI",
-      "HKEX HHN",
-      "HKEX HHT",
-      "HKEX HTI"
-     ]
-    },
-    {
-     "ricRoot": "HSI",
-     "exchange": "HFE",
-     "status": "direct",
-     "ttExchange": "HKEX",
-     "ttSymbol": "HSI",
-     "candidates": []
-    },
-    {
-     "ricRoot": "LCC",
-     "exchange": "IEU",
-     "status": "check",
-     "ttExchange": "ICE",
-     "ttSymbol": "C",
-     "candidates": [
-      "ICE C",
-      "ICE CC",
-      "ICE C_Z",
-      "ICE_L 0L6",
-      "ICE_L 0WF",
-      "ICE_L LSE"
-     ]
-    },
-    {
-     "ricRoot": "FEI",
+     "ricRoot": "FMG",
      "exchange": "IEU",
      "status": "check",
      "ttExchange": "ICE_L",
-     "ttSymbol": "I",
+     "ttSymbol": "H",
      "candidates": [
-      "ICE_L I",
-      "ICE_L BSW",
-      "ICE_L NIB",
-      "ICE_L SA3",
-      "ICE_L SO3",
-      "ICE_L STI"
-     ]
-    },
-    {
-     "ricRoot": "FLG",
-     "exchange": "IEU",
-     "status": "check",
-     "ttExchange": "ICE_L",
-     "ttSymbol": "R",
-     "candidates": [
+      "ICE_L H",
+      "ICE_L G",
       "ICE_L R",
-      "ICE_L EUI",
-      "ICE_L S10",
-      "ICE_L C10",
-      "ICE_L G10",
-      "ICE_L I10"
+      "ICE_L H_Z",
+      "ICE_L S05",
+      "ICE_L BFM"
      ]
     },
     {
-     "ricRoot": "SON3",
+     "ricRoot": "FSG",
      "exchange": "IEU",
      "status": "check",
      "ttExchange": "ICE_L",
-     "ttSymbol": "SO3",
-     "candidates": [
-      "ICE_L SO3",
-      "ICE_L BSW",
-      "ICE_L NIB",
-      "ICE_L SA3",
-      "ICE_L STI",
-      "ICE_L ZAR"
-     ]
-    },
-    {
-     "ricRoot": "FFI",
-     "exchange": "IEU",
-     "status": "check",
-     "ttExchange": "ICE_L",
-     "ttSymbol": "Z",
-     "candidates": [
-      "ICE_L Z",
-      "ICE_L XZ",
-      "ICE_L EFP",
-      "ICE_L UEW",
-      "ICE_L Z_Y",
-      "ICE_L UKG"
-     ]
-    },
-    {
-     "ricRoot": "LCO",
-     "exchange": "IEU",
-     "status": "check",
-     "ttExchange": "ICE",
-     "ttSymbol": "BRN",
-     "candidates": [
-      "ICE BRN",
-      "ICE BM",
-      "ICE ZZT",
-      "ICE WAB",
-      "ICE BNB S",
-      "ICE PDB S"
-     ]
-    },
-    {
-     "ricRoot": "WTCL",
-     "exchange": "IEU",
-     "status": "check",
-     "ttExchange": "ICE",
-     "ttSymbol": "WBS",
-     "candidates": [
-      "ICE WBS",
-      "ICE WLD",
-      "ICE TM",
-      "ICE WAW",
-      "ICE HOU",
-      "ICE UHO"
-     ]
-    },
-    {
-     "ricRoot": "LGO",
-     "exchange": "IEU",
-     "status": "check",
-     "ttExchange": "ICE",
      "ttSymbol": "G",
      "candidates": [
-      "ICE G",
-      "ICE GM",
-      "ICE UUB S",
-      "ICE G_Z",
-      "ICE G_MD",
-      "ICE G_MM"
+      "ICE_L G",
+      "ICE_L H",
+      "ICE_L R",
+      "ICE_L G_Z",
+      "ICE_L S02",
+      "ICE_L BFS"
      ]
     },
     {
-     "ricRoot": "AD",
-     "exchange": "IMM",
+     "ricRoot": "LSU",
+     "exchange": "IEU",
      "status": "check",
-     "ttExchange": "CME",
-     "ttSymbol": "6A",
+     "ttExchange": "ICE",
+     "ttSymbol": "W",
      "candidates": [
-      "CME 6A",
-      "CME ACD",
-      "CME EAD",
-      "CME AJY",
-      "CME ANE",
-      "CME M6A"
+      "ICE W",
+      "ICE W_Z",
+      "ICE SB",
+      "ICE SF"
      ]
     },
     {
-     "ricRoot": "BP",
-     "exchange": "IMM",
+     "ricRoot": "LRC",
+     "exchange": "IEU",
      "status": "check",
-     "ttExchange": "CME",
-     "ttSymbol": "6B",
+     "ttExchange": "ICE",
+     "ttSymbol": "RC",
      "candidates": [
-      "CME 6B",
-      "CME RP",
-      "CME PJY",
-      "CME PSF",
-      "CME M6B"
+      "ICE RC",
+      "ICE KC",
+      "ICE RC_Z",
+      "ICE AC",
+      "ICE KCW",
+      "ICE_L LRC"
      ]
     },
     {
-     "ricRoot": "CD",
-     "exchange": "IMM",
+     "ricRoot": "KC",
+     "exchange": "NYB",
+     "status": "direct",
+     "ttExchange": "ICE",
+     "ttSymbol": "KC",
+     "candidates": []
+    },
+    {
+     "ricRoot": "SB",
+     "exchange": "NYB",
+     "status": "direct",
+     "ttExchange": "ICE",
+     "ttSymbol": "SB",
+     "candidates": []
+    },
+    {
+     "ricRoot": "CT",
+     "exchange": "NYB",
+     "status": "direct",
+     "ttExchange": "ICE",
+     "ttSymbol": "CT",
+     "candidates": []
+    },
+    {
+     "ricRoot": "CC",
+     "exchange": "NYB",
+     "status": "direct",
+     "ttExchange": "ICE",
+     "ttSymbol": "CC",
+     "candidates": []
+    },
+    {
+     "ricRoot": "DX",
+     "exchange": "NYB",
+     "status": "direct",
+     "ttExchange": "ICE",
+     "ttSymbol": "DX",
+     "candidates": []
+    },
+    {
+     "ricRoot": "MHI",
+     "exchange": "HFE",
+     "status": "direct",
+     "ttExchange": "HKEX",
+     "ttSymbol": "MHI",
+     "candidates": []
+    },
+    {
+     "ricRoot": "JNI",
+     "exchange": "OSE",
      "status": "check",
-     "ttExchange": "CME",
-     "ttSymbol": "6C",
+     "ttExchange": "JPX",
+     "ttSymbol": "225",
      "candidates": [
-      "CME 6C",
-      "CME ACD",
-      "CME ECD",
-      "CME CJY",
-      "CME MCD",
-      "CME 6A"
+      "JPX 225",
+      "JPX NVI",
+      "JPX 225M",
+      "JPX NKDV",
+      "JPX 225MC",
+      "JPX NKC15"
+     ]
+    },
+    {
+     "ricRoot": "JNM",
+     "exchange": "OSE",
+     "status": "check",
+     "ttExchange": "JPX",
+     "ttSymbol": "225M",
+     "candidates": [
+      "JPX 225M",
+      "JPX 225",
+      "JPX NVI",
+      "JPX NKDV",
+      "JPX 225MC",
+      "JPX NKC15"
+     ]
+    },
+    {
+     "ricRoot": "JTI",
+     "exchange": "OSE",
+     "status": "check",
+     "ttExchange": "JPX",
+     "ttSymbol": "TPX",
+     "candidates": [
+      "JPX TPX",
+      "JPX C30",
+      "JPX BANK",
+      "JPX TPXM"
+     ]
+    },
+    {
+     "ricRoot": "JGB",
+     "exchange": "OSE",
+     "status": "check",
+     "ttExchange": "JPX",
+     "ttSymbol": "JBL",
+     "candidates": [
+      "JPX JBL",
+      "JPX JBLM",
+      "JPX JBM",
+      "JPX ECBY",
+      "JPX ECPY",
+      "JPX EEBY"
+     ]
+    },
+    {
+     "ricRoot": "SSI",
+     "exchange": "SGX",
+     "status": "check",
+     "ttExchange": "SGX",
+     "ttSymbol": "NK",
+     "candidates": [
+      "SGX NK",
+      "SGX NU",
+      "SGX NS",
+      "SGX NK_TAIC",
+      "SGX NC",
+      "SGX ND"
+     ]
+    },
+    {
+     "ricRoot": "SFC",
+     "exchange": "SGX",
+     "status": "check",
+     "ttExchange": "SGX",
+     "ttSymbol": "CN",
+     "candidates": [
+      "SGX CN",
+      "SGX FCH",
+      "SGX FID",
+      "SGX FMY",
+      "SGX FPH",
+      "SGX FTH"
+     ]
+    },
+    {
+     "ricRoot": "YAP",
+     "exchange": "SFE",
+     "status": "check",
+     "ttExchange": "ASX",
+     "ttSymbol": "AP",
+     "candidates": [
+      "ASX AP",
+      "ASX AM",
+      "ASX AR",
+      "ASX AA"
+     ]
+    },
+    {
+     "ricRoot": "YBA",
+     "exchange": "SFE",
+     "status": "check",
+     "ttExchange": "ASX",
+     "ttSymbol": "BB",
+     "candidates": [
+      "ASX BB",
+      "ASX IR"
+     ]
+    },
+    {
+     "ricRoot": "SXF",
+     "exchange": "MON",
+     "status": "check",
+     "ttExchange": "MX",
+     "ttSymbol": "BSF",
+     "candidates": [
+      "MX BSF",
+      "MX SXF",
+      "MX BEG",
+      "MX BZQ",
+      "MX SDV",
+      "MX SXM"
+     ]
+    },
+    {
+     "ricRoot": "CRA",
+     "exchange": "MON",
+     "status": "direct",
+     "ttExchange": "MX",
+     "ttSymbol": "CRA",
+     "candidates": []
+    },
+    {
+     "ricRoot": "FCE",
+     "exchange": "PAR",
+     "status": "check",
+     "ttExchange": "Euronext",
+     "ttSymbol": "jFCE",
+     "candidates": [
+      "Euronext jFCE",
+      "Euronext jFCG",
+      "Euronext jMFC",
+      "Euronext jFCT",
+      "Euronext j1FC",
+      "Euronext j2FC"
+     ]
+    },
+    {
+     "ricRoot": "FMIB",
+     "exchange": "MIL",
+     "status": "check",
+     "ttExchange": "Euronext",
+     "ttSymbol": "iFIB",
+     "candidates": [
+      "Euronext iFIB",
+      "Euronext iFDIV",
+      "Euronext iMIN",
+      "Euronext iMICR",
+      "Euronext jFIT",
+      "Euronext jEPE"
+     ]
+    },
+    {
+     "ricRoot": "EBM",
+     "exchange": "PAR",
+     "status": "check",
+     "ttExchange": "Euronext",
+     "ttSymbol": "yBMS",
+     "candidates": [
+      "Euronext yBMS",
+      "Euronext yEBM",
+      "Euronext yBCS",
+      "Euronext yBKS",
+      "Euronext yEBMT",
+      "Euronext yEDW"
+     ]
+    },
+    {
+     "ricRoot": "KS",
+     "exchange": "KFE",
+     "status": "check",
+     "ttExchange": "KRX",
+     "ttSymbol": "K2I",
+     "candidates": [
+      "KRX K2I"
      ]
     }
    ]
@@ -5523,11 +5598,10 @@
    ]
   }
  },
- "qe_client_raw": {
+ "universe_client_raw": {
   "headers": [
-   "Q Code",
-   "TS Ticker",
-   "BBG Ticker",
+   "TS",
+   "Bloomberg Ticker",
    "Contract Description",
    "Currency",
    "Supported",
@@ -5536,15 +5610,14 @@
    "Type",
    "Electronic / Voice / Both",
    "Block Trade (Y/N)",
-   "Outrights/Spreads Max Position",
+   "Max Position",
    "Max Order Quantity (Outright)",
    "Max Order Quantity (Spreads)"
   ],
   "rows": [
    {
-    "Q Code": "YS",
-    "TS Ticker": "YT",
-    "BBG Ticker": "YMA COMDTY",
+    "TS": "YT",
+    "Bloomberg Ticker": "YMA COMDTY",
     "Contract Description": "Treasury Bonds, Australia, 3-year (SFE)",
     "Currency": "AUD",
     "Supported": "Y",
@@ -5553,14 +5626,13 @@
     "Type": "Future",
     "Electronic / Voice / Both": "Both",
     "Block Trade (Y/N)": "N",
-    "Outrights/Spreads Max Position": "4000",
+    "Max Position": "4000",
     "Max Order Quantity (Outright)": "1800",
     "Max Order Quantity (Spreads)": "4000"
    },
    {
-    "Q Code": "TS",
-    "TS Ticker": "XT",
-    "BBG Ticker": "XMA COMDTY",
+    "TS": "XT",
+    "Bloomberg Ticker": "XMA COMDTY",
     "Contract Description": "Treasury Bonds, Australia, 10-year (SFE)",
     "Currency": "AUD",
     "Supported": "Y",
@@ -5569,14 +5641,13 @@
     "Type": "Future",
     "Electronic / Voice / Both": "Both",
     "Block Trade (Y/N)": "N",
-    "Outrights/Spreads Max Position": "8000",
+    "Max Position": "8000",
     "Max Order Quantity (Outright)": "4000",
     "Max Order Quantity (Spreads)": "8000"
    },
    {
-    "Q Code": "GX",
-    "TS Ticker": "GBL",
-    "BBG Ticker": "RXA COMDTY",
+    "TS": "GBL",
+    "Bloomberg Ticker": "RXA COMDTY",
     "Contract Description": "Euro Bund (10Y) (EUREX)",
     "Currency": "EUR",
     "Supported": "Y",
@@ -5585,14 +5656,13 @@
     "Type": "Future",
     "Electronic / Voice / Both": "Both",
     "Block Trade (Y/N)": "N",
-    "Outrights/Spreads Max Position": "6000",
+    "Max Position": "6000",
     "Max Order Quantity (Outright)": "2500",
     "Max Order Quantity (Spreads)": "6000"
    },
    {
-    "Q Code": "JB",
-    "TS Ticker": "JBL",
-    "BBG Ticker": "JBA COMDTY",
+    "TS": "JBL",
+    "Bloomberg Ticker": "JBA COMDTY",
     "Contract Description": "Japanese Gov't Bond (JGB), 10-year (TSE)",
     "Currency": "JPY",
     "Supported": "Y",
@@ -5601,14 +5671,13 @@
     "Type": "Future",
     "Electronic / Voice / Both": "Both",
     "Block Trade (Y/N)": "N",
-    "Outrights/Spreads Max Position": "7000",
+    "Max Position": "7000",
     "Max Order Quantity (Outright)": "3500",
     "Max Order Quantity (Spreads)": "7000"
    },
    {
-    "Q Code": "ZZ",
-    "TS Ticker": "ZZZ",
-    "BBG Ticker": "ZZZ COMDTY",
+    "TS": "ZZZ",
+    "Bloomberg Ticker": "ZZZ COMDTY",
     "Contract Description": "Fictional New Product (TEST)",
     "Currency": "USD",
     "Supported": "Y",
@@ -5617,14 +5686,13 @@
     "Type": "Future",
     "Electronic / Voice / Both": "Both",
     "Block Trade (Y/N)": "N",
-    "Outrights/Spreads Max Position": "400",
+    "Max Position": "400",
     "Max Order Quantity (Outright)": "80",
     "Max Order Quantity (Spreads)": "400"
    },
    {
-    "Q Code": "KE",
-    "TS Ticker": "KE",
-    "BBG Ticker": "KEA COMDTY",
+    "TS": "KE",
+    "Bloomberg Ticker": "KEA COMDTY",
     "Contract Description": "Korea 3-Year Bond (KFE)",
     "Currency": "KRW",
     "Supported": "N",
@@ -5633,7 +5701,7 @@
     "Type": "Future",
     "Electronic / Voice / Both": "Both",
     "Block Trade (Y/N)": "N",
-    "Outrights/Spreads Max Position": "999",
+    "Max Position": "999",
     "Max Order Quantity (Outright)": "999",
     "Max Order Quantity (Spreads)": "999"
    }
@@ -5641,7 +5709,7 @@
   "fileType": "xlsx",
   "fileName": "client_sample.xlsx"
  },
- "qe_system_raw": {
+ "universe_system_raw": {
   "headers": [
    "TeName",
    "Exchange",
@@ -5747,11 +5815,10 @@
    }
   ]
  },
- "qe_mappings": {
+ "universe_mappings": {
   "client": {
-   "qCode": "Q Code",
-   "tsTicker": "TS Ticker",
-   "bbgTicker": "BBG Ticker",
+   "ticker": "TS",
+   "bloombergTicker": "Bloomberg Ticker",
    "contractDescription": "Contract Description",
    "currency": "Currency",
    "supported": "Supported",
@@ -5760,7 +5827,7 @@
    "type": "Type",
    "electronicVoice": "Electronic / Voice / Both",
    "blockTrade": "Block Trade (Y/N)",
-   "maxPosition": "Outrights/Spreads Max Position",
+   "maxPosition": "Max Position",
    "maxOrderQtyOutright": "Max Order Quantity (Outright)",
    "maxOrderQtySpreads": "Max Order Quantity (Spreads)"
   },
@@ -5775,11 +5842,11 @@
    "spreadMaxOrderQty": "Spreads: Max order quantity"
   }
  },
- "qe_clients": [
+ "universe_clients": [
   {
-   "qCode": "YS",
-   "tsTicker": "YT",
-   "bbgTicker": "YMA COMDTY",
+   "code": "",
+   "ticker": "YT",
+   "bloombergTicker": "YMA COMDTY",
    "contractDescription": "Treasury Bonds, Australia, 3-year (SFE)",
    "currency": "AUD",
    "supported": "Y",
@@ -5795,9 +5862,9 @@
    "idx": 0
   },
   {
-   "qCode": "TS",
-   "tsTicker": "XT",
-   "bbgTicker": "XMA COMDTY",
+   "code": "",
+   "ticker": "XT",
+   "bloombergTicker": "XMA COMDTY",
    "contractDescription": "Treasury Bonds, Australia, 10-year (SFE)",
    "currency": "AUD",
    "supported": "Y",
@@ -5813,9 +5880,9 @@
    "idx": 1
   },
   {
-   "qCode": "GX",
-   "tsTicker": "GBL",
-   "bbgTicker": "RXA COMDTY",
+   "code": "",
+   "ticker": "GBL",
+   "bloombergTicker": "RXA COMDTY",
    "contractDescription": "Euro Bund (10Y) (EUREX)",
    "currency": "EUR",
    "supported": "Y",
@@ -5831,9 +5898,9 @@
    "idx": 2
   },
   {
-   "qCode": "JB",
-   "tsTicker": "JBL",
-   "bbgTicker": "JBA COMDTY",
+   "code": "",
+   "ticker": "JBL",
+   "bloombergTicker": "JBA COMDTY",
    "contractDescription": "Japanese Gov't Bond (JGB), 10-year (TSE)",
    "currency": "JPY",
    "supported": "Y",
@@ -5849,9 +5916,9 @@
    "idx": 3
   },
   {
-   "qCode": "ZZ",
-   "tsTicker": "ZZZ",
-   "bbgTicker": "ZZZ COMDTY",
+   "code": "",
+   "ticker": "ZZZ",
+   "bloombergTicker": "ZZZ COMDTY",
    "contractDescription": "Fictional New Product (TEST)",
    "currency": "USD",
    "supported": "Y",
@@ -5867,9 +5934,9 @@
    "idx": 4
   },
   {
-   "qCode": "KE",
-   "tsTicker": "KE",
-   "bbgTicker": "KEA COMDTY",
+   "code": "",
+   "ticker": "KE",
+   "bloombergTicker": "KEA COMDTY",
    "contractDescription": "Korea 3-Year Bond (KFE)",
    "currency": "KRW",
    "supported": "N",
@@ -5885,7 +5952,7 @@
    "idx": 5
   }
  ],
- "qe_systems": [
+ "universe_systems": [
   {
    "account": "CB-EXAMPLEFUND",
    "exchange": "ASX",
@@ -5942,7 +6009,7 @@
    "sourceFile": "system_sample.csv"
   }
  ],
- "qe_diff": {
+ "universe_diff": {
   "no_map": {
    "counts": {
     "increase": 1,
@@ -5961,7 +6028,7 @@
      "key": "client-0",
      "category": "increase",
      "matchMethod": "direct",
-     "tsTicker": "YT",
+     "ticker": "YT",
      "family": "YT",
      "account": "CB-EXAMPLEFUND",
      "maxPosition": {
@@ -5984,7 +6051,7 @@
      "key": "client-1",
      "category": "decrease",
      "matchMethod": "direct",
-     "tsTicker": "XT",
+     "ticker": "XT",
      "family": "XT",
      "account": "CB-EXAMPLEFUND",
      "maxPosition": {
@@ -6007,7 +6074,7 @@
      "key": "client-2",
      "category": "new",
      "matchMethod": "none",
-     "tsTicker": "GBL",
+     "ticker": "GBL",
      "family": null,
      "account": "",
      "maxPosition": {
@@ -6030,7 +6097,7 @@
      "key": "client-3",
      "category": "unchanged",
      "matchMethod": "direct",
-     "tsTicker": "JBL",
+     "ticker": "JBL",
      "family": "JBL",
      "account": "CB-EXAMPLEFUND",
      "maxPosition": {
@@ -6053,7 +6120,7 @@
      "key": "client-4",
      "category": "new",
      "matchMethod": "none",
-     "tsTicker": "ZZZ",
+     "ticker": "ZZZ",
      "family": null,
      "account": "",
      "maxPosition": {
@@ -6076,7 +6143,7 @@
      "key": "client-5",
      "category": "notSupported",
      "matchMethod": "none",
-     "tsTicker": "KE",
+     "ticker": "KE",
      "family": null,
      "account": "",
      "maxPosition": {
@@ -6099,7 +6166,7 @@
      "key": "system-0",
      "category": "systemOnly",
      "matchMethod": "systemOnly",
-     "tsTicker": null,
+     "ticker": null,
      "family": "FGBL",
      "account": "CB-EXAMPLEFUND",
      "maxPosition": {
@@ -6122,7 +6189,7 @@
      "key": "system-1",
      "category": "systemOnly",
      "matchMethod": "systemOnly",
-     "tsTicker": null,
+     "ticker": null,
      "family": "LC",
      "account": "EXAMPLEFUND CME",
      "maxPosition": {
@@ -6160,7 +6227,7 @@
      "key": "client-0",
      "category": "increase",
      "matchMethod": "direct",
-     "tsTicker": "YT",
+     "ticker": "YT",
      "family": "YT",
      "account": "CB-EXAMPLEFUND",
      "maxPosition": {
@@ -6183,7 +6250,7 @@
      "key": "client-1",
      "category": "decrease",
      "matchMethod": "direct",
-     "tsTicker": "XT",
+     "ticker": "XT",
      "family": "XT",
      "account": "CB-EXAMPLEFUND",
      "maxPosition": {
@@ -6206,7 +6273,7 @@
      "key": "client-2",
      "category": "increase",
      "matchMethod": "mapped",
-     "tsTicker": "GBL",
+     "ticker": "GBL",
      "family": "FGBL",
      "account": "CB-EXAMPLEFUND",
      "maxPosition": {
@@ -6229,7 +6296,7 @@
      "key": "client-3",
      "category": "unchanged",
      "matchMethod": "direct",
-     "tsTicker": "JBL",
+     "ticker": "JBL",
      "family": "JBL",
      "account": "CB-EXAMPLEFUND",
      "maxPosition": {
@@ -6252,7 +6319,7 @@
      "key": "client-4",
      "category": "new",
      "matchMethod": "none",
-     "tsTicker": "ZZZ",
+     "ticker": "ZZZ",
      "family": null,
      "account": "",
      "maxPosition": {
@@ -6275,7 +6342,7 @@
      "key": "client-5",
      "category": "notSupported",
      "matchMethod": "none",
-     "tsTicker": "KE",
+     "ticker": "KE",
      "family": null,
      "account": "",
      "maxPosition": {
@@ -6298,7 +6365,7 @@
      "key": "system-0",
      "category": "systemOnly",
      "matchMethod": "systemOnly",
-     "tsTicker": null,
+     "ticker": null,
      "family": "LC",
      "account": "EXAMPLEFUND CME",
      "maxPosition": {
@@ -6320,7 +6387,7 @@
    ]
   }
  },
- "qe_parse_limit": [
+ "universe_parse_limit": [
   {
    "text": "",
    "value": null

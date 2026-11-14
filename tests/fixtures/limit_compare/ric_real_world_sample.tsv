@@ -1,49 +1,54 @@
 Exch	RIC	Description	Max Order	Max Net	Expected TT Exchange	Expected TT Symbol
-AEX	AEX	AEX Index	7	14	Euronext	kFTI
-CBF	VX	Cboe Volatility Index	7	14	CFE	VX
-CBT	BO	Soybean Oil	7	14	CME	ZL
-CBT	C	Corn	7	14	CME	ZC
-CBT	FV	5Yr US T-Notes	7	14	CME	ZF
-CBT	KW	KC Hard Red Winter Wheat	7	14	CME	KE
-CBT	SM	Soybean Meal	7	14	CME	ZM
-CBT	TU	2Yr US T-Notes	7	14	CME	ZT
-CBT	TY	10Yr US T-Notes	7	14	CME	ZN
-CBT	US	30Yr US Treasury Bond	7	14	CME	ZB
-CBT	TN	Ultra 10Yr US T-Note	7	14	CME	TN
-CBT	W	Chicago SRW Wheat	7	14	CME	ZW
-CBT	AUL	Ultra Long Term US Treasury Bond	7	14	CME	UB
-CBT	S	Soybeans	7	14	CME	ZS
-CME	FC	Feeder Cattle	7	14	CME	GF
-CME	LC	Live Cattle	7	14	CME	LE
-CME	LH	Lean Hog	7	14	CME	HE
-CMX	GC	Gold	7	14	CME	GC
-CMX	HG	Copper	7	14	CME	HG
-CMX	SI	Silver	7	14	CME	SI
-EDX	TFMBM	Dutch TTF Nat Gas Base Load Monthly	7	14	ICE	TFM
-EUX	FSMI	Swiss Market (SMI) Index	7	14	Eurex	FSMI
-EUX	FBTS	Short-Term Euro-BTP Bond	7	14	Eurex	FBTS
-EUX	FESB	EuroStoxx Banks Index	7	14	Eurex	FESB
-EUX	FGBS	Euro-Schatz Bond	7	14	Eurex	FGBS
-EUX	FDX	DAX Index	7	14	Eurex	FDAX
-EUX	FBTP	Long-Term Euro-BTP Bond	7	14	Eurex	FBTP
-EUX	FOAT	Euro-OAT Bond	7	14	Eurex	FOAT
-EUX	FGBM	Euro-Bobl Bond	7	14	Eurex	FGBM
-EUX	FGBL	Euro-Bund Bond	7	14	Eurex	FGBL
-EUX	FXXP	Stoxx Europe 600 Index	7	14	Eurex	FXXP
-EUX	FGBX	Euro-Buxl Bond	7	14	Eurex	FGBX
-EUX	STXE	EuroStoxx 50 Index	7	14	Eurex	FESX
-GEM	MP	MXN/USD Cross Currency	7	14	CME	6M
-HFE	HHTI	Hang Seng Tech Index	7	14	HKEX	HTI
-HFE	HCEI	Hang Seng China Enterprises Index	7	14	HKEX	HHI
-HFE	HSI	Hang Seng Index	7	14	HKEX	HSI
-IEU	LCC	London Cocoa	7	14	ICE	C
-IEU	FEI	3Mth Euribor	7	14	ICE_L	I
-IEU	FLG	Long Gilt UK Bond	7	14	ICE_L	R
-IEU	SON3	3M SONIA Index	7	14	ICE_L	SO3
-IEU	FFI	FTSE 100 Index	7	14	ICE_L	Z
-IEU	LCO	Brent Crude Monthly	7	14	ICE	BRN
-IEU	WTCL	WTI Crude Oil Monthly	7	14	ICE	WBS
-IEU	LGO	Low Sulphur Gasoil Monthly	7	14	ICE	G
-IMM	AD	AUD/USD Cross Currency	7	14	CME	6A
-IMM	BP	GBP/USD Cross Currency	7	14	CME	6B
-IMM	CD	CAD/USD Cross Currency	7	14	CME	6C
+CBT	YM	E-mini Dow Jones Industrial Average	7	14	CME	YM
+CBT	O	Oats	7	14	CME	ZO
+CBT	RR	Rough Rice	7	14	CME	ZR
+CBT	FF	30 Day Federal Funds	7	14	CME	ZQ
+IMM	SRA	Three-Month SOFR	7	14	CME	SR3
+CME	ES	E-mini S&P 500	7	14	CME	ES
+CME	NQ	E-mini Nasdaq-100	7	14	CME	NQ
+CME	RTY	E-mini Russell 2000	7	14	CME	RTY
+CME	EMD	E-mini S&P MidCap 400	7	14	CME	EMD
+CME	NIY	Nikkei 225 Yen denominated	7	14	CME	NIY
+CME	NKD	Nikkei 225 Dollar denominated	7	14	CME	NKD
+IMM	URO	Euro FX	7	14	CME	6E
+IMM	JY	Japanese Yen	7	14	CME	6J
+IMM	SF	Swiss Franc	7	14	CME	6S
+IMM	NE	New Zealand Dollar	7	14	CME	6N
+IMM	RA	South African Rand	7	14	CME	6Z
+IMM	BR	Brazilian Real	7	14	CME	6L
+CME	MES	Micro E-mini S&P 500	7	14	CME	MES
+CME	MNQ	Micro E-mini Nasdaq-100	7	14	CME	MNQ
+NYM	CL	Light Sweet Crude Oil	7	14	CME	CL
+NYM	NG	Henry Hub Natural Gas	7	14	CME	NG
+NYM	HO	NY Harbor ULSD	7	14	CME	HO
+NYM	RB	RBOB Gasoline	7	14	CME	RB
+NYM	PL	Platinum	7	14	CME	PL
+NYM	PA	Palladium	7	14	CME	PA
+CMX	MGC	Micro Gold	7	14	CME	MGC
+EUX	FDXM	Mini-DAX	7	14	Eurex	FDXM
+EUX	FVS	VSTOXX Mini	7	14	Eurex	FVS
+EUX	CONF	Swiss Confederation Bond	7	14	Eurex	CONF
+IEU	FMG	Medium Gilt	7	14	ICE_L	H
+IEU	FSG	Short Gilt	7	14	ICE_L	G
+IEU	LSU	White Sugar	7	14	ICE	W
+IEU	LRC	Robusta Coffee	7	14	ICE	RC
+NYB	KC	Coffee C	7	14	ICE	KC
+NYB	SB	Sugar No. 11	7	14	ICE	SB
+NYB	CT	Cotton No. 2	7	14	ICE	CT
+NYB	CC	Cocoa	7	14	ICE	CC
+NYB	DX	US Dollar Index	7	14	ICE	DX
+HFE	MHI	Mini Hang Seng Index	7	14	HKEX	MHI
+OSE	JNI	Nikkei 225	7	14	JPX	225
+OSE	JNM	Nikkei 225 Mini	7	14	JPX	225M
+OSE	JTI	TOPIX	7	14	JPX	TPX
+OSE	JGB	10 Year JGB	7	14	JPX	JBL
+SGX	SSI	SGX Nikkei 225 Index	7	14	SGX	NK
+SGX	SFC	FTSE China A50 Index	7	14	SGX	CN
+SFE	YAP	SPI 200 Index	7	14	ASX	AP
+SFE	YBA	90 Day Bank Bills	7	14	ASX	IR
+MON	SXF	S&P/TSX 60 Index	7	14	MX	SXF
+MON	CRA	Three-Month CORRA	7	14	MX	CRA
+PAR	FCE	CAC 40 Index	7	14	Euronext	jFCE
+MIL	FMIB	FTSE MIB Index	7	14	Euronext	iFIB
+PAR	EBM	Milling Wheat	7	14	Euronext	yEBM
+KFE	KS	KOSPI 200	7	14	KRX	K2I

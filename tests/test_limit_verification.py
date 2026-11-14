@@ -21,7 +21,7 @@ PAR\tFCE\tCAC 40 Index\t5\t100
 CBT\tC\tCorn\t1\t1
 """
 
-UNIVERSE_SHEET = """TS Ticker,Type,Desk Supported,Outrights/Spreads Max Position,Max Order Quantity (Outright),Max Order Quantity (Spreads)
+UNIVERSE_SHEET = """Ticker,Type,Desk Supported,Max Position,Max Order Quantity (Outright),Max Order Quantity (Spreads)
 ZN,Future,Y,100,10,20
 GBL,Future,Y,100,10,30
 KE,Future,N,1,1,1

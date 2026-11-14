@@ -214,7 +214,7 @@ def test_real_world_sheet_with_the_full_tt_list() -> None:
         == f"{row['Expected TT Exchange']} {row['Expected TT Symbol']}"
         for r, row in zip(full["rows"], raw.rows, strict=True)
     )
-    assert correct == 48
+    assert correct == len(raw.rows) == 53  # every answer checked against TT's product names
 
     assert as_expected(enrich(raw, cols, full_index(), use_known=False)) == want["no_known"]
 

@@ -15,10 +15,15 @@ which is not in this repo. Those tests run only when the file is available:
 With a checkout of limit_compare (its `npm install` done) and Node 22.18 or later,
 from this folder:
 
-    LIMIT_COMPARE_SPA=<checkout>/spa LIMIT_COMPARE_RIC_TOOL=<RIC tool folder under src/tools> \
+    LIMIT_COMPARE_SPA=<checkout>/spa \
+    LIMIT_COMPARE_RIC_TOOL=<RIC tool folder under src/tools> \
+    LIMIT_COMPARE_UNIVERSE_TOOL=<product-universe tool folder under src/tools> \
       node --import ./regenerate/register.mjs regenerate/dump.mts <full TT CSV> expected_outputs.json
 
 `regenerate/hooks.mjs` resolves the TypeScript `@/` imports. The script reads the
 samples in this folder and only reads the limit_compare checkout; nothing there is
-changed. The original's column called after a firm is renamed `supported` in the
-output, as in the Python port.
+changed. The original's field keys are renamed to the port's neutral names in the
+output (e.g. `supported`, `ticker`, `code`).
+
+`ric_real_world_sample.tsv` lists public futures; its two "Expected" columns were
+checked by hand against the product names in TT's full product list.

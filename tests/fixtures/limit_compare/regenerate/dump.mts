@@ -1,9 +1,11 @@
 import { readFileSync, writeFileSync } from "node:fs";
 import { createRequire } from "node:module";
-// LIMIT_COMPARE_SPA: the limit_compare "spa" folder; LIMIT_COMPARE_RIC_TOOL: its RIC tool
-// folder under src/tools. The sample inputs are read from this fixtures folder.
+// LIMIT_COMPARE_SPA: the limit_compare "spa" folder; LIMIT_COMPARE_RIC_TOOL and
+// LIMIT_COMPARE_UNIVERSE_TOOL: its two tool folders under src/tools. The sample
+// inputs are read from this fixtures folder.
 const SPA = process.env.LIMIT_COMPARE_SPA!.replace(/\/?$/, "/");
 const RIC = "tools/" + process.env.LIMIT_COMPARE_RIC_TOOL! + "/";
+const UNI = "tools/" + process.env.LIMIT_COMPARE_UNIVERSE_TOOL! + "/";
 const FIX = new URL("../", import.meta.url).pathname;
 const req = createRequire(SPA + "package.json");
 const XLSX = req("xlsx-js-style");
@@ -17,9 +19,9 @@ const { enrich, outputColumns } = await m(RIC + "enrich");
 const { tokens, nameScore, rankByDescription } = await m(RIC + "describe");
 const { ttExchangesFor } = await m(RIC + "exchanges");
 const { parseMappingsCsv } = await m(RIC + "mappingCsv");
-const { CLIENT_FIELDS, SYSTEM_FIELDS } = await m("tools/qeLimits/fields");
-const { normalizeClient, normalizeSystem, parseLimit } = await m("tools/qeLimits/limits/normalize");
-const { computeDiff } = await m("tools/qeLimits/limits/diff");
+const { CLIENT_FIELDS, SYSTEM_FIELDS } = await m(UNI + "fields");
+const { normalizeClient, normalizeSystem, parseLimit } = await m(UNI + "limits/normalize");
+const { computeDiff } = await m(UNI + "limits/diff");
 
 const fullCsv = process.argv[2];
 const out: Record<string, unknown> = {};
@@ -75,7 +77,7 @@ if (fullCsv) {
   };
 }
 
-// --- QE ---
+// --- Product universe ---
 const wb = XLSX.read(readFileSync(FIX + "client_sample.xlsx"), { type: "buffer", cellDates: true });
 const arrays = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { header: 1, defval: "", raw: false });
 const headers = (arrays[0] as unknown[]).map((h, i) => String(h ?? "").trim() || `Column ${i + 1}`);
@@ -99,18 +101,23 @@ const diffOut = (d: any) => ({ counts: d.counts, unmatched: d.unmatched.map((r: 
     tsTicker: r.client?.tsTicker ?? null, family: r.system?.family ?? null, account: r.account,
     maxPosition: cell(r.maxPosition), maxOrderQtyOutright: cell(r.maxOrderQtyOutright),
     maxOrderQtySpreads: cell(r.maxOrderQtySpreads) })) });
-out.qe_client_raw = clientRaw;
-out.qe_system_raw = { headers: sysRaw.headers, rows: sysRaw.rows };
-out.qe_mappings = { client: cMap, system: sMap };
-out.qe_clients = clients.map(({ raw, ...rest }: any) => rest);
-out.qe_systems = systems.map(({ raw, ...rest }: any) => rest);
-out.qe_diff = {
+out.universe_client_raw = clientRaw;
+out.universe_system_raw = { headers: sysRaw.headers, rows: sysRaw.rows };
+out.universe_mappings = { client: cMap, system: sMap };
+out.universe_clients = clients.map(({ raw, ...rest }: any) => rest);
+out.universe_systems = systems.map(({ raw, ...rest }: any) => rest);
+out.universe_diff = {
   no_map: diffOut(computeDiff(clients, systems, [])),
   with_map: diffOut(computeDiff(clients, systems, [{ clientTicker: "GBL", type: "Future", systemFamily: "FGBL" }])),
 };
 const limits = ["", " ", "Not Set", "n/a", "NA", "-", "—", "1,000", " 2 000 ", "$500", "50%", "1.5", "-3", "abc", "1e3", "0", "Infinity", "0x10"];
-out.qe_parse_limit = limits.map((t) => ({ text: t, value: parseLimit(t) }));
+out.universe_parse_limit = limits.map((t) => ({ text: t, value: parseLimit(t) }));
 
 // The original names its "supported" column after a firm; the port uses a neutral name.
-writeFileSync(process.argv[3], JSON.stringify(out, null, 1).replaceAll('"wfSupported"', '"supported"'));
+// The original's field keys are renamed to the port's neutral names.
+const RENAME: [string, string][] = [["wfSupported", "supported"], ["qCode", "code"],
+  ["tsTicker", "ticker"], ["bbgTicker", "bloombergTicker"]];
+let json = JSON.stringify(out, null, 1);
+for (const [from, to] of RENAME) json = json.replaceAll(`"${from}"`, `"${to}"`);
+writeFileSync(process.argv[3], json);
 console.log("written", Object.keys(out).join(", "));

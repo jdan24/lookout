@@ -1,6 +1,6 @@
 """Compare requested limits with the limits currently in place.
 
-Ported from limit_compare's QE Limit update (``tools/qeLimits/fields.ts`` and
+Ported from limit_compare's product-universe tool (``fields.ts`` and
 ``limits/normalize.ts``, ``join.ts``, ``diff.ts``). Behaviour is kept identical;
 parity tests compare the results with the original TypeScript on the same inputs.
 
@@ -22,9 +22,11 @@ from typing import Literal
 from checks.tabular import FieldSpec, RawTable, canon
 
 CLIENT_FIELDS: tuple[FieldSpec, ...] = (
-    FieldSpec("qCode", "Q Code", ("Q Code", "QCode", "Q"), False),
-    FieldSpec("tsTicker", "TS Ticker", ("TS Ticker", "TSTicker", "TS"), True),
-    FieldSpec("bbgTicker", "BBG Ticker", ("BBG Ticker", "Bloomberg Ticker", "BBG"), False),
+    # Labels are neutral; the aliases also cover the headers of sheets already in use.
+    FieldSpec("code", "Code", ("Code", "Q Code", "QCode", "Q"), False),
+    FieldSpec("ticker", "Ticker", ("Ticker", "TS Ticker", "TSTicker", "TS"), True),
+    FieldSpec("bloombergTicker", "Bloomberg Ticker", ("Bloomberg Ticker", "BBG Ticker", "BBG"),
+              False),
     FieldSpec("contractDescription", "Contract Description",
               ("Contract Description", "Description", "Contract"), False),
     FieldSpec("currency", "Currency", ("Currency", "Ccy"), False),
@@ -36,9 +38,9 @@ CLIENT_FIELDS: tuple[FieldSpec, ...] = (
               ("Electronic / Voice / Both", "Electronic/Voice/Both", "Electronic Voice Both",
                "Electronic / Voice / Bo"), False),
     FieldSpec("blockTrade", "Block Trade", ("Block Trade (Y/N)", "Block Trade", "Block"), False),
-    FieldSpec("maxPosition", "Outrights/Spreads Max Position",
-              ("Outrights/Spreads Max Position", "Outrights / Spreads Max Position",
-               "Max Position"), True),
+    FieldSpec("maxPosition", "Max Position",
+              ("Max Position", "Outrights/Spreads Max Position",
+               "Outrights / Spreads Max Position"), True),
     FieldSpec("maxOrderQtyOutright", "Max Order Quantity (Outright)",
               ("Max Order Quantity (Outright)", "Max Order Quantity Outright",
                "Max Order Qty Outright"), True),
@@ -129,15 +131,15 @@ def join_key(symbol: str, type_: str) -> str:
 class ClientProduct:
     """One requested product, with the source row kept for display."""
 
-    ts_ticker: str
+    ticker: str
     type: str
     req_max_position: Number | None
     req_max_order_qty_outright: Number | None
     req_max_order_qty_spreads: Number | None
     not_supported: bool = False
     exchange: str = ""
-    q_code: str = ""
-    bbg_ticker: str = ""
+    code: str = ""
+    bloomberg_ticker: str = ""
     contract_description: str = ""
     currency: str = ""
     supported: str = ""
@@ -185,18 +187,18 @@ def normalize_client(raw: RawTable, mapping: dict[str, str]) -> list[ClientProdu
     get = _getter(mapping)
     out: list[ClientProduct] = []
     for idx, row in enumerate(raw.rows):
-        ts_ticker, bbg, desc = (
-            get(row, "tsTicker"),
-            get(row, "bbgTicker"),
+        ticker, bbg, desc = (
+            get(row, "ticker"),
+            get(row, "bloombergTicker"),
             get(row, "contractDescription"),
         )
-        if not ts_ticker and not bbg and not desc and not get(row, "qCode"):
+        if not ticker and not bbg and not desc and not get(row, "code"):
             continue  # spacer rows
         out.append(
             ClientProduct(
-                q_code=get(row, "qCode"),
-                ts_ticker=ts_ticker,
-                bbg_ticker=bbg,
+                code=get(row, "code"),
+                ticker=ticker,
+                bloomberg_ticker=bbg,
                 contract_description=desc,
                 currency=get(row, "currency"),
                 supported=get(row, "supported"),
@@ -295,7 +297,7 @@ def build_symbol_map_index(entries: Sequence[SymbolMapEntry]) -> SymbolMapIndex:
 
 
 def match_client(
-    ts_ticker: str,
+    ticker: str,
     type_: str,
     lookup: SystemLookup,
     symbol_map: SymbolMapIndex,
@@ -304,12 +306,12 @@ def match_client(
     exchange_aware: bool = False,
 ) -> tuple[SystemLimit | None, Literal["direct", "mapped", "none"]]:
     """1. family + type; 2. family only; 3. the symbol map, then 1 and 2 again."""
-    ft_key, f_key = _keys(exchange, ts_ticker, type_, exchange_aware)
+    ft_key, f_key = _keys(exchange, ticker, type_, exchange_aware)
     direct = lookup.by_family_type.get(ft_key) or lookup.by_family.get(f_key)
     if direct is not None:
         return direct, "direct"
-    mapped_family = symbol_map.by_ticker_type.get(join_key(ts_ticker, type_)) or (
-        symbol_map.by_ticker.get(canon(ts_ticker))
+    mapped_family = symbol_map.by_ticker_type.get(join_key(ticker, type_)) or (
+        symbol_map.by_ticker.get(canon(ticker))
     )
     if mapped_family:
         mft, mf = _keys(exchange, mapped_family, type_, exchange_aware)
@@ -414,7 +416,7 @@ def compute_diff(
             counts["notSupported"] += 1
             continue
         system, method = match_client(
-            c.ts_ticker,
+            c.ticker,
             c.type,
             lookup,
             symbol_map,
