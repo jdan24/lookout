@@ -1,0 +1,49 @@
+Exch	RIC	Description	Max Order	Max Net	Expected TT Exchange	Expected TT Symbol
+AEX	AEX	AEX Index	7	14	Euronext	kFTI
+CBF	VX	Cboe Volatility Index	7	14	CFE	VX
+CBT	BO	Soybean Oil	7	14	CME	ZL
+CBT	C	Corn	7	14	CME	ZC
+CBT	FV	5Yr US T-Notes	7	14	CME	ZF
+CBT	KW	KC Hard Red Winter Wheat	7	14	CME	KE
+CBT	SM	Soybean Meal	7	14	CME	ZM
+CBT	TU	2Yr US T-Notes	7	14	CME	ZT
+CBT	TY	10Yr US T-Notes	7	14	CME	ZN
+CBT	US	30Yr US Treasury Bond	7	14	CME	ZB
+CBT	TN	Ultra 10Yr US T-Note	7	14	CME	TN
+CBT	W	Chicago SRW Wheat	7	14	CME	ZW
+CBT	AUL	Ultra Long Term US Treasury Bond	7	14	CME	UB
+CBT	S	Soybeans	7	14	CME	ZS
+CME	FC	Feeder Cattle	7	14	CME	GF
+CME	LC	Live Cattle	7	14	CME	LE
+CME	LH	Lean Hog	7	14	CME	HE
+CMX	GC	Gold	7	14	CME	GC
+CMX	HG	Copper	7	14	CME	HG
+CMX	SI	Silver	7	14	CME	SI
+EDX	TFMBM	Dutch TTF Nat Gas Base Load Monthly	7	14	ICE	TFM
+EUX	FSMI	Swiss Market (SMI) Index	7	14	Eurex	FSMI
+EUX	FBTS	Short-Term Euro-BTP Bond	7	14	Eurex	FBTS
+EUX	FESB	EuroStoxx Banks Index	7	14	Eurex	FESB
+EUX	FGBS	Euro-Schatz Bond	7	14	Eurex	FGBS
+EUX	FDX	DAX Index	7	14	Eurex	FDAX
+EUX	FBTP	Long-Term Euro-BTP Bond	7	14	Eurex	FBTP
+EUX	FOAT	Euro-OAT Bond	7	14	Eurex	FOAT
+EUX	FGBM	Euro-Bobl Bond	7	14	Eurex	FGBM
+EUX	FGBL	Euro-Bund Bond	7	14	Eurex	FGBL
+EUX	FXXP	Stoxx Europe 600 Index	7	14	Eurex	FXXP
+EUX	FGBX	Euro-Buxl Bond	7	14	Eurex	FGBX
+EUX	STXE	EuroStoxx 50 Index	7	14	Eurex	FESX
+GEM	MP	MXN/USD Cross Currency	7	14	CME	6M
+HFE	HHTI	Hang Seng Tech Index	7	14	HKEX	HTI
+HFE	HCEI	Hang Seng China Enterprises Index	7	14	HKEX	HHI
+HFE	HSI	Hang Seng Index	7	14	HKEX	HSI
+IEU	LCC	London Cocoa	7	14	ICE	C
+IEU	FEI	3Mth Euribor	7	14	ICE_L	I
+IEU	FLG	Long Gilt UK Bond	7	14	ICE_L	R
+IEU	SON3	3M SONIA Index	7	14	ICE_L	SO3
+IEU	FFI	FTSE 100 Index	7	14	ICE_L	Z
+IEU	LCO	Brent Crude Monthly	7	14	ICE	BRN
+IEU	WTCL	WTI Crude Oil Monthly	7	14	ICE	WBS
+IEU	LGO	Low Sulphur Gasoil Monthly	7	14	ICE	G
+IMM	AD	AUD/USD Cross Currency	7	14	CME	6A
+IMM	BP	GBP/USD Cross Currency	7	14	CME	6B
+IMM	CD	CAD/USD Cross Currency	7	14	CME	6C

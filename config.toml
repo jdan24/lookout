@@ -1,0 +1,25 @@
+# Lookout app settings. No secrets in this file, ever.
+# TT credentials live in Windows Credential Manager (see scripts/set_credentials.py).
+
+[tt]
+# Must be one of the hosts allow-listed in core/readonly_http.py.
+# Changing this cannot widen the allow-list; an unknown host is refused.
+host = "ttrestapi.trade.tt"
+environment = "ext_prod_live"
+request_id_prefix = "Lookout"   # sent as requestId=<prefix>--<random id>
+
+[pacing]
+requests_per_second = 2      # TT plan allows 5/s and 15,000/day (shared by the team)
+max_calls_per_pull = 1500
+max_order_tag_default_pages = 1000
+
+[snapshots]
+# Empty = per-user default (%LOCALAPPDATA%\Lookout\snapshots on Windows).
+# Snapshots hold real client data and must stay outside the repo.
+directory = ""
+
+[clients]
+# Folder holding client profiles (*.toml). Empty = per-user default
+# (%LOCALAPPDATA%\Lookout\clients on Windows). Profiles hold real client data and
+# must stay outside the repo; docs/example_client.toml shows the format.
+directory = ""

@@ -1,0 +1,263 @@
+"""TT REST client: token, pacing, call cap, status checks and paging.
+
+Every request goes through ``core.readonly_http.ReadOnlyClient``, so this module
+cannot write to TT. It only knows how to GET.
+
+The request conventions below (``x-api-key`` and ``Authorization: Bearer`` headers,
+a ``requestId`` query parameter, and the form fields of the token call) follow TT's
+public REST API documentation. They were NOT taken from the previous tool's code and
+must be confirmed on the first supervised pull.
+"""
+
+from __future__ import annotations
+
+import json
+import time
+import uuid
+from collections.abc import Callable, Iterator, Mapping
+from dataclasses import dataclass
+from typing import Any
+
+from core.credentials import TTCredentials
+from core.normalize import is_on
+from core.readonly_http import ALLOWED_ENVIRONMENT, ReadOnlyClient, Response, TransportError
+
+TOKEN_REFRESH_MARGIN_SECONDS = 60
+MAX_RATE_LIMIT_RETRIES = 2
+DEFAULT_RETRY_AFTER_SECONDS = 2.0
+
+
+class TTApiError(Exception):
+    """A TT call failed. The message never contains credentials or tokens."""
+
+    def __init__(self, message: str, *, path: str = "", status_code: int | None = None) -> None:
+        super().__init__(message)
+        self.path = path
+        self.status_code = status_code
+
+
+class CallCapReached(TTApiError):
+    """The per-pull call cap was reached; no further calls are made."""
+
+
+@dataclass(frozen=True)
+class TTResponse:
+    body: dict[str, Any]
+    text: str  # exactly as TT sent it, for the snapshot
+
+
+@dataclass(frozen=True)
+class Page:
+    number: int  # 1-based
+    response: TTResponse
+    reached_end: bool  # True on the last page of the list
+
+
+class TTClient:
+    def __init__(
+        self,
+        http: ReadOnlyClient,
+        credentials: TTCredentials | Callable[[], TTCredentials],
+        *,
+        requests_per_second: float = 2.0,
+        max_calls: int = 1500,
+        request_id_prefix: str = "Lookout",
+        clock: Callable[[], float] = time.monotonic,
+        sleep: Callable[[float], None] = time.sleep,
+    ) -> None:
+        self._http = http
+        self._credentials = credentials
+        self._interval = 1.0 / requests_per_second
+        self._max_calls = max_calls
+        self._prefix = request_id_prefix
+        self._clock = clock
+        self._sleep = sleep
+        self._last_start: float | None = None
+        self._token: str | None = None
+        self._token_expires_at = 0.0
+        self.calls: list[dict[str, Any]] = []  # (seq, method, path, status, ms); no secrets
+
+    def __repr__(self) -> str:
+        return f"TTClient(calls={len(self.calls)}, max_calls={self._max_calls})"
+
+    @property
+    def calls_made(self) -> int:
+        return len(self.calls)
+
+    @property
+    def calls_left(self) -> int:
+        return max(0, self._max_calls - len(self.calls))
+
+    # --- plumbing ---------------------------------------------------------------
+
+    def _creds(self) -> TTCredentials:
+        return self._credentials() if callable(self._credentials) else self._credentials
+
+    def _request_id(self) -> str:
+        return f"{self._prefix}--{uuid.uuid4()}"
+
+    def _send(self, method: str, path: str, send: Callable[[], Response]) -> Response:
+        """One paced, counted, logged HTTP call."""
+        if len(self.calls) >= self._max_calls:
+            raise CallCapReached(
+                f"Call cap of {self._max_calls} reached; stopped before {method} {path}.",
+                path=path,
+            )
+        now = self._clock()
+        if self._last_start is not None:
+            wait = self._last_start + self._interval - now
+            if wait > 0:
+                self._sleep(wait)
+                now = self._clock()
+        self._last_start = now
+
+        record: dict[str, Any] = {
+            "seq": len(self.calls) + 1,
+            "method": method,
+            "path": path,
+            "status": None,
+            "ms": None,
+        }
+        self.calls.append(record)
+        try:
+            response = send()
+        except TransportError as exc:
+            record["status"] = "network error"
+            record["ms"] = round((self._clock() - now) * 1000)
+            raise TTApiError(
+                f"Could not reach TT for {method} {path} ({type(exc).__name__}).", path=path
+            ) from None
+        record["status"] = response.status_code
+        record["ms"] = round((self._clock() - now) * 1000)
+        return response
+
+    # --- token ------------------------------------------------------------------
+
+    def _fetch_token(self) -> None:
+        creds = self._creds()
+        path = f"/ttid/{ALLOWED_ENVIRONMENT}/token"
+        response = self._send(
+            "POST",
+            path,
+            lambda: self._http.post_token(
+                data={"grant_type": "user_app", "app_key": creds.app_secret},
+                headers={"x-api-key": creds.app_key, "Accept": "application/json"},
+                params={"requestId": self._request_id()},
+            ),
+        )
+        # Nothing from the token response is ever put in a message: it may echo secrets.
+        if response.status_code != 200:
+            raise TTApiError(
+                f"TT refused the sign-in (HTTP {response.status_code}). Check the stored "
+                "credentials with scripts/set_credentials.py.",
+                path=path,
+                status_code=response.status_code,
+            )
+        try:
+            body = json.loads(response.text)
+            token = body["access_token"]
+            lifetime = float(body.get("seconds_until_expiry", 0))
+        except (ValueError, KeyError, TypeError):
+            raise TTApiError("TT's sign-in reply could not be read.", path=path) from None
+        if not isinstance(token, str) or not token:
+            raise TTApiError("TT's sign-in reply had no access token.", path=path)
+        self._token = token
+        self._token_expires_at = self._clock() + max(0.0, lifetime - TOKEN_REFRESH_MARGIN_SECONDS)
+
+    def _headers(self) -> dict[str, str]:
+        if self._token is None or self._clock() >= self._token_expires_at:
+            self._fetch_token()
+        return {
+            "x-api-key": self._creds().app_key,
+            "Authorization": f"Bearer {self._token}",
+            "Accept": "application/json",
+        }
+
+    # --- GET --------------------------------------------------------------------
+
+    def get(
+        self, service: str, resource: str, params: Mapping[str, Any] | None = None
+    ) -> TTResponse:
+        """GET ``/<service>/ext_prod_live/<resource>`` and return the checked JSON body."""
+        path = f"/{service}/{ALLOWED_ENVIRONMENT}/{resource.strip('/')}"
+        refreshed = False
+        rate_limited = 0
+        while True:
+            headers = self._headers()
+            query = {**(params or {}), "requestId": self._request_id()}
+            response = self._send(
+                "GET",
+                path,
+                lambda headers=headers, query=query: self._http.get(
+                    path, params=query, headers=headers
+                ),
+            )
+            if response.status_code == 401 and not refreshed:
+                refreshed = True
+                self._token = None
+                continue
+            if response.status_code == 429 and rate_limited < MAX_RATE_LIMIT_RETRIES:
+                rate_limited += 1
+                self._sleep(_retry_after(response))
+                continue
+            break
+        return _checked(response, path)
+
+    def pages(
+        self,
+        service: str,
+        resource: str,
+        params: Mapping[str, Any] | None = None,
+        *,
+        max_pages: int | None = None,
+    ) -> Iterator[Page]:
+        """Follow ``nextPageKey`` until ``lastPage`` is "true", the key is empty, or the cap."""
+        query = dict(params or {})
+        seen_keys: set[str] = set()
+        number = 0
+        while True:
+            number += 1
+            response = self.get(service, resource, query)
+            next_key = str(response.body.get("nextPageKey") or "")
+            at_end = is_on(response.body.get("lastPage")) or not next_key
+            yield Page(number=number, response=response, reached_end=at_end)
+            if at_end:
+                return
+            if max_pages is not None and number >= max_pages:
+                return
+            if next_key in seen_keys:
+                raise TTApiError(f"TT repeated a page key on {resource}; stopped.", path=resource)
+            seen_keys.add(next_key)
+            query["nextPageKey"] = next_key
+
+
+def _retry_after(response: Response) -> float:
+    try:
+        return max(0.0, min(30.0, float(response.headers.get("Retry-After", ""))))
+    except ValueError:
+        return DEFAULT_RETRY_AFTER_SECONDS
+
+
+def _checked(response: Response, path: str) -> TTResponse:
+    code = response.status_code
+    text = response.text
+    try:
+        body = json.loads(text)
+    except ValueError:
+        body = None
+
+    detail = ""
+    if isinstance(body, dict):
+        parts = [str(body[k]) for k in ("status", "status_message", "message") if body.get(k)]
+        detail = " - " + "; ".join(parts)[:200] if parts else ""
+
+    if code != 200:
+        raise TTApiError(f"TT returned HTTP {code} for {path}{detail}", path=path, status_code=code)
+    if not isinstance(body, dict):
+        raise TTApiError(
+            f"TT's reply for {path} was not a JSON object.", path=path, status_code=code
+        )
+    # A body whose status is not "Ok" is an error, even on HTTP 200.
+    if "status" in body and body["status"] != "Ok":
+        raise TTApiError(f"TT reported an error for {path}{detail}", path=path, status_code=code)
+    return TTResponse(body=body, text=text)

@@ -1,0 +1,6397 @@
+{
+ "ric_paste": {
+  "headers": [
+   "Region",
+   "Exchange",
+   "Bloomberg",
+   "Ric Root",
+   "Product Description",
+   "Give-up (yes or No)",
+   "Max Order",
+   "Max net"
+  ],
+  "rows": [
+   {
+    "Region": "Americas",
+    "Exchange": "CBOT",
+    "Bloomberg": "TYA Comdty",
+    "Ric Root": "TY",
+    "Product Description": "US 10yr Note",
+    "Give-up (yes or No)": "Yes",
+    "Max Order": "750",
+    "Max net": "3,000"
+   },
+   {
+    "Region": "Americas",
+    "Exchange": "CBOT",
+    "Bloomberg": "C A Comdty",
+    "Ric Root": "C",
+    "Product Description": "Corn",
+    "Give-up (yes or No)": "No",
+    "Max Order": "150",
+    "Max net": "900"
+   },
+   {
+    "Region": "Americas",
+    "Exchange": "CME",
+    "Bloomberg": "ESA Index",
+    "Ric Root": "ES",
+    "Product Description": "E-mini S&P 500",
+    "Give-up (yes or No)": "Yes",
+    "Max Order": "250",
+    "Max net": "1200"
+   },
+   {
+    "Region": "Americas",
+    "Exchange": "NYMEX",
+    "Bloomberg": "CLA Comdty",
+    "Ric Root": "CL",
+    "Product Description": "WTI Crude Oil",
+    "Give-up (yes or No)": "Yes",
+    "Max Order": "120",
+    "Max net": "600"
+   },
+   {
+    "Region": "Europe",
+    "Exchange": "EUREX",
+    "Bloomberg": "RXA Comdty",
+    "Ric Root": "FGBL",
+    "Product Description": "Euro Bund",
+    "Give-up (yes or No)": "Yes",
+    "Max Order": "800",
+    "Max net": "4000"
+   },
+   {
+    "Region": "Europe",
+    "Exchange": "ICE Europe",
+    "Bloomberg": "G A Comdty",
+    "Ric Root": "FLG",
+    "Product Description": "Long Gilt",
+    "Give-up (yes or No)": "Yes",
+    "Max Order": "350",
+    "Max net": "2000"
+   },
+   {
+    "Region": "Europe",
+    "Exchange": "ICE",
+    "Bloomberg": "G A Comdty",
+    "Ric Root": "G",
+    "Product Description": "Short Gilt",
+    "Give-up (yes or No)": "No",
+    "Max Order": "40",
+    "Max net": "300"
+   },
+   {
+    "Region": "APAC",
+    "Exchange": "SFE",
+    "Bloomberg": "YMA Comdty",
+    "Ric Root": "YT",
+    "Product Description": "Australia 3yr Bond",
+    "Give-up (yes or No)": "Yes",
+    "Max Order": "700",
+    "Max net": "3500"
+   },
+   {
+    "Region": "Americas",
+    "Exchange": "ME",
+    "Bloomberg": "CNA Comdty",
+    "Ric Root": "CGB",
+    "Product Description": "Canada 10yr Bond",
+    "Give-up (yes or No)": "No",
+    "Max Order": "300",
+    "Max net": "1500"
+   },
+   {
+    "Region": "Americas",
+    "Exchange": "CME",
+    "Bloomberg": "ZZZ Comdty",
+    "Ric Root": "ZZZ",
+    "Product Description": "Fictional",
+    "Give-up (yes or No)": "No",
+    "Max Order": "15",
+    "Max net": "30"
+   }
+  ],
+  "mapping": {
+   "ricRoot": "Ric Root",
+   "maxOrder": "Max Order",
+   "maxNet": "Max net",
+   "exchange": "Exchange",
+   "description": "Product Description"
+  }
+ },
+ "ric_sample_products": [
+  {
+   "exchange": "CME",
+   "symbol": "ZF",
+   "alternateSymbol": "",
+   "name": "5-Year T-Note Futures"
+  },
+  {
+   "exchange": "CME",
+   "symbol": "ES",
+   "alternateSymbol": "",
+   "name": "E-Mini S&P 500 Futures"
+  },
+  {
+   "exchange": "CME",
+   "symbol": "CGB",
+   "alternateSymbol": "",
+   "name": "Conway Natural Gasoline (OPIS) BALMO Futures"
+  },
+  {
+   "exchange": "ICE_L",
+   "symbol": "G",
+   "alternateSymbol": "IFLL.G",
+   "name": "ICEU Short Gilt Future"
+  },
+  {
+   "exchange": "ASX",
+   "symbol": "ES",
+   "alternateSymbol": "",
+   "name": "ASX SA Base Load Monthly Electricity Futures"
+  },
+  {
+   "exchange": "ICE",
+   "symbol": "C",
+   "alternateSymbol": "IFLX.C",
+   "name": "ICEU London Cocoa Future"
+  },
+  {
+   "exchange": "CME",
+   "symbol": "CL",
+   "alternateSymbol": "",
+   "name": "Crude Oil Futures"
+  },
+  {
+   "exchange": "ICE_L",
+   "symbol": "R",
+   "alternateSymbol": "IFLL.R",
+   "name": "ICEU Long Gilt Future"
+  },
+  {
+   "exchange": "MX",
+   "symbol": "CGB",
+   "alternateSymbol": "",
+   "name": "Ten-Year Government of Canada Bond"
+  },
+  {
+   "exchange": "ASX",
+   "symbol": "YT",
+   "alternateSymbol": "",
+   "name": "ASX 3 Year Treasury Bond Futures"
+  },
+  {
+   "exchange": "CME",
+   "symbol": "ZN",
+   "alternateSymbol": "",
+   "name": "10-Year T-Note Futures"
+  },
+  {
+   "exchange": "ICE_L",
+   "symbol": "CL",
+   "alternateSymbol": "IFLO.CL",
+   "name": "ICEU Coca-Cola Hbc Ag - STND OPT"
+  },
+  {
+   "exchange": "ICE",
+   "symbol": "G",
+   "alternateSymbol": "IPE e-Gas Oil",
+   "name": "ULSD-ARA LS Gas Oil Futures"
+  },
+  {
+   "exchange": "ASX",
+   "symbol": "XT",
+   "alternateSymbol": "",
+   "name": "ASX 10 Year Treasury Bond Futures"
+  },
+  {
+   "exchange": "CME",
+   "symbol": "ZC",
+   "alternateSymbol": "",
+   "name": "Corn Futures"
+  },
+  {
+   "exchange": "Eurex",
+   "symbol": "FGBL",
+   "alternateSymbol": "",
+   "name": "Euro-Bund"
+  },
+  {
+   "exchange": "ASX",
+   "symbol": "CL",
+   "alternateSymbol": "",
+   "name": ""
+  },
+  {
+   "exchange": "LME",
+   "symbol": "ZS",
+   "alternateSymbol": "",
+   "name": "Special High Grade Zinc"
+  },
+  {
+   "exchange": "CME",
+   "symbol": "ZS",
+   "alternateSymbol": "",
+   "name": "Soybean Futures"
+  },
+  {
+   "exchange": "Eurex",
+   "symbol": "FGBM",
+   "alternateSymbol": "",
+   "name": "Euro-Bobl"
+  }
+ ],
+ "ric_enrich": {
+  "default": {
+   "columns": [
+    "Region",
+    "Exchange",
+    "Bloomberg",
+    "Ric Root",
+    "Product Description",
+    "Give-up (yes or No)",
+    "TT Exchange",
+    "TT Product Symbol",
+    "Max Order",
+    "Max net"
+   ],
+   "counts": {
+    "mapped": 0,
+    "known": 8,
+    "direct": 1,
+    "check": 0,
+    "unmatched": 1,
+    "noTt": 0
+   },
+   "rows": [
+    {
+     "ricRoot": "TY",
+     "exchange": "CBOT",
+     "status": "known",
+     "ttExchange": "CME",
+     "ttSymbol": "ZN",
+     "candidates": []
+    },
+    {
+     "ricRoot": "C",
+     "exchange": "CBOT",
+     "status": "known",
+     "ttExchange": "CME",
+     "ttSymbol": "ZC",
+     "candidates": []
+    },
+    {
+     "ricRoot": "ES",
+     "exchange": "CME",
+     "status": "known",
+     "ttExchange": "CME",
+     "ttSymbol": "ES",
+     "candidates": []
+    },
+    {
+     "ricRoot": "CL",
+     "exchange": "NYMEX",
+     "status": "known",
+     "ttExchange": "CME",
+     "ttSymbol": "CL",
+     "candidates": []
+    },
+    {
+     "ricRoot": "FGBL",
+     "exchange": "EUREX",
+     "status": "known",
+     "ttExchange": "Eurex",
+     "ttSymbol": "FGBL",
+     "candidates": []
+    },
+    {
+     "ricRoot": "FLG",
+     "exchange": "ICE Europe",
+     "status": "known",
+     "ttExchange": "ICE_L",
+     "ttSymbol": "R",
+     "candidates": []
+    },
+    {
+     "ricRoot": "G",
+     "exchange": "ICE",
+     "status": "direct",
+     "ttExchange": "ICE_L",
+     "ttSymbol": "G",
+     "candidates": []
+    },
+    {
+     "ricRoot": "YT",
+     "exchange": "SFE",
+     "status": "known",
+     "ttExchange": "ASX",
+     "ttSymbol": "YT",
+     "candidates": []
+    },
+    {
+     "ricRoot": "CGB",
+     "exchange": "ME",
+     "status": "known",
+     "ttExchange": "MX",
+     "ttSymbol": "CGB",
+     "candidates": []
+    },
+    {
+     "ricRoot": "ZZZ",
+     "exchange": "CME",
+     "status": "unmatched",
+     "ttExchange": "",
+     "ttSymbol": "",
+     "candidates": []
+    }
+   ]
+  },
+  "no_known": {
+   "columns": [
+    "Region",
+    "Exchange",
+    "Bloomberg",
+    "Ric Root",
+    "Product Description",
+    "Give-up (yes or No)",
+    "TT Exchange",
+    "TT Product Symbol",
+    "Max Order",
+    "Max net"
+   ],
+   "counts": {
+    "mapped": 0,
+    "known": 0,
+    "direct": 6,
+    "check": 3,
+    "unmatched": 1,
+    "noTt": 0
+   },
+   "rows": [
+    {
+     "ricRoot": "TY",
+     "exchange": "CBOT",
+     "status": "check",
+     "ttExchange": "CME",
+     "ttSymbol": "ZN",
+     "candidates": [
+      "CME ZN",
+      "CME ZF"
+     ]
+    },
+    {
+     "ricRoot": "C",
+     "exchange": "CBOT",
+     "status": "check",
+     "ttExchange": "CME",
+     "ttSymbol": "ZC",
+     "candidates": [
+      "CME ZC"
+     ]
+    },
+    {
+     "ricRoot": "ES",
+     "exchange": "CME",
+     "status": "direct",
+     "ttExchange": "CME",
+     "ttSymbol": "ES",
+     "candidates": []
+    },
+    {
+     "ricRoot": "CL",
+     "exchange": "NYMEX",
+     "status": "direct",
+     "ttExchange": "CME",
+     "ttSymbol": "CL",
+     "candidates": []
+    },
+    {
+     "ricRoot": "FGBL",
+     "exchange": "EUREX",
+     "status": "direct",
+     "ttExchange": "Eurex",
+     "ttSymbol": "FGBL",
+     "candidates": []
+    },
+    {
+     "ricRoot": "FLG",
+     "exchange": "ICE Europe",
+     "status": "check",
+     "ttExchange": "ICE_L",
+     "ttSymbol": "R",
+     "candidates": [
+      "ICE_L R",
+      "ICE_L G"
+     ]
+    },
+    {
+     "ricRoot": "G",
+     "exchange": "ICE",
+     "status": "direct",
+     "ttExchange": "ICE_L",
+     "ttSymbol": "G",
+     "candidates": []
+    },
+    {
+     "ricRoot": "YT",
+     "exchange": "SFE",
+     "status": "direct",
+     "ttExchange": "ASX",
+     "ttSymbol": "YT",
+     "candidates": []
+    },
+    {
+     "ricRoot": "CGB",
+     "exchange": "ME",
+     "status": "direct",
+     "ttExchange": "MX",
+     "ttSymbol": "CGB",
+     "candidates": []
+    },
+    {
+     "ricRoot": "ZZZ",
+     "exchange": "CME",
+     "status": "unmatched",
+     "ttExchange": "",
+     "ttSymbol": "",
+     "candidates": []
+    }
+   ]
+  },
+  "mapped": {
+   "columns": [
+    "Region",
+    "Exchange",
+    "Bloomberg",
+    "Ric Root",
+    "Product Description",
+    "Give-up (yes or No)",
+    "TT Exchange",
+    "TT Product Symbol",
+    "Max Order",
+    "Max net"
+   ],
+   "counts": {
+    "mapped": 3,
+    "known": 6,
+    "direct": 0,
+    "check": 0,
+    "unmatched": 1,
+    "noTt": 0
+   },
+   "rows": [
+    {
+     "ricRoot": "TY",
+     "exchange": "CBOT",
+     "status": "mapped",
+     "ttExchange": "CME",
+     "ttSymbol": "TN",
+     "candidates": []
+    },
+    {
+     "ricRoot": "C",
+     "exchange": "CBOT",
+     "status": "known",
+     "ttExchange": "CME",
+     "ttSymbol": "ZC",
+     "candidates": []
+    },
+    {
+     "ricRoot": "ES",
+     "exchange": "CME",
+     "status": "known",
+     "ttExchange": "CME",
+     "ttSymbol": "ES",
+     "candidates": []
+    },
+    {
+     "ricRoot": "CL",
+     "exchange": "NYMEX",
+     "status": "known",
+     "ttExchange": "CME",
+     "ttSymbol": "CL",
+     "candidates": []
+    },
+    {
+     "ricRoot": "FGBL",
+     "exchange": "EUREX",
+     "status": "known",
+     "ttExchange": "Eurex",
+     "ttSymbol": "FGBL",
+     "candidates": []
+    },
+    {
+     "ricRoot": "FLG",
+     "exchange": "ICE Europe",
+     "status": "mapped",
+     "ttExchange": "ICE_L",
+     "ttSymbol": "R",
+     "candidates": []
+    },
+    {
+     "ricRoot": "G",
+     "exchange": "ICE",
+     "status": "mapped",
+     "ttExchange": "ICE_L",
+     "ttSymbol": "G",
+     "candidates": []
+    },
+    {
+     "ricRoot": "YT",
+     "exchange": "SFE",
+     "status": "known",
+     "ttExchange": "ASX",
+     "ttSymbol": "YT",
+     "candidates": []
+    },
+    {
+     "ricRoot": "CGB",
+     "exchange": "ME",
+     "status": "known",
+     "ttExchange": "MX",
+     "ttSymbol": "CGB",
+     "candidates": []
+    },
+    {
+     "ricRoot": "ZZZ",
+     "exchange": "CME",
+     "status": "unmatched",
+     "ttExchange": "",
+     "ttSymbol": "",
+     "candidates": []
+    }
+   ]
+  },
+  "no_tt": {
+   "columns": [
+    "Region",
+    "Exchange",
+    "Bloomberg",
+    "Ric Root",
+    "Product Description",
+    "Give-up (yes or No)",
+    "TT Exchange",
+    "TT Product Symbol",
+    "Max Order",
+    "Max net"
+   ],
+   "counts": {
+    "mapped": 0,
+    "known": 0,
+    "direct": 0,
+    "check": 0,
+    "unmatched": 0,
+    "noTt": 10
+   },
+   "rows": [
+    {
+     "ricRoot": "TY",
+     "exchange": "CBOT",
+     "status": "noTt",
+     "ttExchange": "",
+     "ttSymbol": "",
+     "candidates": []
+    },
+    {
+     "ricRoot": "C",
+     "exchange": "CBOT",
+     "status": "noTt",
+     "ttExchange": "",
+     "ttSymbol": "",
+     "candidates": []
+    },
+    {
+     "ricRoot": "ES",
+     "exchange": "CME",
+     "status": "noTt",
+     "ttExchange": "",
+     "ttSymbol": "",
+     "candidates": []
+    },
+    {
+     "ricRoot": "CL",
+     "exchange": "NYMEX",
+     "status": "noTt",
+     "ttExchange": "",
+     "ttSymbol": "",
+     "candidates": []
+    },
+    {
+     "ricRoot": "FGBL",
+     "exchange": "EUREX",
+     "status": "noTt",
+     "ttExchange": "",
+     "ttSymbol": "",
+     "candidates": []
+    },
+    {
+     "ricRoot": "FLG",
+     "exchange": "ICE Europe",
+     "status": "noTt",
+     "ttExchange": "",
+     "ttSymbol": "",
+     "candidates": []
+    },
+    {
+     "ricRoot": "G",
+     "exchange": "ICE",
+     "status": "noTt",
+     "ttExchange": "",
+     "ttSymbol": "",
+     "candidates": []
+    },
+    {
+     "ricRoot": "YT",
+     "exchange": "SFE",
+     "status": "noTt",
+     "ttExchange": "",
+     "ttSymbol": "",
+     "candidates": []
+    },
+    {
+     "ricRoot": "CGB",
+     "exchange": "ME",
+     "status": "noTt",
+     "ttExchange": "",
+     "ttSymbol": "",
+     "candidates": []
+    },
+    {
+     "ricRoot": "ZZZ",
+     "exchange": "CME",
+     "status": "noTt",
+     "ttExchange": "",
+     "ttSymbol": "",
+     "candidates": []
+    }
+   ]
+  }
+ },
+ "ric_user_mappings": [
+  {
+   "ricRoot": "FLG",
+   "exchange": "ICE Europe",
+   "ttExchange": "ICE_L",
+   "ttSymbol": "R"
+  },
+  {
+   "ricRoot": "G",
+   "exchange": "",
+   "ttExchange": "ICE_L",
+   "ttSymbol": "G"
+  },
+  {
+   "ricRoot": "TY",
+   "exchange": "CBOT",
+   "ttExchange": "CME",
+   "ttSymbol": "TN"
+  }
+ ],
+ "ric_tokens": [
+  {
+   "text": "US 10yr Note",
+   "tokens": [
+    "us",
+    "10",
+    "year",
+    "note"
+   ]
+  },
+  {
+   "text": "Corn",
+   "tokens": [
+    "corn"
+   ]
+  },
+  {
+   "text": "E-mini S&P 500",
+   "tokens": [
+    "e",
+    "mini",
+    "s&p",
+    "500"
+   ]
+  },
+  {
+   "text": "WTI Crude Oil",
+   "tokens": [
+    "wti",
+    "crude",
+    "oil"
+   ]
+  },
+  {
+   "text": "Euro Bund",
+   "tokens": [
+    "euro",
+    "bund"
+   ]
+  },
+  {
+   "text": "Long Gilt",
+   "tokens": [
+    "long",
+    "gilt"
+   ]
+  },
+  {
+   "text": "Short Gilt",
+   "tokens": [
+    "short",
+    "gilt"
+   ]
+  },
+  {
+   "text": "Australia 3yr Bond",
+   "tokens": [
+    "australia",
+    "3",
+    "year",
+    "bond"
+   ]
+  },
+  {
+   "text": "Canada 10yr Bond",
+   "tokens": [
+    "canada",
+    "10",
+    "year",
+    "bond"
+   ]
+  },
+  {
+   "text": "Fictional",
+   "tokens": [
+    "fictional"
+   ]
+  },
+  {
+   "text": "US 10yr Note",
+   "tokens": [
+    "us",
+    "10",
+    "year",
+    "note"
+   ]
+  },
+  {
+   "text": "3 Month SOFR",
+   "tokens": [
+    "3",
+    "month",
+    "sofr"
+   ]
+  },
+  {
+   "text": "Low Sulphur Gasoil",
+   "tokens": [
+    "ls",
+    "gas",
+    "oil"
+   ]
+  },
+  {
+   "text": "Hard Red Winter Wheat",
+   "tokens": [
+    "hrw",
+    "wheat"
+   ]
+  },
+  {
+   "text": "E-mini S&P 500",
+   "tokens": [
+    "e",
+    "mini",
+    "s&p",
+    "500"
+   ]
+  },
+  {
+   "text": "Euro-Bund",
+   "tokens": [
+    "euro",
+    "bund"
+   ]
+  },
+  {
+   "text": "AUD/USD",
+   "tokens": [
+    "australian",
+    "dollar"
+   ]
+  },
+  {
+   "text": "Nikkei 225 (Yen)",
+   "tokens": [
+    "nikkei",
+    "225",
+    "yen"
+   ]
+  },
+  {
+   "text": "T-Bond 30 yrs",
+   "tokens": [
+    "treasury",
+    "bond",
+    "30",
+    "year"
+   ]
+  },
+  {
+   "text": "Two Year U.S. T-Notes",
+   "tokens": [
+    "2",
+    "year",
+    "us",
+    "treasury",
+    "note"
+   ]
+  },
+  {
+   "text": "...",
+   "tokens": []
+  },
+  {
+   "text": "",
+   "tokens": []
+  }
+ ],
+ "ric_name_scores": [
+  {
+   "text": "US 10yr Note",
+   "exchange": "CME",
+   "symbol": "ZF",
+   "score": 0.22
+  },
+  {
+   "text": "US 10yr Note",
+   "exchange": "CME",
+   "symbol": "ES",
+   "score": -0.56
+  },
+  {
+   "text": "US 10yr Note",
+   "exchange": "CME",
+   "symbol": "CGB",
+   "score": -0.37
+  },
+  {
+   "text": "US 10yr Note",
+   "exchange": "ICE_L",
+   "symbol": "G",
+   "score": -0.06
+  },
+  {
+   "text": "US 10yr Note",
+   "exchange": "ASX",
+   "symbol": "ES",
+   "score": -0.12
+  },
+  {
+   "text": "US 10yr Note",
+   "exchange": "ICE",
+   "symbol": "C",
+   "score": -0.06
+  },
+  {
+   "text": "US 10yr Note",
+   "exchange": "CME",
+   "symbol": "CL",
+   "score": -0.06
+  },
+  {
+   "text": "US 10yr Note",
+   "exchange": "ICE_L",
+   "symbol": "R",
+   "score": -0.06
+  },
+  {
+   "text": "US 10yr Note",
+   "exchange": "MX",
+   "symbol": "CGB",
+   "score": 0.4099999999999999
+  },
+  {
+   "text": "US 10yr Note",
+   "exchange": "ASX",
+   "symbol": "YT",
+   "score": -0.06
+  },
+  {
+   "text": "US 10yr Note",
+   "exchange": "CME",
+   "symbol": "ZN",
+   "score": 0.72
+  },
+  {
+   "text": "US 10yr Note",
+   "exchange": "ICE_L",
+   "symbol": "CL",
+   "score": -0.37
+  },
+  {
+   "text": "US 10yr Note",
+   "exchange": "ICE",
+   "symbol": "G",
+   "score": -0.15
+  },
+  {
+   "text": "US 10yr Note",
+   "exchange": "ASX",
+   "symbol": "XT",
+   "score": 0.43999999999999995
+  },
+  {
+   "text": "US 10yr Note",
+   "exchange": "CME",
+   "symbol": "ZC",
+   "score": -0.03
+  },
+  {
+   "text": "US 10yr Note",
+   "exchange": "Eurex",
+   "symbol": "FGBL",
+   "score": -0.06
+  },
+  {
+   "text": "US 10yr Note",
+   "exchange": "ASX",
+   "symbol": "CL",
+   "score": 0
+  },
+  {
+   "text": "US 10yr Note",
+   "exchange": "LME",
+   "symbol": "ZS",
+   "score": -0.12
+  },
+  {
+   "text": "US 10yr Note",
+   "exchange": "CME",
+   "symbol": "ZS",
+   "score": -0.03
+  },
+  {
+   "text": "US 10yr Note",
+   "exchange": "Eurex",
+   "symbol": "FGBM",
+   "score": -0.06
+  },
+  {
+   "text": "Corn",
+   "exchange": "CME",
+   "symbol": "ZF",
+   "score": -0.3400000000000001
+  },
+  {
+   "text": "Corn",
+   "exchange": "CME",
+   "symbol": "ES",
+   "score": -0.56
+  },
+  {
+   "text": "Corn",
+   "exchange": "CME",
+   "symbol": "CGB",
+   "score": -0.37
+  },
+  {
+   "text": "Corn",
+   "exchange": "ICE_L",
+   "symbol": "G",
+   "score": -0.06
+  },
+  {
+   "text": "Corn",
+   "exchange": "ASX",
+   "symbol": "ES",
+   "score": -0.12
+  },
+  {
+   "text": "Corn",
+   "exchange": "ICE",
+   "symbol": "C",
+   "score": -0.06
+  },
+  {
+   "text": "Corn",
+   "exchange": "CME",
+   "symbol": "CL",
+   "score": -0.06
+  },
+  {
+   "text": "Corn",
+   "exchange": "ICE_L",
+   "symbol": "R",
+   "score": -0.06
+  },
+  {
+   "text": "Corn",
+   "exchange": "MX",
+   "symbol": "CGB",
+   "score": -0.3700000000000001
+  },
+  {
+   "text": "Corn",
+   "exchange": "ASX",
+   "symbol": "YT",
+   "score": -0.3400000000000001
+  },
+  {
+   "text": "Corn",
+   "exchange": "CME",
+   "symbol": "ZN",
+   "score": -0.3400000000000001
+  },
+  {
+   "text": "Corn",
+   "exchange": "ICE_L",
+   "symbol": "CL",
+   "score": -0.37
+  },
+  {
+   "text": "Corn",
+   "exchange": "ICE",
+   "symbol": "G",
+   "score": -0.15
+  },
+  {
+   "text": "Corn",
+   "exchange": "ASX",
+   "symbol": "XT",
+   "score": -0.3400000000000001
+  },
+  {
+   "text": "Corn",
+   "exchange": "CME",
+   "symbol": "ZC",
+   "score": 1
+  },
+  {
+   "text": "Corn",
+   "exchange": "Eurex",
+   "symbol": "FGBL",
+   "score": -0.06
+  },
+  {
+   "text": "Corn",
+   "exchange": "ASX",
+   "symbol": "CL",
+   "score": 0
+  },
+  {
+   "text": "Corn",
+   "exchange": "LME",
+   "symbol": "ZS",
+   "score": -0.12
+  },
+  {
+   "text": "Corn",
+   "exchange": "CME",
+   "symbol": "ZS",
+   "score": -0.03
+  },
+  {
+   "text": "Corn",
+   "exchange": "Eurex",
+   "symbol": "FGBM",
+   "score": -0.06
+  },
+  {
+   "text": "E-mini S&P 500",
+   "exchange": "CME",
+   "symbol": "ZF",
+   "score": -0.3400000000000001
+  },
+  {
+   "text": "E-mini S&P 500",
+   "exchange": "CME",
+   "symbol": "ES",
+   "score": 1
+  },
+  {
+   "text": "E-mini S&P 500",
+   "exchange": "CME",
+   "symbol": "CGB",
+   "score": -0.37
+  },
+  {
+   "text": "E-mini S&P 500",
+   "exchange": "ICE_L",
+   "symbol": "G",
+   "score": -0.06
+  },
+  {
+   "text": "E-mini S&P 500",
+   "exchange": "ASX",
+   "symbol": "ES",
+   "score": -0.12
+  },
+  {
+   "text": "E-mini S&P 500",
+   "exchange": "ICE",
+   "symbol": "C",
+   "score": -0.06
+  },
+  {
+   "text": "E-mini S&P 500",
+   "exchange": "CME",
+   "symbol": "CL",
+   "score": -0.06
+  },
+  {
+   "text": "E-mini S&P 500",
+   "exchange": "ICE_L",
+   "symbol": "R",
+   "score": -0.06
+  },
+  {
+   "text": "E-mini S&P 500",
+   "exchange": "MX",
+   "symbol": "CGB",
+   "score": -0.3700000000000001
+  },
+  {
+   "text": "E-mini S&P 500",
+   "exchange": "ASX",
+   "symbol": "YT",
+   "score": -0.3400000000000001
+  },
+  {
+   "text": "E-mini S&P 500",
+   "exchange": "CME",
+   "symbol": "ZN",
+   "score": -0.3400000000000001
+  },
+  {
+   "text": "E-mini S&P 500",
+   "exchange": "ICE_L",
+   "symbol": "CL",
+   "score": -0.37
+  },
+  {
+   "text": "E-mini S&P 500",
+   "exchange": "ICE",
+   "symbol": "G",
+   "score": -0.15
+  },
+  {
+   "text": "E-mini S&P 500",
+   "exchange": "ASX",
+   "symbol": "XT",
+   "score": -0.3400000000000001
+  },
+  {
+   "text": "E-mini S&P 500",
+   "exchange": "CME",
+   "symbol": "ZC",
+   "score": -0.03
+  },
+  {
+   "text": "E-mini S&P 500",
+   "exchange": "Eurex",
+   "symbol": "FGBL",
+   "score": -0.06
+  },
+  {
+   "text": "E-mini S&P 500",
+   "exchange": "ASX",
+   "symbol": "CL",
+   "score": 0
+  },
+  {
+   "text": "E-mini S&P 500",
+   "exchange": "LME",
+   "symbol": "ZS",
+   "score": -0.12
+  },
+  {
+   "text": "E-mini S&P 500",
+   "exchange": "CME",
+   "symbol": "ZS",
+   "score": -0.03
+  },
+  {
+   "text": "E-mini S&P 500",
+   "exchange": "Eurex",
+   "symbol": "FGBM",
+   "score": -0.06
+  },
+  {
+   "text": "WTI Crude Oil",
+   "exchange": "CME",
+   "symbol": "ZF",
+   "score": -0.3400000000000001
+  },
+  {
+   "text": "WTI Crude Oil",
+   "exchange": "CME",
+   "symbol": "ES",
+   "score": -0.56
+  },
+  {
+   "text": "WTI Crude Oil",
+   "exchange": "CME",
+   "symbol": "CGB",
+   "score": -0.37
+  },
+  {
+   "text": "WTI Crude Oil",
+   "exchange": "ICE_L",
+   "symbol": "G",
+   "score": -0.06
+  },
+  {
+   "text": "WTI Crude Oil",
+   "exchange": "ASX",
+   "symbol": "ES",
+   "score": -0.12
+  },
+  {
+   "text": "WTI Crude Oil",
+   "exchange": "ICE",
+   "symbol": "C",
+   "score": -0.06
+  },
+  {
+   "text": "WTI Crude Oil",
+   "exchange": "CME",
+   "symbol": "CL",
+   "score": 0.6666666666666666
+  },
+  {
+   "text": "WTI Crude Oil",
+   "exchange": "ICE_L",
+   "symbol": "R",
+   "score": -0.06
+  },
+  {
+   "text": "WTI Crude Oil",
+   "exchange": "MX",
+   "symbol": "CGB",
+   "score": -0.3700000000000001
+  },
+  {
+   "text": "WTI Crude Oil",
+   "exchange": "ASX",
+   "symbol": "YT",
+   "score": -0.3400000000000001
+  },
+  {
+   "text": "WTI Crude Oil",
+   "exchange": "CME",
+   "symbol": "ZN",
+   "score": -0.3400000000000001
+  },
+  {
+   "text": "WTI Crude Oil",
+   "exchange": "ICE_L",
+   "symbol": "CL",
+   "score": -0.37
+  },
+  {
+   "text": "WTI Crude Oil",
+   "exchange": "ICE",
+   "symbol": "G",
+   "score": 0.21333333333333332
+  },
+  {
+   "text": "WTI Crude Oil",
+   "exchange": "ASX",
+   "symbol": "XT",
+   "score": -0.3400000000000001
+  },
+  {
+   "text": "WTI Crude Oil",
+   "exchange": "CME",
+   "symbol": "ZC",
+   "score": -0.03
+  },
+  {
+   "text": "WTI Crude Oil",
+   "exchange": "Eurex",
+   "symbol": "FGBL",
+   "score": -0.06
+  },
+  {
+   "text": "WTI Crude Oil",
+   "exchange": "ASX",
+   "symbol": "CL",
+   "score": 0
+  },
+  {
+   "text": "WTI Crude Oil",
+   "exchange": "LME",
+   "symbol": "ZS",
+   "score": -0.12
+  },
+  {
+   "text": "WTI Crude Oil",
+   "exchange": "CME",
+   "symbol": "ZS",
+   "score": -0.03
+  },
+  {
+   "text": "WTI Crude Oil",
+   "exchange": "Eurex",
+   "symbol": "FGBM",
+   "score": -0.06
+  },
+  {
+   "text": "Euro Bund",
+   "exchange": "CME",
+   "symbol": "ZF",
+   "score": -0.3400000000000001
+  },
+  {
+   "text": "Euro Bund",
+   "exchange": "CME",
+   "symbol": "ES",
+   "score": -0.56
+  },
+  {
+   "text": "Euro Bund",
+   "exchange": "CME",
+   "symbol": "CGB",
+   "score": -0.37
+  },
+  {
+   "text": "Euro Bund",
+   "exchange": "ICE_L",
+   "symbol": "G",
+   "score": -0.06
+  },
+  {
+   "text": "Euro Bund",
+   "exchange": "ASX",
+   "symbol": "ES",
+   "score": -0.12
+  },
+  {
+   "text": "Euro Bund",
+   "exchange": "ICE",
+   "symbol": "C",
+   "score": -0.06
+  },
+  {
+   "text": "Euro Bund",
+   "exchange": "CME",
+   "symbol": "CL",
+   "score": -0.06
+  },
+  {
+   "text": "Euro Bund",
+   "exchange": "ICE_L",
+   "symbol": "R",
+   "score": -0.06
+  },
+  {
+   "text": "Euro Bund",
+   "exchange": "MX",
+   "symbol": "CGB",
+   "score": -0.3700000000000001
+  },
+  {
+   "text": "Euro Bund",
+   "exchange": "ASX",
+   "symbol": "YT",
+   "score": -0.3400000000000001
+  },
+  {
+   "text": "Euro Bund",
+   "exchange": "CME",
+   "symbol": "ZN",
+   "score": -0.3400000000000001
+  },
+  {
+   "text": "Euro Bund",
+   "exchange": "ICE_L",
+   "symbol": "CL",
+   "score": -0.37
+  },
+  {
+   "text": "Euro Bund",
+   "exchange": "ICE",
+   "symbol": "G",
+   "score": -0.15
+  },
+  {
+   "text": "Euro Bund",
+   "exchange": "ASX",
+   "symbol": "XT",
+   "score": -0.3400000000000001
+  },
+  {
+   "text": "Euro Bund",
+   "exchange": "CME",
+   "symbol": "ZC",
+   "score": -0.03
+  },
+  {
+   "text": "Euro Bund",
+   "exchange": "Eurex",
+   "symbol": "FGBL",
+   "score": 1
+  },
+  {
+   "text": "Euro Bund",
+   "exchange": "ASX",
+   "symbol": "CL",
+   "score": 0
+  },
+  {
+   "text": "Euro Bund",
+   "exchange": "LME",
+   "symbol": "ZS",
+   "score": -0.12
+  },
+  {
+   "text": "Euro Bund",
+   "exchange": "CME",
+   "symbol": "ZS",
+   "score": -0.03
+  },
+  {
+   "text": "Euro Bund",
+   "exchange": "Eurex",
+   "symbol": "FGBM",
+   "score": 0.47
+  },
+  {
+   "text": "Long Gilt",
+   "exchange": "CME",
+   "symbol": "ZF",
+   "score": -0.3400000000000001
+  },
+  {
+   "text": "Long Gilt",
+   "exchange": "CME",
+   "symbol": "ES",
+   "score": -0.56
+  },
+  {
+   "text": "Long Gilt",
+   "exchange": "CME",
+   "symbol": "CGB",
+   "score": -0.37
+  },
+  {
+   "text": "Long Gilt",
+   "exchange": "ICE_L",
+   "symbol": "G",
+   "score": 0.47
+  },
+  {
+   "text": "Long Gilt",
+   "exchange": "ASX",
+   "symbol": "ES",
+   "score": -0.12
+  },
+  {
+   "text": "Long Gilt",
+   "exchange": "ICE",
+   "symbol": "C",
+   "score": -0.06
+  },
+  {
+   "text": "Long Gilt",
+   "exchange": "CME",
+   "symbol": "CL",
+   "score": -0.06
+  },
+  {
+   "text": "Long Gilt",
+   "exchange": "ICE_L",
+   "symbol": "R",
+   "score": 1
+  },
+  {
+   "text": "Long Gilt",
+   "exchange": "MX",
+   "symbol": "CGB",
+   "score": -0.3700000000000001
+  },
+  {
+   "text": "Long Gilt",
+   "exchange": "ASX",
+   "symbol": "YT",
+   "score": -0.3400000000000001
+  },
+  {
+   "text": "Long Gilt",
+   "exchange": "CME",
+   "symbol": "ZN",
+   "score": -0.3400000000000001
+  },
+  {
+   "text": "Long Gilt",
+   "exchange": "ICE_L",
+   "symbol": "CL",
+   "score": -0.37
+  },
+  {
+   "text": "Long Gilt",
+   "exchange": "ICE",
+   "symbol": "G",
+   "score": -0.15
+  },
+  {
+   "text": "Long Gilt",
+   "exchange": "ASX",
+   "symbol": "XT",
+   "score": -0.3400000000000001
+  },
+  {
+   "text": "Long Gilt",
+   "exchange": "CME",
+   "symbol": "ZC",
+   "score": -0.03
+  },
+  {
+   "text": "Long Gilt",
+   "exchange": "Eurex",
+   "symbol": "FGBL",
+   "score": -0.06
+  },
+  {
+   "text": "Long Gilt",
+   "exchange": "ASX",
+   "symbol": "CL",
+   "score": 0
+  },
+  {
+   "text": "Long Gilt",
+   "exchange": "LME",
+   "symbol": "ZS",
+   "score": -0.12
+  },
+  {
+   "text": "Long Gilt",
+   "exchange": "CME",
+   "symbol": "ZS",
+   "score": -0.03
+  },
+  {
+   "text": "Long Gilt",
+   "exchange": "Eurex",
+   "symbol": "FGBM",
+   "score": -0.06
+  },
+  {
+   "text": "Short Gilt",
+   "exchange": "CME",
+   "symbol": "ZF",
+   "score": -0.3400000000000001
+  },
+  {
+   "text": "Short Gilt",
+   "exchange": "CME",
+   "symbol": "ES",
+   "score": -0.56
+  },
+  {
+   "text": "Short Gilt",
+   "exchange": "CME",
+   "symbol": "CGB",
+   "score": -0.37
+  },
+  {
+   "text": "Short Gilt",
+   "exchange": "ICE_L",
+   "symbol": "G",
+   "score": 1
+  },
+  {
+   "text": "Short Gilt",
+   "exchange": "ASX",
+   "symbol": "ES",
+   "score": -0.12
+  },
+  {
+   "text": "Short Gilt",
+   "exchange": "ICE",
+   "symbol": "C",
+   "score": -0.06
+  },
+  {
+   "text": "Short Gilt",
+   "exchange": "CME",
+   "symbol": "CL",
+   "score": -0.06
+  },
+  {
+   "text": "Short Gilt",
+   "exchange": "ICE_L",
+   "symbol": "R",
+   "score": 0.47
+  },
+  {
+   "text": "Short Gilt",
+   "exchange": "MX",
+   "symbol": "CGB",
+   "score": -0.3700000000000001
+  },
+  {
+   "text": "Short Gilt",
+   "exchange": "ASX",
+   "symbol": "YT",
+   "score": -0.3400000000000001
+  },
+  {
+   "text": "Short Gilt",
+   "exchange": "CME",
+   "symbol": "ZN",
+   "score": -0.3400000000000001
+  },
+  {
+   "text": "Short Gilt",
+   "exchange": "ICE_L",
+   "symbol": "CL",
+   "score": -0.37
+  },
+  {
+   "text": "Short Gilt",
+   "exchange": "ICE",
+   "symbol": "G",
+   "score": -0.15
+  },
+  {
+   "text": "Short Gilt",
+   "exchange": "ASX",
+   "symbol": "XT",
+   "score": -0.3400000000000001
+  },
+  {
+   "text": "Short Gilt",
+   "exchange": "CME",
+   "symbol": "ZC",
+   "score": -0.03
+  },
+  {
+   "text": "Short Gilt",
+   "exchange": "Eurex",
+   "symbol": "FGBL",
+   "score": -0.06
+  },
+  {
+   "text": "Short Gilt",
+   "exchange": "ASX",
+   "symbol": "CL",
+   "score": 0
+  },
+  {
+   "text": "Short Gilt",
+   "exchange": "LME",
+   "symbol": "ZS",
+   "score": -0.12
+  },
+  {
+   "text": "Short Gilt",
+   "exchange": "CME",
+   "symbol": "ZS",
+   "score": -0.03
+  },
+  {
+   "text": "Short Gilt",
+   "exchange": "Eurex",
+   "symbol": "FGBM",
+   "score": -0.06
+  },
+  {
+   "text": "Australia 3yr Bond",
+   "exchange": "CME",
+   "symbol": "ZF",
+   "score": -0.06
+  },
+  {
+   "text": "Australia 3yr Bond",
+   "exchange": "CME",
+   "symbol": "ES",
+   "score": -0.56
+  },
+  {
+   "text": "Australia 3yr Bond",
+   "exchange": "CME",
+   "symbol": "CGB",
+   "score": -0.37
+  },
+  {
+   "text": "Australia 3yr Bond",
+   "exchange": "ICE_L",
+   "symbol": "G",
+   "score": -0.06
+  },
+  {
+   "text": "Australia 3yr Bond",
+   "exchange": "ASX",
+   "symbol": "ES",
+   "score": -0.12
+  },
+  {
+   "text": "Australia 3yr Bond",
+   "exchange": "ICE",
+   "symbol": "C",
+   "score": -0.06
+  },
+  {
+   "text": "Australia 3yr Bond",
+   "exchange": "CME",
+   "symbol": "CL",
+   "score": -0.06
+  },
+  {
+   "text": "Australia 3yr Bond",
+   "exchange": "ICE_L",
+   "symbol": "R",
+   "score": -0.06
+  },
+  {
+   "text": "Australia 3yr Bond",
+   "exchange": "MX",
+   "symbol": "CGB",
+   "score": 0.19
+  },
+  {
+   "text": "Australia 3yr Bond",
+   "exchange": "ASX",
+   "symbol": "YT",
+   "score": 0.72
+  },
+  {
+   "text": "Australia 3yr Bond",
+   "exchange": "CME",
+   "symbol": "ZN",
+   "score": -0.06
+  },
+  {
+   "text": "Australia 3yr Bond",
+   "exchange": "ICE_L",
+   "symbol": "CL",
+   "score": -0.37
+  },
+  {
+   "text": "Australia 3yr Bond",
+   "exchange": "ICE",
+   "symbol": "G",
+   "score": -0.15
+  },
+  {
+   "text": "Australia 3yr Bond",
+   "exchange": "ASX",
+   "symbol": "XT",
+   "score": 0.22
+  },
+  {
+   "text": "Australia 3yr Bond",
+   "exchange": "CME",
+   "symbol": "ZC",
+   "score": -0.03
+  },
+  {
+   "text": "Australia 3yr Bond",
+   "exchange": "Eurex",
+   "symbol": "FGBL",
+   "score": -0.06
+  },
+  {
+   "text": "Australia 3yr Bond",
+   "exchange": "ASX",
+   "symbol": "CL",
+   "score": 0
+  },
+  {
+   "text": "Australia 3yr Bond",
+   "exchange": "LME",
+   "symbol": "ZS",
+   "score": -0.12
+  },
+  {
+   "text": "Australia 3yr Bond",
+   "exchange": "CME",
+   "symbol": "ZS",
+   "score": -0.03
+  },
+  {
+   "text": "Australia 3yr Bond",
+   "exchange": "Eurex",
+   "symbol": "FGBM",
+   "score": -0.06
+  },
+  {
+   "text": "Canada 10yr Bond",
+   "exchange": "CME",
+   "symbol": "ZF",
+   "score": -0.06
+  },
+  {
+   "text": "Canada 10yr Bond",
+   "exchange": "CME",
+   "symbol": "ES",
+   "score": -0.56
+  },
+  {
+   "text": "Canada 10yr Bond",
+   "exchange": "CME",
+   "symbol": "CGB",
+   "score": -0.37
+  },
+  {
+   "text": "Canada 10yr Bond",
+   "exchange": "ICE_L",
+   "symbol": "G",
+   "score": -0.06
+  },
+  {
+   "text": "Canada 10yr Bond",
+   "exchange": "ASX",
+   "symbol": "ES",
+   "score": -0.12
+  },
+  {
+   "text": "Canada 10yr Bond",
+   "exchange": "ICE",
+   "symbol": "C",
+   "score": -0.06
+  },
+  {
+   "text": "Canada 10yr Bond",
+   "exchange": "CME",
+   "symbol": "CL",
+   "score": -0.06
+  },
+  {
+   "text": "Canada 10yr Bond",
+   "exchange": "ICE_L",
+   "symbol": "R",
+   "score": -0.06
+  },
+  {
+   "text": "Canada 10yr Bond",
+   "exchange": "MX",
+   "symbol": "CGB",
+   "score": 0.97
+  },
+  {
+   "text": "Canada 10yr Bond",
+   "exchange": "ASX",
+   "symbol": "YT",
+   "score": 0.22
+  },
+  {
+   "text": "Canada 10yr Bond",
+   "exchange": "CME",
+   "symbol": "ZN",
+   "score": 0.43999999999999995
+  },
+  {
+   "text": "Canada 10yr Bond",
+   "exchange": "ICE_L",
+   "symbol": "CL",
+   "score": -0.37
+  },
+  {
+   "text": "Canada 10yr Bond",
+   "exchange": "ICE",
+   "symbol": "G",
+   "score": -0.15
+  },
+  {
+   "text": "Canada 10yr Bond",
+   "exchange": "ASX",
+   "symbol": "XT",
+   "score": 0.72
+  },
+  {
+   "text": "Canada 10yr Bond",
+   "exchange": "CME",
+   "symbol": "ZC",
+   "score": -0.03
+  },
+  {
+   "text": "Canada 10yr Bond",
+   "exchange": "Eurex",
+   "symbol": "FGBL",
+   "score": -0.06
+  },
+  {
+   "text": "Canada 10yr Bond",
+   "exchange": "ASX",
+   "symbol": "CL",
+   "score": 0
+  },
+  {
+   "text": "Canada 10yr Bond",
+   "exchange": "LME",
+   "symbol": "ZS",
+   "score": -0.12
+  },
+  {
+   "text": "Canada 10yr Bond",
+   "exchange": "CME",
+   "symbol": "ZS",
+   "score": -0.03
+  },
+  {
+   "text": "Canada 10yr Bond",
+   "exchange": "Eurex",
+   "symbol": "FGBM",
+   "score": -0.06
+  },
+  {
+   "text": "Fictional",
+   "exchange": "CME",
+   "symbol": "ZF",
+   "score": -0.3400000000000001
+  },
+  {
+   "text": "Fictional",
+   "exchange": "CME",
+   "symbol": "ES",
+   "score": -0.56
+  },
+  {
+   "text": "Fictional",
+   "exchange": "CME",
+   "symbol": "CGB",
+   "score": -0.37
+  },
+  {
+   "text": "Fictional",
+   "exchange": "ICE_L",
+   "symbol": "G",
+   "score": -0.06
+  },
+  {
+   "text": "Fictional",
+   "exchange": "ASX",
+   "symbol": "ES",
+   "score": -0.12
+  },
+  {
+   "text": "Fictional",
+   "exchange": "ICE",
+   "symbol": "C",
+   "score": -0.06
+  },
+  {
+   "text": "Fictional",
+   "exchange": "CME",
+   "symbol": "CL",
+   "score": -0.06
+  },
+  {
+   "text": "Fictional",
+   "exchange": "ICE_L",
+   "symbol": "R",
+   "score": -0.06
+  },
+  {
+   "text": "Fictional",
+   "exchange": "MX",
+   "symbol": "CGB",
+   "score": -0.3700000000000001
+  },
+  {
+   "text": "Fictional",
+   "exchange": "ASX",
+   "symbol": "YT",
+   "score": -0.3400000000000001
+  },
+  {
+   "text": "Fictional",
+   "exchange": "CME",
+   "symbol": "ZN",
+   "score": -0.3400000000000001
+  },
+  {
+   "text": "Fictional",
+   "exchange": "ICE_L",
+   "symbol": "CL",
+   "score": -0.37
+  },
+  {
+   "text": "Fictional",
+   "exchange": "ICE",
+   "symbol": "G",
+   "score": -0.15
+  },
+  {
+   "text": "Fictional",
+   "exchange": "ASX",
+   "symbol": "XT",
+   "score": -0.3400000000000001
+  },
+  {
+   "text": "Fictional",
+   "exchange": "CME",
+   "symbol": "ZC",
+   "score": -0.03
+  },
+  {
+   "text": "Fictional",
+   "exchange": "Eurex",
+   "symbol": "FGBL",
+   "score": -0.06
+  },
+  {
+   "text": "Fictional",
+   "exchange": "ASX",
+   "symbol": "CL",
+   "score": 0
+  },
+  {
+   "text": "Fictional",
+   "exchange": "LME",
+   "symbol": "ZS",
+   "score": -0.12
+  },
+  {
+   "text": "Fictional",
+   "exchange": "CME",
+   "symbol": "ZS",
+   "score": -0.03
+  },
+  {
+   "text": "Fictional",
+   "exchange": "Eurex",
+   "symbol": "FGBM",
+   "score": -0.06
+  },
+  {
+   "text": "US 10yr Note",
+   "exchange": "CME",
+   "symbol": "ZF",
+   "score": 0.22
+  },
+  {
+   "text": "US 10yr Note",
+   "exchange": "CME",
+   "symbol": "ES",
+   "score": -0.56
+  },
+  {
+   "text": "US 10yr Note",
+   "exchange": "CME",
+   "symbol": "CGB",
+   "score": -0.37
+  },
+  {
+   "text": "US 10yr Note",
+   "exchange": "ICE_L",
+   "symbol": "G",
+   "score": -0.06
+  },
+  {
+   "text": "US 10yr Note",
+   "exchange": "ASX",
+   "symbol": "ES",
+   "score": -0.12
+  },
+  {
+   "text": "US 10yr Note",
+   "exchange": "ICE",
+   "symbol": "C",
+   "score": -0.06
+  },
+  {
+   "text": "US 10yr Note",
+   "exchange": "CME",
+   "symbol": "CL",
+   "score": -0.06
+  },
+  {
+   "text": "US 10yr Note",
+   "exchange": "ICE_L",
+   "symbol": "R",
+   "score": -0.06
+  },
+  {
+   "text": "US 10yr Note",
+   "exchange": "MX",
+   "symbol": "CGB",
+   "score": 0.4099999999999999
+  },
+  {
+   "text": "US 10yr Note",
+   "exchange": "ASX",
+   "symbol": "YT",
+   "score": -0.06
+  },
+  {
+   "text": "US 10yr Note",
+   "exchange": "CME",
+   "symbol": "ZN",
+   "score": 0.72
+  },
+  {
+   "text": "US 10yr Note",
+   "exchange": "ICE_L",
+   "symbol": "CL",
+   "score": -0.37
+  },
+  {
+   "text": "US 10yr Note",
+   "exchange": "ICE",
+   "symbol": "G",
+   "score": -0.15
+  },
+  {
+   "text": "US 10yr Note",
+   "exchange": "ASX",
+   "symbol": "XT",
+   "score": 0.43999999999999995
+  },
+  {
+   "text": "US 10yr Note",
+   "exchange": "CME",
+   "symbol": "ZC",
+   "score": -0.03
+  },
+  {
+   "text": "US 10yr Note",
+   "exchange": "Eurex",
+   "symbol": "FGBL",
+   "score": -0.06
+  },
+  {
+   "text": "US 10yr Note",
+   "exchange": "ASX",
+   "symbol": "CL",
+   "score": 0
+  },
+  {
+   "text": "US 10yr Note",
+   "exchange": "LME",
+   "symbol": "ZS",
+   "score": -0.12
+  },
+  {
+   "text": "US 10yr Note",
+   "exchange": "CME",
+   "symbol": "ZS",
+   "score": -0.03
+  },
+  {
+   "text": "US 10yr Note",
+   "exchange": "Eurex",
+   "symbol": "FGBM",
+   "score": -0.06
+  },
+  {
+   "text": "3 Month SOFR",
+   "exchange": "CME",
+   "symbol": "ZF",
+   "score": -0.3400000000000001
+  },
+  {
+   "text": "3 Month SOFR",
+   "exchange": "CME",
+   "symbol": "ES",
+   "score": -0.56
+  },
+  {
+   "text": "3 Month SOFR",
+   "exchange": "CME",
+   "symbol": "CGB",
+   "score": -0.37
+  },
+  {
+   "text": "3 Month SOFR",
+   "exchange": "ICE_L",
+   "symbol": "G",
+   "score": -0.06
+  },
+  {
+   "text": "3 Month SOFR",
+   "exchange": "ASX",
+   "symbol": "ES",
+   "score": -0.12
+  },
+  {
+   "text": "3 Month SOFR",
+   "exchange": "ICE",
+   "symbol": "C",
+   "score": -0.06
+  },
+  {
+   "text": "3 Month SOFR",
+   "exchange": "CME",
+   "symbol": "CL",
+   "score": -0.06
+  },
+  {
+   "text": "3 Month SOFR",
+   "exchange": "ICE_L",
+   "symbol": "R",
+   "score": -0.06
+  },
+  {
+   "text": "3 Month SOFR",
+   "exchange": "MX",
+   "symbol": "CGB",
+   "score": -0.3700000000000001
+  },
+  {
+   "text": "3 Month SOFR",
+   "exchange": "ASX",
+   "symbol": "YT",
+   "score": 0.24333333333333332
+  },
+  {
+   "text": "3 Month SOFR",
+   "exchange": "CME",
+   "symbol": "ZN",
+   "score": -0.3400000000000001
+  },
+  {
+   "text": "3 Month SOFR",
+   "exchange": "ICE_L",
+   "symbol": "CL",
+   "score": -0.37
+  },
+  {
+   "text": "3 Month SOFR",
+   "exchange": "ICE",
+   "symbol": "G",
+   "score": -0.15
+  },
+  {
+   "text": "3 Month SOFR",
+   "exchange": "ASX",
+   "symbol": "XT",
+   "score": -0.3400000000000001
+  },
+  {
+   "text": "3 Month SOFR",
+   "exchange": "CME",
+   "symbol": "ZC",
+   "score": -0.03
+  },
+  {
+   "text": "3 Month SOFR",
+   "exchange": "Eurex",
+   "symbol": "FGBL",
+   "score": -0.06
+  },
+  {
+   "text": "3 Month SOFR",
+   "exchange": "ASX",
+   "symbol": "CL",
+   "score": 0
+  },
+  {
+   "text": "3 Month SOFR",
+   "exchange": "LME",
+   "symbol": "ZS",
+   "score": -0.12
+  },
+  {
+   "text": "3 Month SOFR",
+   "exchange": "CME",
+   "symbol": "ZS",
+   "score": -0.03
+  },
+  {
+   "text": "3 Month SOFR",
+   "exchange": "Eurex",
+   "symbol": "FGBM",
+   "score": -0.06
+  },
+  {
+   "text": "Low Sulphur Gasoil",
+   "exchange": "CME",
+   "symbol": "ZF",
+   "score": -0.3400000000000001
+  },
+  {
+   "text": "Low Sulphur Gasoil",
+   "exchange": "CME",
+   "symbol": "ES",
+   "score": -0.56
+  },
+  {
+   "text": "Low Sulphur Gasoil",
+   "exchange": "CME",
+   "symbol": "CGB",
+   "score": -0.37
+  },
+  {
+   "text": "Low Sulphur Gasoil",
+   "exchange": "ICE_L",
+   "symbol": "G",
+   "score": -0.06
+  },
+  {
+   "text": "Low Sulphur Gasoil",
+   "exchange": "ASX",
+   "symbol": "ES",
+   "score": -0.12
+  },
+  {
+   "text": "Low Sulphur Gasoil",
+   "exchange": "ICE",
+   "symbol": "C",
+   "score": -0.06
+  },
+  {
+   "text": "Low Sulphur Gasoil",
+   "exchange": "CME",
+   "symbol": "CL",
+   "score": 0.30333333333333334
+  },
+  {
+   "text": "Low Sulphur Gasoil",
+   "exchange": "ICE_L",
+   "symbol": "R",
+   "score": -0.06
+  },
+  {
+   "text": "Low Sulphur Gasoil",
+   "exchange": "MX",
+   "symbol": "CGB",
+   "score": -0.3700000000000001
+  },
+  {
+   "text": "Low Sulphur Gasoil",
+   "exchange": "ASX",
+   "symbol": "YT",
+   "score": -0.3400000000000001
+  },
+  {
+   "text": "Low Sulphur Gasoil",
+   "exchange": "CME",
+   "symbol": "ZN",
+   "score": -0.3400000000000001
+  },
+  {
+   "text": "Low Sulphur Gasoil",
+   "exchange": "ICE_L",
+   "symbol": "CL",
+   "score": -0.37
+  },
+  {
+   "text": "Low Sulphur Gasoil",
+   "exchange": "ICE",
+   "symbol": "G",
+   "score": 0.94
+  },
+  {
+   "text": "Low Sulphur Gasoil",
+   "exchange": "ASX",
+   "symbol": "XT",
+   "score": -0.3400000000000001
+  },
+  {
+   "text": "Low Sulphur Gasoil",
+   "exchange": "CME",
+   "symbol": "ZC",
+   "score": -0.03
+  },
+  {
+   "text": "Low Sulphur Gasoil",
+   "exchange": "Eurex",
+   "symbol": "FGBL",
+   "score": -0.06
+  },
+  {
+   "text": "Low Sulphur Gasoil",
+   "exchange": "ASX",
+   "symbol": "CL",
+   "score": 0
+  },
+  {
+   "text": "Low Sulphur Gasoil",
+   "exchange": "LME",
+   "symbol": "ZS",
+   "score": -0.12
+  },
+  {
+   "text": "Low Sulphur Gasoil",
+   "exchange": "CME",
+   "symbol": "ZS",
+   "score": -0.03
+  },
+  {
+   "text": "Low Sulphur Gasoil",
+   "exchange": "Eurex",
+   "symbol": "FGBM",
+   "score": -0.06
+  },
+  {
+   "text": "Hard Red Winter Wheat",
+   "exchange": "CME",
+   "symbol": "ZF",
+   "score": -0.3400000000000001
+  },
+  {
+   "text": "Hard Red Winter Wheat",
+   "exchange": "CME",
+   "symbol": "ES",
+   "score": -0.56
+  },
+  {
+   "text": "Hard Red Winter Wheat",
+   "exchange": "CME",
+   "symbol": "CGB",
+   "score": -0.37
+  },
+  {
+   "text": "Hard Red Winter Wheat",
+   "exchange": "ICE_L",
+   "symbol": "G",
+   "score": -0.06
+  },
+  {
+   "text": "Hard Red Winter Wheat",
+   "exchange": "ASX",
+   "symbol": "ES",
+   "score": -0.12
+  },
+  {
+   "text": "Hard Red Winter Wheat",
+   "exchange": "ICE",
+   "symbol": "C",
+   "score": -0.06
+  },
+  {
+   "text": "Hard Red Winter Wheat",
+   "exchange": "CME",
+   "symbol": "CL",
+   "score": -0.06
+  },
+  {
+   "text": "Hard Red Winter Wheat",
+   "exchange": "ICE_L",
+   "symbol": "R",
+   "score": -0.06
+  },
+  {
+   "text": "Hard Red Winter Wheat",
+   "exchange": "MX",
+   "symbol": "CGB",
+   "score": -0.3700000000000001
+  },
+  {
+   "text": "Hard Red Winter Wheat",
+   "exchange": "ASX",
+   "symbol": "YT",
+   "score": -0.3400000000000001
+  },
+  {
+   "text": "Hard Red Winter Wheat",
+   "exchange": "CME",
+   "symbol": "ZN",
+   "score": -0.3400000000000001
+  },
+  {
+   "text": "Hard Red Winter Wheat",
+   "exchange": "ICE_L",
+   "symbol": "CL",
+   "score": -0.37
+  },
+  {
+   "text": "Hard Red Winter Wheat",
+   "exchange": "ICE",
+   "symbol": "G",
+   "score": -0.15
+  },
+  {
+   "text": "Hard Red Winter Wheat",
+   "exchange": "ASX",
+   "symbol": "XT",
+   "score": -0.3400000000000001
+  },
+  {
+   "text": "Hard Red Winter Wheat",
+   "exchange": "CME",
+   "symbol": "ZC",
+   "score": -0.03
+  },
+  {
+   "text": "Hard Red Winter Wheat",
+   "exchange": "Eurex",
+   "symbol": "FGBL",
+   "score": -0.06
+  },
+  {
+   "text": "Hard Red Winter Wheat",
+   "exchange": "ASX",
+   "symbol": "CL",
+   "score": 0
+  },
+  {
+   "text": "Hard Red Winter Wheat",
+   "exchange": "LME",
+   "symbol": "ZS",
+   "score": -0.12
+  },
+  {
+   "text": "Hard Red Winter Wheat",
+   "exchange": "CME",
+   "symbol": "ZS",
+   "score": -0.03
+  },
+  {
+   "text": "Hard Red Winter Wheat",
+   "exchange": "Eurex",
+   "symbol": "FGBM",
+   "score": -0.06
+  },
+  {
+   "text": "E-mini S&P 500",
+   "exchange": "CME",
+   "symbol": "ZF",
+   "score": -0.3400000000000001
+  },
+  {
+   "text": "E-mini S&P 500",
+   "exchange": "CME",
+   "symbol": "ES",
+   "score": 1
+  },
+  {
+   "text": "E-mini S&P 500",
+   "exchange": "CME",
+   "symbol": "CGB",
+   "score": -0.37
+  },
+  {
+   "text": "E-mini S&P 500",
+   "exchange": "ICE_L",
+   "symbol": "G",
+   "score": -0.06
+  },
+  {
+   "text": "E-mini S&P 500",
+   "exchange": "ASX",
+   "symbol": "ES",
+   "score": -0.12
+  },
+  {
+   "text": "E-mini S&P 500",
+   "exchange": "ICE",
+   "symbol": "C",
+   "score": -0.06
+  },
+  {
+   "text": "E-mini S&P 500",
+   "exchange": "CME",
+   "symbol": "CL",
+   "score": -0.06
+  },
+  {
+   "text": "E-mini S&P 500",
+   "exchange": "ICE_L",
+   "symbol": "R",
+   "score": -0.06
+  },
+  {
+   "text": "E-mini S&P 500",
+   "exchange": "MX",
+   "symbol": "CGB",
+   "score": -0.3700000000000001
+  },
+  {
+   "text": "E-mini S&P 500",
+   "exchange": "ASX",
+   "symbol": "YT",
+   "score": -0.3400000000000001
+  },
+  {
+   "text": "E-mini S&P 500",
+   "exchange": "CME",
+   "symbol": "ZN",
+   "score": -0.3400000000000001
+  },
+  {
+   "text": "E-mini S&P 500",
+   "exchange": "ICE_L",
+   "symbol": "CL",
+   "score": -0.37
+  },
+  {
+   "text": "E-mini S&P 500",
+   "exchange": "ICE",
+   "symbol": "G",
+   "score": -0.15
+  },
+  {
+   "text": "E-mini S&P 500",
+   "exchange": "ASX",
+   "symbol": "XT",
+   "score": -0.3400000000000001
+  },
+  {
+   "text": "E-mini S&P 500",
+   "exchange": "CME",
+   "symbol": "ZC",
+   "score": -0.03
+  },
+  {
+   "text": "E-mini S&P 500",
+   "exchange": "Eurex",
+   "symbol": "FGBL",
+   "score": -0.06
+  },
+  {
+   "text": "E-mini S&P 500",
+   "exchange": "ASX",
+   "symbol": "CL",
+   "score": 0
+  },
+  {
+   "text": "E-mini S&P 500",
+   "exchange": "LME",
+   "symbol": "ZS",
+   "score": -0.12
+  },
+  {
+   "text": "E-mini S&P 500",
+   "exchange": "CME",
+   "symbol": "ZS",
+   "score": -0.03
+  },
+  {
+   "text": "E-mini S&P 500",
+   "exchange": "Eurex",
+   "symbol": "FGBM",
+   "score": -0.06
+  },
+  {
+   "text": "Euro-Bund",
+   "exchange": "CME",
+   "symbol": "ZF",
+   "score": -0.3400000000000001
+  },
+  {
+   "text": "Euro-Bund",
+   "exchange": "CME",
+   "symbol": "ES",
+   "score": -0.56
+  },
+  {
+   "text": "Euro-Bund",
+   "exchange": "CME",
+   "symbol": "CGB",
+   "score": -0.37
+  },
+  {
+   "text": "Euro-Bund",
+   "exchange": "ICE_L",
+   "symbol": "G",
+   "score": -0.06
+  },
+  {
+   "text": "Euro-Bund",
+   "exchange": "ASX",
+   "symbol": "ES",
+   "score": -0.12
+  },
+  {
+   "text": "Euro-Bund",
+   "exchange": "ICE",
+   "symbol": "C",
+   "score": -0.06
+  },
+  {
+   "text": "Euro-Bund",
+   "exchange": "CME",
+   "symbol": "CL",
+   "score": -0.06
+  },
+  {
+   "text": "Euro-Bund",
+   "exchange": "ICE_L",
+   "symbol": "R",
+   "score": -0.06
+  },
+  {
+   "text": "Euro-Bund",
+   "exchange": "MX",
+   "symbol": "CGB",
+   "score": -0.3700000000000001
+  },
+  {
+   "text": "Euro-Bund",
+   "exchange": "ASX",
+   "symbol": "YT",
+   "score": -0.3400000000000001
+  },
+  {
+   "text": "Euro-Bund",
+   "exchange": "CME",
+   "symbol": "ZN",
+   "score": -0.3400000000000001
+  },
+  {
+   "text": "Euro-Bund",
+   "exchange": "ICE_L",
+   "symbol": "CL",
+   "score": -0.37
+  },
+  {
+   "text": "Euro-Bund",
+   "exchange": "ICE",
+   "symbol": "G",
+   "score": -0.15
+  },
+  {
+   "text": "Euro-Bund",
+   "exchange": "ASX",
+   "symbol": "XT",
+   "score": -0.3400000000000001
+  },
+  {
+   "text": "Euro-Bund",
+   "exchange": "CME",
+   "symbol": "ZC",
+   "score": -0.03
+  },
+  {
+   "text": "Euro-Bund",
+   "exchange": "Eurex",
+   "symbol": "FGBL",
+   "score": 1
+  },
+  {
+   "text": "Euro-Bund",
+   "exchange": "ASX",
+   "symbol": "CL",
+   "score": 0
+  },
+  {
+   "text": "Euro-Bund",
+   "exchange": "LME",
+   "symbol": "ZS",
+   "score": -0.12
+  },
+  {
+   "text": "Euro-Bund",
+   "exchange": "CME",
+   "symbol": "ZS",
+   "score": -0.03
+  },
+  {
+   "text": "Euro-Bund",
+   "exchange": "Eurex",
+   "symbol": "FGBM",
+   "score": 0.47
+  },
+  {
+   "text": "AUD/USD",
+   "exchange": "CME",
+   "symbol": "ZF",
+   "score": -0.3400000000000001
+  },
+  {
+   "text": "AUD/USD",
+   "exchange": "CME",
+   "symbol": "ES",
+   "score": -0.56
+  },
+  {
+   "text": "AUD/USD",
+   "exchange": "CME",
+   "symbol": "CGB",
+   "score": -0.37
+  },
+  {
+   "text": "AUD/USD",
+   "exchange": "ICE_L",
+   "symbol": "G",
+   "score": -0.06
+  },
+  {
+   "text": "AUD/USD",
+   "exchange": "ASX",
+   "symbol": "ES",
+   "score": -0.12
+  },
+  {
+   "text": "AUD/USD",
+   "exchange": "ICE",
+   "symbol": "C",
+   "score": -0.06
+  },
+  {
+   "text": "AUD/USD",
+   "exchange": "CME",
+   "symbol": "CL",
+   "score": -0.06
+  },
+  {
+   "text": "AUD/USD",
+   "exchange": "ICE_L",
+   "symbol": "R",
+   "score": -0.06
+  },
+  {
+   "text": "AUD/USD",
+   "exchange": "MX",
+   "symbol": "CGB",
+   "score": -0.3700000000000001
+  },
+  {
+   "text": "AUD/USD",
+   "exchange": "ASX",
+   "symbol": "YT",
+   "score": -0.3400000000000001
+  },
+  {
+   "text": "AUD/USD",
+   "exchange": "CME",
+   "symbol": "ZN",
+   "score": -0.3400000000000001
+  },
+  {
+   "text": "AUD/USD",
+   "exchange": "ICE_L",
+   "symbol": "CL",
+   "score": -0.37
+  },
+  {
+   "text": "AUD/USD",
+   "exchange": "ICE",
+   "symbol": "G",
+   "score": -0.15
+  },
+  {
+   "text": "AUD/USD",
+   "exchange": "ASX",
+   "symbol": "XT",
+   "score": -0.3400000000000001
+  },
+  {
+   "text": "AUD/USD",
+   "exchange": "CME",
+   "symbol": "ZC",
+   "score": -0.03
+  },
+  {
+   "text": "AUD/USD",
+   "exchange": "Eurex",
+   "symbol": "FGBL",
+   "score": -0.06
+  },
+  {
+   "text": "AUD/USD",
+   "exchange": "ASX",
+   "symbol": "CL",
+   "score": 0
+  },
+  {
+   "text": "AUD/USD",
+   "exchange": "LME",
+   "symbol": "ZS",
+   "score": -0.12
+  },
+  {
+   "text": "AUD/USD",
+   "exchange": "CME",
+   "symbol": "ZS",
+   "score": -0.03
+  },
+  {
+   "text": "AUD/USD",
+   "exchange": "Eurex",
+   "symbol": "FGBM",
+   "score": -0.06
+  },
+  {
+   "text": "Nikkei 225 (Yen)",
+   "exchange": "CME",
+   "symbol": "ZF",
+   "score": -0.3400000000000001
+  },
+  {
+   "text": "Nikkei 225 (Yen)",
+   "exchange": "CME",
+   "symbol": "ES",
+   "score": -0.56
+  },
+  {
+   "text": "Nikkei 225 (Yen)",
+   "exchange": "CME",
+   "symbol": "CGB",
+   "score": -0.37
+  },
+  {
+   "text": "Nikkei 225 (Yen)",
+   "exchange": "ICE_L",
+   "symbol": "G",
+   "score": -0.06
+  },
+  {
+   "text": "Nikkei 225 (Yen)",
+   "exchange": "ASX",
+   "symbol": "ES",
+   "score": -0.12
+  },
+  {
+   "text": "Nikkei 225 (Yen)",
+   "exchange": "ICE",
+   "symbol": "C",
+   "score": -0.06
+  },
+  {
+   "text": "Nikkei 225 (Yen)",
+   "exchange": "CME",
+   "symbol": "CL",
+   "score": -0.06
+  },
+  {
+   "text": "Nikkei 225 (Yen)",
+   "exchange": "ICE_L",
+   "symbol": "R",
+   "score": -0.06
+  },
+  {
+   "text": "Nikkei 225 (Yen)",
+   "exchange": "MX",
+   "symbol": "CGB",
+   "score": -0.3700000000000001
+  },
+  {
+   "text": "Nikkei 225 (Yen)",
+   "exchange": "ASX",
+   "symbol": "YT",
+   "score": -0.3400000000000001
+  },
+  {
+   "text": "Nikkei 225 (Yen)",
+   "exchange": "CME",
+   "symbol": "ZN",
+   "score": -0.3400000000000001
+  },
+  {
+   "text": "Nikkei 225 (Yen)",
+   "exchange": "ICE_L",
+   "symbol": "CL",
+   "score": -0.37
+  },
+  {
+   "text": "Nikkei 225 (Yen)",
+   "exchange": "ICE",
+   "symbol": "G",
+   "score": -0.15
+  },
+  {
+   "text": "Nikkei 225 (Yen)",
+   "exchange": "ASX",
+   "symbol": "XT",
+   "score": -0.3400000000000001
+  },
+  {
+   "text": "Nikkei 225 (Yen)",
+   "exchange": "CME",
+   "symbol": "ZC",
+   "score": -0.03
+  },
+  {
+   "text": "Nikkei 225 (Yen)",
+   "exchange": "Eurex",
+   "symbol": "FGBL",
+   "score": -0.06
+  },
+  {
+   "text": "Nikkei 225 (Yen)",
+   "exchange": "ASX",
+   "symbol": "CL",
+   "score": 0
+  },
+  {
+   "text": "Nikkei 225 (Yen)",
+   "exchange": "LME",
+   "symbol": "ZS",
+   "score": -0.12
+  },
+  {
+   "text": "Nikkei 225 (Yen)",
+   "exchange": "CME",
+   "symbol": "ZS",
+   "score": -0.03
+  },
+  {
+   "text": "Nikkei 225 (Yen)",
+   "exchange": "Eurex",
+   "symbol": "FGBM",
+   "score": -0.06
+  },
+  {
+   "text": "T-Bond 30 yrs",
+   "exchange": "CME",
+   "symbol": "ZF",
+   "score": 0.22
+  },
+  {
+   "text": "T-Bond 30 yrs",
+   "exchange": "CME",
+   "symbol": "ES",
+   "score": -0.56
+  },
+  {
+   "text": "T-Bond 30 yrs",
+   "exchange": "CME",
+   "symbol": "CGB",
+   "score": -0.37
+  },
+  {
+   "text": "T-Bond 30 yrs",
+   "exchange": "ICE_L",
+   "symbol": "G",
+   "score": -0.06
+  },
+  {
+   "text": "T-Bond 30 yrs",
+   "exchange": "ASX",
+   "symbol": "ES",
+   "score": -0.12
+  },
+  {
+   "text": "T-Bond 30 yrs",
+   "exchange": "ICE",
+   "symbol": "C",
+   "score": -0.06
+  },
+  {
+   "text": "T-Bond 30 yrs",
+   "exchange": "CME",
+   "symbol": "CL",
+   "score": -0.06
+  },
+  {
+   "text": "T-Bond 30 yrs",
+   "exchange": "ICE_L",
+   "symbol": "R",
+   "score": -0.06
+  },
+  {
+   "text": "T-Bond 30 yrs",
+   "exchange": "MX",
+   "symbol": "CGB",
+   "score": 0.19
+  },
+  {
+   "text": "T-Bond 30 yrs",
+   "exchange": "ASX",
+   "symbol": "YT",
+   "score": 0.5
+  },
+  {
+   "text": "T-Bond 30 yrs",
+   "exchange": "CME",
+   "symbol": "ZN",
+   "score": 0.22
+  },
+  {
+   "text": "T-Bond 30 yrs",
+   "exchange": "ICE_L",
+   "symbol": "CL",
+   "score": -0.37
+  },
+  {
+   "text": "T-Bond 30 yrs",
+   "exchange": "ICE",
+   "symbol": "G",
+   "score": -0.15
+  },
+  {
+   "text": "T-Bond 30 yrs",
+   "exchange": "ASX",
+   "symbol": "XT",
+   "score": 0.5
+  },
+  {
+   "text": "T-Bond 30 yrs",
+   "exchange": "CME",
+   "symbol": "ZC",
+   "score": -0.03
+  },
+  {
+   "text": "T-Bond 30 yrs",
+   "exchange": "Eurex",
+   "symbol": "FGBL",
+   "score": -0.06
+  },
+  {
+   "text": "T-Bond 30 yrs",
+   "exchange": "ASX",
+   "symbol": "CL",
+   "score": 0
+  },
+  {
+   "text": "T-Bond 30 yrs",
+   "exchange": "LME",
+   "symbol": "ZS",
+   "score": -0.12
+  },
+  {
+   "text": "T-Bond 30 yrs",
+   "exchange": "CME",
+   "symbol": "ZS",
+   "score": -0.03
+  },
+  {
+   "text": "T-Bond 30 yrs",
+   "exchange": "Eurex",
+   "symbol": "FGBM",
+   "score": -0.06
+  },
+  {
+   "text": "Two Year U.S. T-Notes",
+   "exchange": "CME",
+   "symbol": "ZF",
+   "score": 0.35
+  },
+  {
+   "text": "Two Year U.S. T-Notes",
+   "exchange": "CME",
+   "symbol": "ES",
+   "score": -0.56
+  },
+  {
+   "text": "Two Year U.S. T-Notes",
+   "exchange": "CME",
+   "symbol": "CGB",
+   "score": -0.37
+  },
+  {
+   "text": "Two Year U.S. T-Notes",
+   "exchange": "ICE_L",
+   "symbol": "G",
+   "score": -0.06
+  },
+  {
+   "text": "Two Year U.S. T-Notes",
+   "exchange": "ASX",
+   "symbol": "ES",
+   "score": -0.12
+  },
+  {
+   "text": "Two Year U.S. T-Notes",
+   "exchange": "ICE",
+   "symbol": "C",
+   "score": -0.06
+  },
+  {
+   "text": "Two Year U.S. T-Notes",
+   "exchange": "CME",
+   "symbol": "CL",
+   "score": -0.06
+  },
+  {
+   "text": "Two Year U.S. T-Notes",
+   "exchange": "ICE_L",
+   "symbol": "R",
+   "score": -0.06
+  },
+  {
+   "text": "Two Year U.S. T-Notes",
+   "exchange": "MX",
+   "symbol": "CGB",
+   "score": -0.13999999999999999
+  },
+  {
+   "text": "Two Year U.S. T-Notes",
+   "exchange": "ASX",
+   "symbol": "YT",
+   "score": 0.12000000000000002
+  },
+  {
+   "text": "Two Year U.S. T-Notes",
+   "exchange": "CME",
+   "symbol": "ZN",
+   "score": 0.35
+  },
+  {
+   "text": "Two Year U.S. T-Notes",
+   "exchange": "ICE_L",
+   "symbol": "CL",
+   "score": -0.37
+  },
+  {
+   "text": "Two Year U.S. T-Notes",
+   "exchange": "ICE",
+   "symbol": "G",
+   "score": -0.15
+  },
+  {
+   "text": "Two Year U.S. T-Notes",
+   "exchange": "ASX",
+   "symbol": "XT",
+   "score": 0.12000000000000002
+  },
+  {
+   "text": "Two Year U.S. T-Notes",
+   "exchange": "CME",
+   "symbol": "ZC",
+   "score": -0.03
+  },
+  {
+   "text": "Two Year U.S. T-Notes",
+   "exchange": "Eurex",
+   "symbol": "FGBL",
+   "score": -0.06
+  },
+  {
+   "text": "Two Year U.S. T-Notes",
+   "exchange": "ASX",
+   "symbol": "CL",
+   "score": 0
+  },
+  {
+   "text": "Two Year U.S. T-Notes",
+   "exchange": "LME",
+   "symbol": "ZS",
+   "score": -0.12
+  },
+  {
+   "text": "Two Year U.S. T-Notes",
+   "exchange": "CME",
+   "symbol": "ZS",
+   "score": -0.03
+  },
+  {
+   "text": "Two Year U.S. T-Notes",
+   "exchange": "Eurex",
+   "symbol": "FGBM",
+   "score": -0.06
+  },
+  {
+   "text": "...",
+   "exchange": "CME",
+   "symbol": "ZF",
+   "score": 0
+  },
+  {
+   "text": "...",
+   "exchange": "CME",
+   "symbol": "ES",
+   "score": 0
+  },
+  {
+   "text": "...",
+   "exchange": "CME",
+   "symbol": "CGB",
+   "score": 0
+  },
+  {
+   "text": "...",
+   "exchange": "ICE_L",
+   "symbol": "G",
+   "score": 0
+  },
+  {
+   "text": "...",
+   "exchange": "ASX",
+   "symbol": "ES",
+   "score": 0
+  },
+  {
+   "text": "...",
+   "exchange": "ICE",
+   "symbol": "C",
+   "score": 0
+  },
+  {
+   "text": "...",
+   "exchange": "CME",
+   "symbol": "CL",
+   "score": 0
+  },
+  {
+   "text": "...",
+   "exchange": "ICE_L",
+   "symbol": "R",
+   "score": 0
+  },
+  {
+   "text": "...",
+   "exchange": "MX",
+   "symbol": "CGB",
+   "score": 0
+  },
+  {
+   "text": "...",
+   "exchange": "ASX",
+   "symbol": "YT",
+   "score": 0
+  },
+  {
+   "text": "...",
+   "exchange": "CME",
+   "symbol": "ZN",
+   "score": 0
+  },
+  {
+   "text": "...",
+   "exchange": "ICE_L",
+   "symbol": "CL",
+   "score": 0
+  },
+  {
+   "text": "...",
+   "exchange": "ICE",
+   "symbol": "G",
+   "score": 0
+  },
+  {
+   "text": "...",
+   "exchange": "ASX",
+   "symbol": "XT",
+   "score": 0
+  },
+  {
+   "text": "...",
+   "exchange": "CME",
+   "symbol": "ZC",
+   "score": 0
+  },
+  {
+   "text": "...",
+   "exchange": "Eurex",
+   "symbol": "FGBL",
+   "score": 0
+  },
+  {
+   "text": "...",
+   "exchange": "ASX",
+   "symbol": "CL",
+   "score": 0
+  },
+  {
+   "text": "...",
+   "exchange": "LME",
+   "symbol": "ZS",
+   "score": 0
+  },
+  {
+   "text": "...",
+   "exchange": "CME",
+   "symbol": "ZS",
+   "score": 0
+  },
+  {
+   "text": "...",
+   "exchange": "Eurex",
+   "symbol": "FGBM",
+   "score": 0
+  },
+  {
+   "text": "",
+   "exchange": "CME",
+   "symbol": "ZF",
+   "score": 0
+  },
+  {
+   "text": "",
+   "exchange": "CME",
+   "symbol": "ES",
+   "score": 0
+  },
+  {
+   "text": "",
+   "exchange": "CME",
+   "symbol": "CGB",
+   "score": 0
+  },
+  {
+   "text": "",
+   "exchange": "ICE_L",
+   "symbol": "G",
+   "score": 0
+  },
+  {
+   "text": "",
+   "exchange": "ASX",
+   "symbol": "ES",
+   "score": 0
+  },
+  {
+   "text": "",
+   "exchange": "ICE",
+   "symbol": "C",
+   "score": 0
+  },
+  {
+   "text": "",
+   "exchange": "CME",
+   "symbol": "CL",
+   "score": 0
+  },
+  {
+   "text": "",
+   "exchange": "ICE_L",
+   "symbol": "R",
+   "score": 0
+  },
+  {
+   "text": "",
+   "exchange": "MX",
+   "symbol": "CGB",
+   "score": 0
+  },
+  {
+   "text": "",
+   "exchange": "ASX",
+   "symbol": "YT",
+   "score": 0
+  },
+  {
+   "text": "",
+   "exchange": "CME",
+   "symbol": "ZN",
+   "score": 0
+  },
+  {
+   "text": "",
+   "exchange": "ICE_L",
+   "symbol": "CL",
+   "score": 0
+  },
+  {
+   "text": "",
+   "exchange": "ICE",
+   "symbol": "G",
+   "score": 0
+  },
+  {
+   "text": "",
+   "exchange": "ASX",
+   "symbol": "XT",
+   "score": 0
+  },
+  {
+   "text": "",
+   "exchange": "CME",
+   "symbol": "ZC",
+   "score": 0
+  },
+  {
+   "text": "",
+   "exchange": "Eurex",
+   "symbol": "FGBL",
+   "score": 0
+  },
+  {
+   "text": "",
+   "exchange": "ASX",
+   "symbol": "CL",
+   "score": 0
+  },
+  {
+   "text": "",
+   "exchange": "LME",
+   "symbol": "ZS",
+   "score": 0
+  },
+  {
+   "text": "",
+   "exchange": "CME",
+   "symbol": "ZS",
+   "score": 0
+  },
+  {
+   "text": "",
+   "exchange": "Eurex",
+   "symbol": "FGBM",
+   "score": 0
+  }
+ ],
+ "ric_rank": [
+  {
+   "text": "US 10yr Note",
+   "ranked": [
+    {
+     "p": "CME ZN",
+     "name": 0.72,
+     "total": 0.72
+    },
+    {
+     "p": "ASX XT",
+     "name": 0.43999999999999995,
+     "total": 0.43999999999999995
+    },
+    {
+     "p": "MX CGB",
+     "name": 0.4099999999999999,
+     "total": 0.4099999999999999
+    },
+    {
+     "p": "CME ZF",
+     "name": 0.22,
+     "total": 0.22
+    }
+   ]
+  },
+  {
+   "text": "Corn",
+   "ranked": [
+    {
+     "p": "CME ZC",
+     "name": 1,
+     "total": 1
+    }
+   ]
+  },
+  {
+   "text": "E-mini S&P 500",
+   "ranked": [
+    {
+     "p": "CME ES",
+     "name": 1,
+     "total": 1
+    }
+   ]
+  },
+  {
+   "text": "WTI Crude Oil",
+   "ranked": [
+    {
+     "p": "CME CL",
+     "name": 0.6666666666666666,
+     "total": 0.6666666666666666
+    },
+    {
+     "p": "ICE G",
+     "name": 0.21333333333333332,
+     "total": 0.21333333333333332
+    }
+   ]
+  },
+  {
+   "text": "Euro Bund",
+   "ranked": [
+    {
+     "p": "Eurex FGBL",
+     "name": 1,
+     "total": 1
+    },
+    {
+     "p": "Eurex FGBM",
+     "name": 0.47,
+     "total": 0.47
+    }
+   ]
+  },
+  {
+   "text": "Long Gilt",
+   "ranked": [
+    {
+     "p": "ICE_L R",
+     "name": 1,
+     "total": 1
+    },
+    {
+     "p": "ICE_L G",
+     "name": 0.47,
+     "total": 0.47
+    }
+   ]
+  },
+  {
+   "text": "Short Gilt",
+   "ranked": [
+    {
+     "p": "ICE_L G",
+     "name": 1,
+     "total": 1
+    },
+    {
+     "p": "ICE_L R",
+     "name": 0.47,
+     "total": 0.47
+    }
+   ]
+  },
+  {
+   "text": "Australia 3yr Bond",
+   "ranked": [
+    {
+     "p": "ASX YT",
+     "name": 0.72,
+     "total": 0.72
+    },
+    {
+     "p": "ASX XT",
+     "name": 0.22,
+     "total": 0.22
+    },
+    {
+     "p": "MX CGB",
+     "name": 0.19,
+     "total": 0.19
+    }
+   ]
+  },
+  {
+   "text": "Canada 10yr Bond",
+   "ranked": [
+    {
+     "p": "MX CGB",
+     "name": 0.97,
+     "total": 0.97
+    },
+    {
+     "p": "ASX XT",
+     "name": 0.72,
+     "total": 0.72
+    },
+    {
+     "p": "CME ZN",
+     "name": 0.43999999999999995,
+     "total": 0.43999999999999995
+    },
+    {
+     "p": "ASX YT",
+     "name": 0.22,
+     "total": 0.22
+    }
+   ]
+  },
+  {
+   "text": "Fictional",
+   "ranked": []
+  },
+  {
+   "text": "US 10yr Note",
+   "ranked": [
+    {
+     "p": "CME ZN",
+     "name": 0.72,
+     "total": 0.72
+    },
+    {
+     "p": "ASX XT",
+     "name": 0.43999999999999995,
+     "total": 0.43999999999999995
+    },
+    {
+     "p": "MX CGB",
+     "name": 0.4099999999999999,
+     "total": 0.4099999999999999
+    },
+    {
+     "p": "CME ZF",
+     "name": 0.22,
+     "total": 0.22
+    }
+   ]
+  },
+  {
+   "text": "3 Month SOFR",
+   "ranked": [
+    {
+     "p": "ASX YT",
+     "name": 0.24333333333333332,
+     "total": 0.24333333333333332
+    }
+   ]
+  },
+  {
+   "text": "Low Sulphur Gasoil",
+   "ranked": [
+    {
+     "p": "ICE G",
+     "name": 0.94,
+     "total": 0.94
+    },
+    {
+     "p": "CME CL",
+     "name": 0.30333333333333334,
+     "total": 0.30333333333333334
+    }
+   ]
+  },
+  {
+   "text": "Hard Red Winter Wheat",
+   "ranked": []
+  },
+  {
+   "text": "E-mini S&P 500",
+   "ranked": [
+    {
+     "p": "CME ES",
+     "name": 1,
+     "total": 1
+    }
+   ]
+  },
+  {
+   "text": "Euro-Bund",
+   "ranked": [
+    {
+     "p": "Eurex FGBL",
+     "name": 1,
+     "total": 1
+    },
+    {
+     "p": "Eurex FGBM",
+     "name": 0.47,
+     "total": 0.47
+    }
+   ]
+  },
+  {
+   "text": "AUD/USD",
+   "ranked": []
+  },
+  {
+   "text": "Nikkei 225 (Yen)",
+   "ranked": []
+  },
+  {
+   "text": "T-Bond 30 yrs",
+   "ranked": [
+    {
+     "p": "ASX YT",
+     "name": 0.5,
+     "total": 0.5
+    },
+    {
+     "p": "ASX XT",
+     "name": 0.5,
+     "total": 0.5
+    },
+    {
+     "p": "CME ZF",
+     "name": 0.22,
+     "total": 0.22
+    },
+    {
+     "p": "CME ZN",
+     "name": 0.22,
+     "total": 0.22
+    },
+    {
+     "p": "MX CGB",
+     "name": 0.19,
+     "total": 0.19
+    }
+   ]
+  },
+  {
+   "text": "Two Year U.S. T-Notes",
+   "ranked": [
+    {
+     "p": "CME ZF",
+     "name": 0.35,
+     "total": 0.35
+    },
+    {
+     "p": "CME ZN",
+     "name": 0.35,
+     "total": 0.35
+    },
+    {
+     "p": "ASX YT",
+     "name": 0.12000000000000002,
+     "total": 0.12000000000000002
+    },
+    {
+     "p": "ASX XT",
+     "name": 0.12000000000000002,
+     "total": 0.12000000000000002
+    }
+   ]
+  },
+  {
+   "text": "...",
+   "ranked": []
+  },
+  {
+   "text": "",
+   "ranked": []
+  }
+ ],
+ "ric_exchanges": [
+  {
+   "exchange": "CBOT",
+   "tt": [
+    "CME"
+   ]
+  },
+  {
+   "exchange": "ICE Europe",
+   "tt": [
+    "ICE_L",
+    "ICE"
+   ]
+  },
+  {
+   "exchange": "ICE",
+   "tt": [
+    "ICE",
+    "ICE_L"
+   ]
+  },
+  {
+   "exchange": "SFE",
+   "tt": [
+    "ASX"
+   ]
+  },
+  {
+   "exchange": "ME",
+   "tt": [
+    "MX"
+   ]
+  },
+  {
+   "exchange": "EUREX",
+   "tt": [
+    "Eurex"
+   ]
+  },
+  {
+   "exchange": "IEU",
+   "tt": [
+    "ICE_L",
+    "ICE"
+   ]
+  },
+  {
+   "exchange": "Endex",
+   "tt": [
+    "ICE",
+    "ICE_L"
+   ]
+  },
+  {
+   "exchange": "cboe",
+   "tt": [
+    "CFE"
+   ]
+  },
+  {
+   "exchange": "",
+   "tt": null
+  },
+  {
+   "exchange": "Nowhere",
+   "tt": null
+  },
+  {
+   "exchange": "ASX",
+   "tt": [
+    "ASX"
+   ]
+  },
+  {
+   "exchange": "Eurex",
+   "tt": [
+    "Eurex"
+   ]
+  },
+  {
+   "exchange": "c.b.o.t",
+   "tt": [
+    "CME"
+   ]
+  }
+ ],
+ "ric_output_columns": [
+  {
+   "headers": [
+    "A",
+    "Max Order",
+    "B",
+    "Max Net"
+   ],
+   "cols": {
+    "maxOrder": "Max Order",
+    "maxNet": "Max Net"
+   },
+   "out": [
+    "A",
+    "TT Exchange",
+    "TT Product Symbol",
+    "Max Order",
+    "B",
+    "Max Net"
+   ]
+  },
+  {
+   "headers": [
+    "A",
+    "B"
+   ],
+   "cols": {},
+   "out": [
+    "A",
+    "B",
+    "TT Exchange",
+    "TT Product Symbol"
+   ]
+  },
+  {
+   "headers": [
+    "A",
+    "TT Exchange",
+    "Max Net",
+    "TT Product Symbol"
+   ],
+   "cols": {
+    "maxNet": "Max Net"
+   },
+   "out": [
+    "A",
+    "TT Exchange",
+    "TT Product Symbol",
+    "Max Net"
+   ]
+  }
+ ],
+ "ric_mapping_csv": {
+  "mappings": [
+   {
+    "ricRoot": "FLG",
+    "exchange": "ICE, Europe",
+    "ttExchange": "ICE_L",
+    "ttSymbol": "R"
+   }
+  ],
+  "skipped": 1
+ },
+ "ric_real_world": {
+  "rows": [
+   {
+    "Exch": "AEX",
+    "RIC": "AEX",
+    "Description": "AEX Index",
+    "Max Order": "7",
+    "Max Net": "14",
+    "Expected TT Exchange": "Euronext",
+    "Expected TT Symbol": "kFTI"
+   },
+   {
+    "Exch": "CBF",
+    "RIC": "VX",
+    "Description": "Cboe Volatility Index",
+    "Max Order": "7",
+    "Max Net": "14",
+    "Expected TT Exchange": "CFE",
+    "Expected TT Symbol": "VX"
+   },
+   {
+    "Exch": "CBT",
+    "RIC": "BO",
+    "Description": "Soybean Oil",
+    "Max Order": "7",
+    "Max Net": "14",
+    "Expected TT Exchange": "CME",
+    "Expected TT Symbol": "ZL"
+   },
+   {
+    "Exch": "CBT",
+    "RIC": "C",
+    "Description": "Corn",
+    "Max Order": "7",
+    "Max Net": "14",
+    "Expected TT Exchange": "CME",
+    "Expected TT Symbol": "ZC"
+   },
+   {
+    "Exch": "CBT",
+    "RIC": "FV",
+    "Description": "5Yr US T-Notes",
+    "Max Order": "7",
+    "Max Net": "14",
+    "Expected TT Exchange": "CME",
+    "Expected TT Symbol": "ZF"
+   },
+   {
+    "Exch": "CBT",
+    "RIC": "KW",
+    "Description": "KC Hard Red Winter Wheat",
+    "Max Order": "7",
+    "Max Net": "14",
+    "Expected TT Exchange": "CME",
+    "Expected TT Symbol": "KE"
+   },
+   {
+    "Exch": "CBT",
+    "RIC": "SM",
+    "Description": "Soybean Meal",
+    "Max Order": "7",
+    "Max Net": "14",
+    "Expected TT Exchange": "CME",
+    "Expected TT Symbol": "ZM"
+   },
+   {
+    "Exch": "CBT",
+    "RIC": "TU",
+    "Description": "2Yr US T-Notes",
+    "Max Order": "7",
+    "Max Net": "14",
+    "Expected TT Exchange": "CME",
+    "Expected TT Symbol": "ZT"
+   },
+   {
+    "Exch": "CBT",
+    "RIC": "TY",
+    "Description": "10Yr US T-Notes",
+    "Max Order": "7",
+    "Max Net": "14",
+    "Expected TT Exchange": "CME",
+    "Expected TT Symbol": "ZN"
+   },
+   {
+    "Exch": "CBT",
+    "RIC": "US",
+    "Description": "30Yr US Treasury Bond",
+    "Max Order": "7",
+    "Max Net": "14",
+    "Expected TT Exchange": "CME",
+    "Expected TT Symbol": "ZB"
+   },
+   {
+    "Exch": "CBT",
+    "RIC": "TN",
+    "Description": "Ultra 10Yr US T-Note",
+    "Max Order": "7",
+    "Max Net": "14",
+    "Expected TT Exchange": "CME",
+    "Expected TT Symbol": "TN"
+   },
+   {
+    "Exch": "CBT",
+    "RIC": "W",
+    "Description": "Chicago SRW Wheat",
+    "Max Order": "7",
+    "Max Net": "14",
+    "Expected TT Exchange": "CME",
+    "Expected TT Symbol": "ZW"
+   },
+   {
+    "Exch": "CBT",
+    "RIC": "AUL",
+    "Description": "Ultra Long Term US Treasury Bond",
+    "Max Order": "7",
+    "Max Net": "14",
+    "Expected TT Exchange": "CME",
+    "Expected TT Symbol": "UB"
+   },
+   {
+    "Exch": "CBT",
+    "RIC": "S",
+    "Description": "Soybeans",
+    "Max Order": "7",
+    "Max Net": "14",
+    "Expected TT Exchange": "CME",
+    "Expected TT Symbol": "ZS"
+   },
+   {
+    "Exch": "CME",
+    "RIC": "FC",
+    "Description": "Feeder Cattle",
+    "Max Order": "7",
+    "Max Net": "14",
+    "Expected TT Exchange": "CME",
+    "Expected TT Symbol": "GF"
+   },
+   {
+    "Exch": "CME",
+    "RIC": "LC",
+    "Description": "Live Cattle",
+    "Max Order": "7",
+    "Max Net": "14",
+    "Expected TT Exchange": "CME",
+    "Expected TT Symbol": "LE"
+   },
+   {
+    "Exch": "CME",
+    "RIC": "LH",
+    "Description": "Lean Hog",
+    "Max Order": "7",
+    "Max Net": "14",
+    "Expected TT Exchange": "CME",
+    "Expected TT Symbol": "HE"
+   },
+   {
+    "Exch": "CMX",
+    "RIC": "GC",
+    "Description": "Gold",
+    "Max Order": "7",
+    "Max Net": "14",
+    "Expected TT Exchange": "CME",
+    "Expected TT Symbol": "GC"
+   },
+   {
+    "Exch": "CMX",
+    "RIC": "HG",
+    "Description": "Copper",
+    "Max Order": "7",
+    "Max Net": "14",
+    "Expected TT Exchange": "CME",
+    "Expected TT Symbol": "HG"
+   },
+   {
+    "Exch": "CMX",
+    "RIC": "SI",
+    "Description": "Silver",
+    "Max Order": "7",
+    "Max Net": "14",
+    "Expected TT Exchange": "CME",
+    "Expected TT Symbol": "SI"
+   },
+   {
+    "Exch": "EDX",
+    "RIC": "TFMBM",
+    "Description": "Dutch TTF Nat Gas Base Load Monthly",
+    "Max Order": "7",
+    "Max Net": "14",
+    "Expected TT Exchange": "ICE",
+    "Expected TT Symbol": "TFM"
+   },
+   {
+    "Exch": "EUX",
+    "RIC": "FSMI",
+    "Description": "Swiss Market (SMI) Index",
+    "Max Order": "7",
+    "Max Net": "14",
+    "Expected TT Exchange": "Eurex",
+    "Expected TT Symbol": "FSMI"
+   },
+   {
+    "Exch": "EUX",
+    "RIC": "FBTS",
+    "Description": "Short-Term Euro-BTP Bond",
+    "Max Order": "7",
+    "Max Net": "14",
+    "Expected TT Exchange": "Eurex",
+    "Expected TT Symbol": "FBTS"
+   },
+   {
+    "Exch": "EUX",
+    "RIC": "FESB",
+    "Description": "EuroStoxx Banks Index",
+    "Max Order": "7",
+    "Max Net": "14",
+    "Expected TT Exchange": "Eurex",
+    "Expected TT Symbol": "FESB"
+   },
+   {
+    "Exch": "EUX",
+    "RIC": "FGBS",
+    "Description": "Euro-Schatz Bond",
+    "Max Order": "7",
+    "Max Net": "14",
+    "Expected TT Exchange": "Eurex",
+    "Expected TT Symbol": "FGBS"
+   },
+   {
+    "Exch": "EUX",
+    "RIC": "FDX",
+    "Description": "DAX Index",
+    "Max Order": "7",
+    "Max Net": "14",
+    "Expected TT Exchange": "Eurex",
+    "Expected TT Symbol": "FDAX"
+   },
+   {
+    "Exch": "EUX",
+    "RIC": "FBTP",
+    "Description": "Long-Term Euro-BTP Bond",
+    "Max Order": "7",
+    "Max Net": "14",
+    "Expected TT Exchange": "Eurex",
+    "Expected TT Symbol": "FBTP"
+   },
+   {
+    "Exch": "EUX",
+    "RIC": "FOAT",
+    "Description": "Euro-OAT Bond",
+    "Max Order": "7",
+    "Max Net": "14",
+    "Expected TT Exchange": "Eurex",
+    "Expected TT Symbol": "FOAT"
+   },
+   {
+    "Exch": "EUX",
+    "RIC": "FGBM",
+    "Description": "Euro-Bobl Bond",
+    "Max Order": "7",
+    "Max Net": "14",
+    "Expected TT Exchange": "Eurex",
+    "Expected TT Symbol": "FGBM"
+   },
+   {
+    "Exch": "EUX",
+    "RIC": "FGBL",
+    "Description": "Euro-Bund Bond",
+    "Max Order": "7",
+    "Max Net": "14",
+    "Expected TT Exchange": "Eurex",
+    "Expected TT Symbol": "FGBL"
+   },
+   {
+    "Exch": "EUX",
+    "RIC": "FXXP",
+    "Description": "Stoxx Europe 600 Index",
+    "Max Order": "7",
+    "Max Net": "14",
+    "Expected TT Exchange": "Eurex",
+    "Expected TT Symbol": "FXXP"
+   },
+   {
+    "Exch": "EUX",
+    "RIC": "FGBX",
+    "Description": "Euro-Buxl Bond",
+    "Max Order": "7",
+    "Max Net": "14",
+    "Expected TT Exchange": "Eurex",
+    "Expected TT Symbol": "FGBX"
+   },
+   {
+    "Exch": "EUX",
+    "RIC": "STXE",
+    "Description": "EuroStoxx 50 Index",
+    "Max Order": "7",
+    "Max Net": "14",
+    "Expected TT Exchange": "Eurex",
+    "Expected TT Symbol": "FESX"
+   },
+   {
+    "Exch": "GEM",
+    "RIC": "MP",
+    "Description": "MXN/USD Cross Currency",
+    "Max Order": "7",
+    "Max Net": "14",
+    "Expected TT Exchange": "CME",
+    "Expected TT Symbol": "6M"
+   },
+   {
+    "Exch": "HFE",
+    "RIC": "HHTI",
+    "Description": "Hang Seng Tech Index",
+    "Max Order": "7",
+    "Max Net": "14",
+    "Expected TT Exchange": "HKEX",
+    "Expected TT Symbol": "HTI"
+   },
+   {
+    "Exch": "HFE",
+    "RIC": "HCEI",
+    "Description": "Hang Seng China Enterprises Index",
+    "Max Order": "7",
+    "Max Net": "14",
+    "Expected TT Exchange": "HKEX",
+    "Expected TT Symbol": "HHI"
+   },
+   {
+    "Exch": "HFE",
+    "RIC": "HSI",
+    "Description": "Hang Seng Index",
+    "Max Order": "7",
+    "Max Net": "14",
+    "Expected TT Exchange": "HKEX",
+    "Expected TT Symbol": "HSI"
+   },
+   {
+    "Exch": "IEU",
+    "RIC": "LCC",
+    "Description": "London Cocoa",
+    "Max Order": "7",
+    "Max Net": "14",
+    "Expected TT Exchange": "ICE",
+    "Expected TT Symbol": "C"
+   },
+   {
+    "Exch": "IEU",
+    "RIC": "FEI",
+    "Description": "3Mth Euribor",
+    "Max Order": "7",
+    "Max Net": "14",
+    "Expected TT Exchange": "ICE_L",
+    "Expected TT Symbol": "I"
+   },
+   {
+    "Exch": "IEU",
+    "RIC": "FLG",
+    "Description": "Long Gilt UK Bond",
+    "Max Order": "7",
+    "Max Net": "14",
+    "Expected TT Exchange": "ICE_L",
+    "Expected TT Symbol": "R"
+   },
+   {
+    "Exch": "IEU",
+    "RIC": "SON3",
+    "Description": "3M SONIA Index",
+    "Max Order": "7",
+    "Max Net": "14",
+    "Expected TT Exchange": "ICE_L",
+    "Expected TT Symbol": "SO3"
+   },
+   {
+    "Exch": "IEU",
+    "RIC": "FFI",
+    "Description": "FTSE 100 Index",
+    "Max Order": "7",
+    "Max Net": "14",
+    "Expected TT Exchange": "ICE_L",
+    "Expected TT Symbol": "Z"
+   },
+   {
+    "Exch": "IEU",
+    "RIC": "LCO",
+    "Description": "Brent Crude Monthly",
+    "Max Order": "7",
+    "Max Net": "14",
+    "Expected TT Exchange": "ICE",
+    "Expected TT Symbol": "BRN"
+   },
+   {
+    "Exch": "IEU",
+    "RIC": "WTCL",
+    "Description": "WTI Crude Oil Monthly",
+    "Max Order": "7",
+    "Max Net": "14",
+    "Expected TT Exchange": "ICE",
+    "Expected TT Symbol": "WBS"
+   },
+   {
+    "Exch": "IEU",
+    "RIC": "LGO",
+    "Description": "Low Sulphur Gasoil Monthly",
+    "Max Order": "7",
+    "Max Net": "14",
+    "Expected TT Exchange": "ICE",
+    "Expected TT Symbol": "G"
+   },
+   {
+    "Exch": "IMM",
+    "RIC": "AD",
+    "Description": "AUD/USD Cross Currency",
+    "Max Order": "7",
+    "Max Net": "14",
+    "Expected TT Exchange": "CME",
+    "Expected TT Symbol": "6A"
+   },
+   {
+    "Exch": "IMM",
+    "RIC": "BP",
+    "Description": "GBP/USD Cross Currency",
+    "Max Order": "7",
+    "Max Net": "14",
+    "Expected TT Exchange": "CME",
+    "Expected TT Symbol": "6B"
+   },
+   {
+    "Exch": "IMM",
+    "RIC": "CD",
+    "Description": "CAD/USD Cross Currency",
+    "Max Order": "7",
+    "Max Net": "14",
+    "Expected TT Exchange": "CME",
+    "Expected TT Symbol": "6C"
+   }
+  ],
+  "mapping": {
+   "ricRoot": "RIC",
+   "maxOrder": "Max Order",
+   "maxNet": "Max Net",
+   "exchange": "Exch",
+   "description": "Description"
+  },
+  "futures": 15684,
+  "default": {
+   "columns": [
+    "Exch",
+    "RIC",
+    "Description",
+    "TT Exchange",
+    "TT Product Symbol",
+    "Max Order",
+    "Max Net",
+    "Expected TT Exchange",
+    "Expected TT Symbol"
+   ],
+   "counts": {
+    "mapped": 0,
+    "known": 48,
+    "direct": 0,
+    "check": 0,
+    "unmatched": 0,
+    "noTt": 0
+   },
+   "rows": [
+    {
+     "ricRoot": "AEX",
+     "exchange": "AEX",
+     "status": "known",
+     "ttExchange": "Euronext",
+     "ttSymbol": "kFTI",
+     "candidates": []
+    },
+    {
+     "ricRoot": "VX",
+     "exchange": "CBF",
+     "status": "known",
+     "ttExchange": "CFE",
+     "ttSymbol": "VX",
+     "candidates": []
+    },
+    {
+     "ricRoot": "BO",
+     "exchange": "CBT",
+     "status": "known",
+     "ttExchange": "CME",
+     "ttSymbol": "ZL",
+     "candidates": []
+    },
+    {
+     "ricRoot": "C",
+     "exchange": "CBT",
+     "status": "known",
+     "ttExchange": "CME",
+     "ttSymbol": "ZC",
+     "candidates": []
+    },
+    {
+     "ricRoot": "FV",
+     "exchange": "CBT",
+     "status": "known",
+     "ttExchange": "CME",
+     "ttSymbol": "ZF",
+     "candidates": []
+    },
+    {
+     "ricRoot": "KW",
+     "exchange": "CBT",
+     "status": "known",
+     "ttExchange": "CME",
+     "ttSymbol": "KE",
+     "candidates": []
+    },
+    {
+     "ricRoot": "SM",
+     "exchange": "CBT",
+     "status": "known",
+     "ttExchange": "CME",
+     "ttSymbol": "ZM",
+     "candidates": []
+    },
+    {
+     "ricRoot": "TU",
+     "exchange": "CBT",
+     "status": "known",
+     "ttExchange": "CME",
+     "ttSymbol": "ZT",
+     "candidates": []
+    },
+    {
+     "ricRoot": "TY",
+     "exchange": "CBT",
+     "status": "known",
+     "ttExchange": "CME",
+     "ttSymbol": "ZN",
+     "candidates": []
+    },
+    {
+     "ricRoot": "US",
+     "exchange": "CBT",
+     "status": "known",
+     "ttExchange": "CME",
+     "ttSymbol": "ZB",
+     "candidates": []
+    },
+    {
+     "ricRoot": "TN",
+     "exchange": "CBT",
+     "status": "known",
+     "ttExchange": "CME",
+     "ttSymbol": "TN",
+     "candidates": []
+    },
+    {
+     "ricRoot": "W",
+     "exchange": "CBT",
+     "status": "known",
+     "ttExchange": "CME",
+     "ttSymbol": "ZW",
+     "candidates": []
+    },
+    {
+     "ricRoot": "AUL",
+     "exchange": "CBT",
+     "status": "known",
+     "ttExchange": "CME",
+     "ttSymbol": "UB",
+     "candidates": []
+    },
+    {
+     "ricRoot": "S",
+     "exchange": "CBT",
+     "status": "known",
+     "ttExchange": "CME",
+     "ttSymbol": "ZS",
+     "candidates": []
+    },
+    {
+     "ricRoot": "FC",
+     "exchange": "CME",
+     "status": "known",
+     "ttExchange": "CME",
+     "ttSymbol": "GF",
+     "candidates": []
+    },
+    {
+     "ricRoot": "LC",
+     "exchange": "CME",
+     "status": "known",
+     "ttExchange": "CME",
+     "ttSymbol": "LE",
+     "candidates": []
+    },
+    {
+     "ricRoot": "LH",
+     "exchange": "CME",
+     "status": "known",
+     "ttExchange": "CME",
+     "ttSymbol": "HE",
+     "candidates": []
+    },
+    {
+     "ricRoot": "GC",
+     "exchange": "CMX",
+     "status": "known",
+     "ttExchange": "CME",
+     "ttSymbol": "GC",
+     "candidates": []
+    },
+    {
+     "ricRoot": "HG",
+     "exchange": "CMX",
+     "status": "known",
+     "ttExchange": "CME",
+     "ttSymbol": "HG",
+     "candidates": []
+    },
+    {
+     "ricRoot": "SI",
+     "exchange": "CMX",
+     "status": "known",
+     "ttExchange": "CME",
+     "ttSymbol": "SI",
+     "candidates": []
+    },
+    {
+     "ricRoot": "TFMBM",
+     "exchange": "EDX",
+     "status": "known",
+     "ttExchange": "ICE",
+     "ttSymbol": "TFM",
+     "candidates": []
+    },
+    {
+     "ricRoot": "FSMI",
+     "exchange": "EUX",
+     "status": "known",
+     "ttExchange": "Eurex",
+     "ttSymbol": "FSMI",
+     "candidates": []
+    },
+    {
+     "ricRoot": "FBTS",
+     "exchange": "EUX",
+     "status": "known",
+     "ttExchange": "Eurex",
+     "ttSymbol": "FBTS",
+     "candidates": []
+    },
+    {
+     "ricRoot": "FESB",
+     "exchange": "EUX",
+     "status": "known",
+     "ttExchange": "Eurex",
+     "ttSymbol": "FESB",
+     "candidates": []
+    },
+    {
+     "ricRoot": "FGBS",
+     "exchange": "EUX",
+     "status": "known",
+     "ttExchange": "Eurex",
+     "ttSymbol": "FGBS",
+     "candidates": []
+    },
+    {
+     "ricRoot": "FDX",
+     "exchange": "EUX",
+     "status": "known",
+     "ttExchange": "Eurex",
+     "ttSymbol": "FDAX",
+     "candidates": []
+    },
+    {
+     "ricRoot": "FBTP",
+     "exchange": "EUX",
+     "status": "known",
+     "ttExchange": "Eurex",
+     "ttSymbol": "FBTP",
+     "candidates": []
+    },
+    {
+     "ricRoot": "FOAT",
+     "exchange": "EUX",
+     "status": "known",
+     "ttExchange": "Eurex",
+     "ttSymbol": "FOAT",
+     "candidates": []
+    },
+    {
+     "ricRoot": "FGBM",
+     "exchange": "EUX",
+     "status": "known",
+     "ttExchange": "Eurex",
+     "ttSymbol": "FGBM",
+     "candidates": []
+    },
+    {
+     "ricRoot": "FGBL",
+     "exchange": "EUX",
+     "status": "known",
+     "ttExchange": "Eurex",
+     "ttSymbol": "FGBL",
+     "candidates": []
+    },
+    {
+     "ricRoot": "FXXP",
+     "exchange": "EUX",
+     "status": "known",
+     "ttExchange": "Eurex",
+     "ttSymbol": "FXXP",
+     "candidates": []
+    },
+    {
+     "ricRoot": "FGBX",
+     "exchange": "EUX",
+     "status": "known",
+     "ttExchange": "Eurex",
+     "ttSymbol": "FGBX",
+     "candidates": []
+    },
+    {
+     "ricRoot": "STXE",
+     "exchange": "EUX",
+     "status": "known",
+     "ttExchange": "Eurex",
+     "ttSymbol": "FESX",
+     "candidates": []
+    },
+    {
+     "ricRoot": "MP",
+     "exchange": "GEM",
+     "status": "known",
+     "ttExchange": "CME",
+     "ttSymbol": "6M",
+     "candidates": []
+    },
+    {
+     "ricRoot": "HHTI",
+     "exchange": "HFE",
+     "status": "known",
+     "ttExchange": "HKEX",
+     "ttSymbol": "HTI",
+     "candidates": []
+    },
+    {
+     "ricRoot": "HCEI",
+     "exchange": "HFE",
+     "status": "known",
+     "ttExchange": "HKEX",
+     "ttSymbol": "HHI",
+     "candidates": []
+    },
+    {
+     "ricRoot": "HSI",
+     "exchange": "HFE",
+     "status": "known",
+     "ttExchange": "HKEX",
+     "ttSymbol": "HSI",
+     "candidates": []
+    },
+    {
+     "ricRoot": "LCC",
+     "exchange": "IEU",
+     "status": "known",
+     "ttExchange": "ICE",
+     "ttSymbol": "C",
+     "candidates": []
+    },
+    {
+     "ricRoot": "FEI",
+     "exchange": "IEU",
+     "status": "known",
+     "ttExchange": "ICE_L",
+     "ttSymbol": "I",
+     "candidates": []
+    },
+    {
+     "ricRoot": "FLG",
+     "exchange": "IEU",
+     "status": "known",
+     "ttExchange": "ICE_L",
+     "ttSymbol": "R",
+     "candidates": []
+    },
+    {
+     "ricRoot": "SON3",
+     "exchange": "IEU",
+     "status": "known",
+     "ttExchange": "ICE_L",
+     "ttSymbol": "SO3",
+     "candidates": []
+    },
+    {
+     "ricRoot": "FFI",
+     "exchange": "IEU",
+     "status": "known",
+     "ttExchange": "ICE_L",
+     "ttSymbol": "Z",
+     "candidates": []
+    },
+    {
+     "ricRoot": "LCO",
+     "exchange": "IEU",
+     "status": "known",
+     "ttExchange": "ICE",
+     "ttSymbol": "BRN",
+     "candidates": []
+    },
+    {
+     "ricRoot": "WTCL",
+     "exchange": "IEU",
+     "status": "known",
+     "ttExchange": "ICE",
+     "ttSymbol": "WBS",
+     "candidates": []
+    },
+    {
+     "ricRoot": "LGO",
+     "exchange": "IEU",
+     "status": "known",
+     "ttExchange": "ICE",
+     "ttSymbol": "G",
+     "candidates": []
+    },
+    {
+     "ricRoot": "AD",
+     "exchange": "IMM",
+     "status": "known",
+     "ttExchange": "CME",
+     "ttSymbol": "6A",
+     "candidates": []
+    },
+    {
+     "ricRoot": "BP",
+     "exchange": "IMM",
+     "status": "known",
+     "ttExchange": "CME",
+     "ttSymbol": "6B",
+     "candidates": []
+    },
+    {
+     "ricRoot": "CD",
+     "exchange": "IMM",
+     "status": "known",
+     "ttExchange": "CME",
+     "ttSymbol": "6C",
+     "candidates": []
+    }
+   ]
+  },
+  "no_known": {
+   "columns": [
+    "Exch",
+    "RIC",
+    "Description",
+    "TT Exchange",
+    "TT Product Symbol",
+    "Max Order",
+    "Max Net",
+    "Expected TT Exchange",
+    "Expected TT Symbol"
+   ],
+   "counts": {
+    "mapped": 0,
+    "known": 0,
+    "direct": 16,
+    "check": 32,
+    "unmatched": 0,
+    "noTt": 0
+   },
+   "rows": [
+    {
+     "ricRoot": "AEX",
+     "exchange": "AEX",
+     "status": "check",
+     "ttExchange": "Euronext",
+     "ttSymbol": "kFTI",
+     "candidates": [
+      "Euronext kFTI",
+      "Euronext kAXF",
+      "Euronext kMFA",
+      "Euronext k1FT",
+      "Euronext k2FT",
+      "Euronext k4FT"
+     ]
+    },
+    {
+     "ricRoot": "VX",
+     "exchange": "CBF",
+     "status": "direct",
+     "ttExchange": "CFE",
+     "ttSymbol": "VX",
+     "candidates": []
+    },
+    {
+     "ricRoot": "BO",
+     "exchange": "CBT",
+     "status": "check",
+     "ttExchange": "CME",
+     "ttSymbol": "ZL",
+     "candidates": [
+      "CME ZL",
+      "CME ZLT",
+      "CME ZS",
+      "CME CL",
+      "CME ZM",
+      "CME FCPO"
+     ]
+    },
+    {
+     "ricRoot": "C",
+     "exchange": "CBT",
+     "status": "check",
+     "ttExchange": "CME",
+     "ttSymbol": "ZC",
+     "candidates": [
+      "CME ZC",
+      "CME XC",
+      "CME ZCT"
+     ]
+    },
+    {
+     "ricRoot": "FV",
+     "exchange": "CBT",
+     "status": "check",
+     "ttExchange": "CME",
+     "ttSymbol": "ZF",
+     "candidates": [
+      "CME ZF",
+      "CME ZFT",
+      "CME ZB",
+      "CME ZN",
+      "CME ZT",
+      "CME Z3N"
+     ]
+    },
+    {
+     "ricRoot": "KW",
+     "exchange": "CBT",
+     "status": "check",
+     "ttExchange": "CME",
+     "ttSymbol": "KE",
+     "candidates": [
+      "CME KE",
+      "CME KET",
+      "CME MKC",
+      "CME KC7",
+      "CME HRS",
+      "CME KW"
+     ]
+    },
+    {
+     "ricRoot": "SM",
+     "exchange": "CBT",
+     "status": "check",
+     "ttExchange": "CME",
+     "ttSymbol": "ZM",
+     "candidates": [
+      "CME ZM",
+      "CME ZMT",
+      "CME ZS",
+      "CME ZL",
+      "CME SAS",
+      "CME XK"
+     ]
+    },
+    {
+     "ricRoot": "TU",
+     "exchange": "CBT",
+     "status": "check",
+     "ttExchange": "CME",
+     "ttSymbol": "ZT",
+     "candidates": [
+      "CME ZT",
+      "CME ZTT",
+      "CME ZB",
+      "CME ZF",
+      "CME ZN",
+      "CME Z3N"
+     ]
+    },
+    {
+     "ricRoot": "TY",
+     "exchange": "CBT",
+     "status": "check",
+     "ttExchange": "CME",
+     "ttSymbol": "ZN",
+     "candidates": [
+      "CME ZN",
+      "CME TN",
+      "CME ZNS",
+      "CME MTN",
+      "CME ZB",
+      "CME ZF"
+     ]
+    },
+    {
+     "ricRoot": "US",
+     "exchange": "CBT",
+     "status": "check",
+     "ttExchange": "CME",
+     "ttSymbol": "ZB",
+     "candidates": [
+      "CME ZB",
+      "CME TWE",
+      "CME UB",
+      "CME ZBT",
+      "CME ZF",
+      "CME ZN"
+     ]
+    },
+    {
+     "ricRoot": "TN",
+     "exchange": "CBT",
+     "status": "direct",
+     "ttExchange": "CME",
+     "ttSymbol": "TN",
+     "candidates": []
+    },
+    {
+     "ricRoot": "W",
+     "exchange": "CBT",
+     "status": "check",
+     "ttExchange": "CME",
+     "ttSymbol": "ZW",
+     "candidates": [
+      "CME ZW",
+      "CME H2",
+      "CME HRS",
+      "CME 4C",
+      "CME CU",
+      "CME K2"
+     ]
+    },
+    {
+     "ricRoot": "AUL",
+     "exchange": "CBT",
+     "status": "check",
+     "ttExchange": "CME",
+     "ttSymbol": "UB",
+     "candidates": [
+      "CME UB",
+      "CME ZB",
+      "CME MWN",
+      "CME UBT",
+      "CME ZBT",
+      "CME TWE"
+     ]
+    },
+    {
+     "ricRoot": "S",
+     "exchange": "CBT",
+     "status": "check",
+     "ttExchange": "CME",
+     "ttSymbol": "ZS",
+     "candidates": [
+      "CME ZS",
+      "CME ZL",
+      "CME ZM",
+      "CME SAS",
+      "CME XK",
+      "CME SBT"
+     ]
+    },
+    {
+     "ricRoot": "FC",
+     "exchange": "CME",
+     "status": "check",
+     "ttExchange": "CME",
+     "ttSymbol": "GF",
+     "candidates": [
+      "CME GF",
+      "CME GFT",
+      "CME LE",
+      "CME LET"
+     ]
+    },
+    {
+     "ricRoot": "LC",
+     "exchange": "CME",
+     "status": "check",
+     "ttExchange": "CME",
+     "ttSymbol": "LE",
+     "candidates": [
+      "CME LE",
+      "CME LET",
+      "CME GF",
+      "CME GFT"
+     ]
+    },
+    {
+     "ricRoot": "LH",
+     "exchange": "CME",
+     "status": "check",
+     "ttExchange": "CME",
+     "ttSymbol": "HE",
+     "candidates": [
+      "CME HE",
+      "CME HET"
+     ]
+    },
+    {
+     "ricRoot": "GC",
+     "exchange": "CMX",
+     "status": "direct",
+     "ttExchange": "CME",
+     "ttSymbol": "GC",
+     "candidates": []
+    },
+    {
+     "ricRoot": "HG",
+     "exchange": "CMX",
+     "status": "direct",
+     "ttExchange": "CME",
+     "ttSymbol": "HG",
+     "candidates": []
+    },
+    {
+     "ricRoot": "SI",
+     "exchange": "CMX",
+     "status": "direct",
+     "ttExchange": "CME",
+     "ttSymbol": "SI",
+     "candidates": []
+    },
+    {
+     "ricRoot": "TFMBM",
+     "exchange": "EDX",
+     "status": "check",
+     "ttExchange": "ICE",
+     "ttSymbol": "TFM",
+     "candidates": [
+      "ICE TFM",
+      "ICE TFN",
+      "ICE TFO",
+      "ICE ZZR",
+      "ICE DPB",
+      "ICE TFE"
+     ]
+    },
+    {
+     "ricRoot": "FSMI",
+     "exchange": "EUX",
+     "status": "direct",
+     "ttExchange": "Eurex",
+     "ttSymbol": "FSMI",
+     "candidates": []
+    },
+    {
+     "ricRoot": "FBTS",
+     "exchange": "EUX",
+     "status": "direct",
+     "ttExchange": "Eurex",
+     "ttSymbol": "FBTS",
+     "candidates": []
+    },
+    {
+     "ricRoot": "FESB",
+     "exchange": "EUX",
+     "status": "direct",
+     "ttExchange": "Eurex",
+     "ttSymbol": "FESB",
+     "candidates": []
+    },
+    {
+     "ricRoot": "FGBS",
+     "exchange": "EUX",
+     "status": "direct",
+     "ttExchange": "Eurex",
+     "ttSymbol": "FGBS",
+     "candidates": []
+    },
+    {
+     "ricRoot": "FDX",
+     "exchange": "EUX",
+     "status": "check",
+     "ttExchange": "Eurex",
+     "ttSymbol": "FDAX",
+     "candidates": [
+      "Eurex FDAX",
+      "Eurex FDXM",
+      "Eurex FDXS",
+      "Eurex EXSF",
+      "Eurex FSDX"
+     ]
+    },
+    {
+     "ricRoot": "FBTP",
+     "exchange": "EUX",
+     "status": "direct",
+     "ttExchange": "Eurex",
+     "ttSymbol": "FBTP",
+     "candidates": []
+    },
+    {
+     "ricRoot": "FOAT",
+     "exchange": "EUX",
+     "status": "direct",
+     "ttExchange": "Eurex",
+     "ttSymbol": "FOAT",
+     "candidates": []
+    },
+    {
+     "ricRoot": "FGBM",
+     "exchange": "EUX",
+     "status": "direct",
+     "ttExchange": "Eurex",
+     "ttSymbol": "FGBM",
+     "candidates": []
+    },
+    {
+     "ricRoot": "FGBL",
+     "exchange": "EUX",
+     "status": "direct",
+     "ttExchange": "Eurex",
+     "ttSymbol": "FGBL",
+     "candidates": []
+    },
+    {
+     "ricRoot": "FXXP",
+     "exchange": "EUX",
+     "status": "direct",
+     "ttExchange": "Eurex",
+     "ttSymbol": "FXXP",
+     "candidates": []
+    },
+    {
+     "ricRoot": "FGBX",
+     "exchange": "EUX",
+     "status": "direct",
+     "ttExchange": "Eurex",
+     "ttSymbol": "FGBX",
+     "candidates": []
+    },
+    {
+     "ricRoot": "STXE",
+     "exchange": "EUX",
+     "status": "check",
+     "ttExchange": "Eurex",
+     "ttSymbol": "FESX",
+     "candidates": [
+      "Eurex FESX",
+      "Eurex FES1",
+      "Eurex EVAR",
+      "Eurex FESQ",
+      "Eurex FEXD",
+      "Eurex FSSX"
+     ]
+    },
+    {
+     "ricRoot": "MP",
+     "exchange": "GEM",
+     "status": "check",
+     "ttExchange": "CME",
+     "ttSymbol": "6M",
+     "candidates": [
+      "CME 6M",
+      "CME TIE"
+     ]
+    },
+    {
+     "ricRoot": "HHTI",
+     "exchange": "HFE",
+     "status": "check",
+     "ttExchange": "HKEX",
+     "ttSymbol": "HTI",
+     "candidates": [
+      "HKEX HTI",
+      "HKEX HSI",
+      "HKEX HBI",
+      "HKEX MBI",
+      "HKEX MHI",
+      "HKEX HCF"
+     ]
+    },
+    {
+     "ricRoot": "HCEI",
+     "exchange": "HFE",
+     "status": "check",
+     "ttExchange": "HKEX",
+     "ttSymbol": "HCF",
+     "candidates": [
+      "HKEX HCF",
+      "HKEX HSI",
+      "HKEX HBI",
+      "HKEX HHN",
+      "HKEX HHT",
+      "HKEX HTI"
+     ]
+    },
+    {
+     "ricRoot": "HSI",
+     "exchange": "HFE",
+     "status": "direct",
+     "ttExchange": "HKEX",
+     "ttSymbol": "HSI",
+     "candidates": []
+    },
+    {
+     "ricRoot": "LCC",
+     "exchange": "IEU",
+     "status": "check",
+     "ttExchange": "ICE",
+     "ttSymbol": "C",
+     "candidates": [
+      "ICE C",
+      "ICE CC",
+      "ICE C_Z",
+      "ICE_L 0L6",
+      "ICE_L 0WF",
+      "ICE_L LSE"
+     ]
+    },
+    {
+     "ricRoot": "FEI",
+     "exchange": "IEU",
+     "status": "check",
+     "ttExchange": "ICE_L",
+     "ttSymbol": "I",
+     "candidates": [
+      "ICE_L I",
+      "ICE_L BSW",
+      "ICE_L NIB",
+      "ICE_L SA3",
+      "ICE_L SO3",
+      "ICE_L STI"
+     ]
+    },
+    {
+     "ricRoot": "FLG",
+     "exchange": "IEU",
+     "status": "check",
+     "ttExchange": "ICE_L",
+     "ttSymbol": "R",
+     "candidates": [
+      "ICE_L R",
+      "ICE_L EUI",
+      "ICE_L S10",
+      "ICE_L C10",
+      "ICE_L G10",
+      "ICE_L I10"
+     ]
+    },
+    {
+     "ricRoot": "SON3",
+     "exchange": "IEU",
+     "status": "check",
+     "ttExchange": "ICE_L",
+     "ttSymbol": "SO3",
+     "candidates": [
+      "ICE_L SO3",
+      "ICE_L BSW",
+      "ICE_L NIB",
+      "ICE_L SA3",
+      "ICE_L STI",
+      "ICE_L ZAR"
+     ]
+    },
+    {
+     "ricRoot": "FFI",
+     "exchange": "IEU",
+     "status": "check",
+     "ttExchange": "ICE_L",
+     "ttSymbol": "Z",
+     "candidates": [
+      "ICE_L Z",
+      "ICE_L XZ",
+      "ICE_L EFP",
+      "ICE_L UEW",
+      "ICE_L Z_Y",
+      "ICE_L UKG"
+     ]
+    },
+    {
+     "ricRoot": "LCO",
+     "exchange": "IEU",
+     "status": "check",
+     "ttExchange": "ICE",
+     "ttSymbol": "BRN",
+     "candidates": [
+      "ICE BRN",
+      "ICE BM",
+      "ICE ZZT",
+      "ICE WAB",
+      "ICE BNB S",
+      "ICE PDB S"
+     ]
+    },
+    {
+     "ricRoot": "WTCL",
+     "exchange": "IEU",
+     "status": "check",
+     "ttExchange": "ICE",
+     "ttSymbol": "WBS",
+     "candidates": [
+      "ICE WBS",
+      "ICE WLD",
+      "ICE TM",
+      "ICE WAW",
+      "ICE HOU",
+      "ICE UHO"
+     ]
+    },
+    {
+     "ricRoot": "LGO",
+     "exchange": "IEU",
+     "status": "check",
+     "ttExchange": "ICE",
+     "ttSymbol": "G",
+     "candidates": [
+      "ICE G",
+      "ICE GM",
+      "ICE UUB S",
+      "ICE G_Z",
+      "ICE G_MD",
+      "ICE G_MM"
+     ]
+    },
+    {
+     "ricRoot": "AD",
+     "exchange": "IMM",
+     "status": "check",
+     "ttExchange": "CME",
+     "ttSymbol": "6A",
+     "candidates": [
+      "CME 6A",
+      "CME ACD",
+      "CME EAD",
+      "CME AJY",
+      "CME ANE",
+      "CME M6A"
+     ]
+    },
+    {
+     "ricRoot": "BP",
+     "exchange": "IMM",
+     "status": "check",
+     "ttExchange": "CME",
+     "ttSymbol": "6B",
+     "candidates": [
+      "CME 6B",
+      "CME RP",
+      "CME PJY",
+      "CME PSF",
+      "CME M6B"
+     ]
+    },
+    {
+     "ricRoot": "CD",
+     "exchange": "IMM",
+     "status": "check",
+     "ttExchange": "CME",
+     "ttSymbol": "6C",
+     "candidates": [
+      "CME 6C",
+      "CME ACD",
+      "CME ECD",
+      "CME CJY",
+      "CME MCD",
+      "CME 6A"
+     ]
+    }
+   ]
+  },
+  "paste_sample_full": {
+   "columns": [
+    "Region",
+    "Exchange",
+    "Bloomberg",
+    "Ric Root",
+    "Product Description",
+    "Give-up (yes or No)",
+    "TT Exchange",
+    "TT Product Symbol",
+    "Max Order",
+    "Max net"
+   ],
+   "counts": {
+    "mapped": 0,
+    "known": 8,
+    "direct": 1,
+    "check": 0,
+    "unmatched": 1,
+    "noTt": 0
+   },
+   "rows": [
+    {
+     "ricRoot": "TY",
+     "exchange": "CBOT",
+     "status": "known",
+     "ttExchange": "CME",
+     "ttSymbol": "ZN",
+     "candidates": []
+    },
+    {
+     "ricRoot": "C",
+     "exchange": "CBOT",
+     "status": "known",
+     "ttExchange": "CME",
+     "ttSymbol": "ZC",
+     "candidates": []
+    },
+    {
+     "ricRoot": "ES",
+     "exchange": "CME",
+     "status": "known",
+     "ttExchange": "CME",
+     "ttSymbol": "ES",
+     "candidates": []
+    },
+    {
+     "ricRoot": "CL",
+     "exchange": "NYMEX",
+     "status": "known",
+     "ttExchange": "CME",
+     "ttSymbol": "CL",
+     "candidates": []
+    },
+    {
+     "ricRoot": "FGBL",
+     "exchange": "EUREX",
+     "status": "known",
+     "ttExchange": "Eurex",
+     "ttSymbol": "FGBL",
+     "candidates": []
+    },
+    {
+     "ricRoot": "FLG",
+     "exchange": "ICE Europe",
+     "status": "known",
+     "ttExchange": "ICE_L",
+     "ttSymbol": "R",
+     "candidates": []
+    },
+    {
+     "ricRoot": "G",
+     "exchange": "ICE",
+     "status": "direct",
+     "ttExchange": "ICE_L",
+     "ttSymbol": "G",
+     "candidates": []
+    },
+    {
+     "ricRoot": "YT",
+     "exchange": "SFE",
+     "status": "known",
+     "ttExchange": "ASX",
+     "ttSymbol": "YT",
+     "candidates": []
+    },
+    {
+     "ricRoot": "CGB",
+     "exchange": "ME",
+     "status": "known",
+     "ttExchange": "MX",
+     "ttSymbol": "CGB",
+     "candidates": []
+    },
+    {
+     "ricRoot": "ZZZ",
+     "exchange": "CME",
+     "status": "unmatched",
+     "ttExchange": "",
+     "ttSymbol": "",
+     "candidates": []
+    }
+   ]
+  }
+ },
+ "qe_client_raw": {
+  "headers": [
+   "Q Code",
+   "TS Ticker",
+   "BBG Ticker",
+   "Contract Description",
+   "Currency",
+   "Supported",
+   "Asset Class",
+   "Exchange",
+   "Type",
+   "Electronic / Voice / Both",
+   "Block Trade (Y/N)",
+   "Outrights/Spreads Max Position",
+   "Max Order Quantity (Outright)",
+   "Max Order Quantity (Spreads)"
+  ],
+  "rows": [
+   {
+    "Q Code": "YS",
+    "TS Ticker": "YT",
+    "BBG Ticker": "YMA COMDTY",
+    "Contract Description": "Treasury Bonds, Australia, 3-year (SFE)",
+    "Currency": "AUD",
+    "Supported": "Y",
+    "Asset Class": "Bond",
+    "Exchange": "SFE",
+    "Type": "Future",
+    "Electronic / Voice / Both": "Both",
+    "Block Trade (Y/N)": "N",
+    "Outrights/Spreads Max Position": "4000",
+    "Max Order Quantity (Outright)": "1800",
+    "Max Order Quantity (Spreads)": "4000"
+   },
+   {
+    "Q Code": "TS",
+    "TS Ticker": "XT",
+    "BBG Ticker": "XMA COMDTY",
+    "Contract Description": "Treasury Bonds, Australia, 10-year (SFE)",
+    "Currency": "AUD",
+    "Supported": "Y",
+    "Asset Class": "Bond",
+    "Exchange": "SFE",
+    "Type": "Future",
+    "Electronic / Voice / Both": "Both",
+    "Block Trade (Y/N)": "N",
+    "Outrights/Spreads Max Position": "8000",
+    "Max Order Quantity (Outright)": "4000",
+    "Max Order Quantity (Spreads)": "8000"
+   },
+   {
+    "Q Code": "GX",
+    "TS Ticker": "GBL",
+    "BBG Ticker": "RXA COMDTY",
+    "Contract Description": "Euro Bund (10Y) (EUREX)",
+    "Currency": "EUR",
+    "Supported": "Y",
+    "Asset Class": "Bond",
+    "Exchange": "EUREX",
+    "Type": "Future",
+    "Electronic / Voice / Both": "Both",
+    "Block Trade (Y/N)": "N",
+    "Outrights/Spreads Max Position": "6000",
+    "Max Order Quantity (Outright)": "2500",
+    "Max Order Quantity (Spreads)": "6000"
+   },
+   {
+    "Q Code": "JB",
+    "TS Ticker": "JBL",
+    "BBG Ticker": "JBA COMDTY",
+    "Contract Description": "Japanese Gov't Bond (JGB), 10-year (TSE)",
+    "Currency": "JPY",
+    "Supported": "Y",
+    "Asset Class": "Bond",
+    "Exchange": "JPX",
+    "Type": "Future",
+    "Electronic / Voice / Both": "Both",
+    "Block Trade (Y/N)": "N",
+    "Outrights/Spreads Max Position": "7000",
+    "Max Order Quantity (Outright)": "3500",
+    "Max Order Quantity (Spreads)": "7000"
+   },
+   {
+    "Q Code": "ZZ",
+    "TS Ticker": "ZZZ",
+    "BBG Ticker": "ZZZ COMDTY",
+    "Contract Description": "Fictional New Product (TEST)",
+    "Currency": "USD",
+    "Supported": "Y",
+    "Asset Class": "Commodity",
+    "Exchange": "CME",
+    "Type": "Future",
+    "Electronic / Voice / Both": "Both",
+    "Block Trade (Y/N)": "N",
+    "Outrights/Spreads Max Position": "400",
+    "Max Order Quantity (Outright)": "80",
+    "Max Order Quantity (Spreads)": "400"
+   },
+   {
+    "Q Code": "KE",
+    "TS Ticker": "KE",
+    "BBG Ticker": "KEA COMDTY",
+    "Contract Description": "Korea 3-Year Bond (KFE)",
+    "Currency": "KRW",
+    "Supported": "N",
+    "Asset Class": "Bond",
+    "Exchange": "KFE",
+    "Type": "Future",
+    "Electronic / Voice / Both": "Both",
+    "Block Trade (Y/N)": "N",
+    "Outrights/Spreads Max Position": "999",
+    "Max Order Quantity (Outright)": "999",
+    "Max Order Quantity (Spreads)": "999"
+   }
+  ],
+  "fileType": "xlsx",
+  "fileName": "client_sample.xlsx"
+ },
+ "qe_system_raw": {
+  "headers": [
+   "TeName",
+   "Exchange",
+   "Family",
+   "Type",
+   "Product",
+   "Product Code Path",
+   "Applied margin %",
+   "Max long position per contract",
+   "Max order quantity",
+   "Max position product (net)",
+   "Max short position per contract",
+   "Spreads: Applied margin %",
+   "Spreads: Max order quantity",
+   "Spreads: Trading allowed",
+   "Trading allowed"
+  ],
+  "rows": [
+   {
+    "TeName": "CB-EXAMPLEFUND",
+    "Exchange": "ASX",
+    "Family": "YT",
+    "Type": "Future",
+    "Product": "YT - ASX 3 Year Treasury Bond",
+    "Product Code Path": "",
+    "Applied margin %": "100",
+    "Max long position per contract": "Not Set",
+    "Max order quantity": "1200",
+    "Max position product (net)": "2500",
+    "Max short position per contract": "Not Set",
+    "Spreads: Applied margin %": "100",
+    "Spreads: Max order quantity": "2500",
+    "Spreads: Trading allowed": "TRUE",
+    "Trading allowed": "TRUE"
+   },
+   {
+    "TeName": "CB-EXAMPLEFUND",
+    "Exchange": "ASX",
+    "Family": "XT",
+    "Type": "Future",
+    "Product": "XT - ASX 10 Year Treasury Bond",
+    "Product Code Path": "",
+    "Applied margin %": "100",
+    "Max long position per contract": "Not Set",
+    "Max order quantity": "6000",
+    "Max position product (net)": "12000",
+    "Max short position per contract": "Not Set",
+    "Spreads: Applied margin %": "100",
+    "Spreads: Max order quantity": "12000",
+    "Spreads: Trading allowed": "TRUE",
+    "Trading allowed": "TRUE"
+   },
+   {
+    "TeName": "CB-EXAMPLEFUND",
+    "Exchange": "EUREX",
+    "Family": "FGBL",
+    "Type": "Future",
+    "Product": "FGBL - Euro Bund",
+    "Product Code Path": "",
+    "Applied margin %": "100",
+    "Max long position per contract": "Not Set",
+    "Max order quantity": "2000",
+    "Max position product (net)": "6000",
+    "Max short position per contract": "Not Set",
+    "Spreads: Applied margin %": "100",
+    "Spreads: Max order quantity": "6000",
+    "Spreads: Trading allowed": "TRUE",
+    "Trading allowed": "TRUE"
+   },
+   {
+    "TeName": "CB-EXAMPLEFUND",
+    "Exchange": "JPX",
+    "Family": "JBL",
+    "Type": "Future",
+    "Product": "JBL - 10-Year JGB Futures",
+    "Product Code Path": "",
+    "Applied margin %": "100",
+    "Max long position per contract": "Not Set",
+    "Max order quantity": "3500",
+    "Max position product (net)": "7000",
+    "Max short position per contract": "Not Set",
+    "Spreads: Applied margin %": "100",
+    "Spreads: Max order quantity": "7000",
+    "Spreads: Trading allowed": "TRUE",
+    "Trading allowed": "TRUE"
+   },
+   {
+    "TeName": "EXAMPLEFUND CME",
+    "Exchange": "CME",
+    "Family": "LC",
+    "Type": "Future",
+    "Product": "LC - Live Cattle",
+    "Product Code Path": "",
+    "Applied margin %": "100",
+    "Max long position per contract": "Not Set",
+    "Max order quantity": "600",
+    "Max position product (net)": "1200",
+    "Max short position per contract": "Not Set",
+    "Spreads: Applied margin %": "100",
+    "Spreads: Max order quantity": "1200",
+    "Spreads: Trading allowed": "TRUE",
+    "Trading allowed": "TRUE"
+   }
+  ]
+ },
+ "qe_mappings": {
+  "client": {
+   "qCode": "Q Code",
+   "tsTicker": "TS Ticker",
+   "bbgTicker": "BBG Ticker",
+   "contractDescription": "Contract Description",
+   "currency": "Currency",
+   "supported": "Supported",
+   "assetClass": "Asset Class",
+   "exchange": "Exchange",
+   "type": "Type",
+   "electronicVoice": "Electronic / Voice / Both",
+   "blockTrade": "Block Trade (Y/N)",
+   "maxPosition": "Outrights/Spreads Max Position",
+   "maxOrderQtyOutright": "Max Order Quantity (Outright)",
+   "maxOrderQtySpreads": "Max Order Quantity (Spreads)"
+  },
+  "system": {
+   "account": "TeName",
+   "exchange": "Exchange",
+   "family": "Family",
+   "type": "Type",
+   "product": "Product",
+   "maxPositionNet": "Max position product (net)",
+   "maxOrderQty": "Max order quantity",
+   "spreadMaxOrderQty": "Spreads: Max order quantity"
+  }
+ },
+ "qe_clients": [
+  {
+   "qCode": "YS",
+   "tsTicker": "YT",
+   "bbgTicker": "YMA COMDTY",
+   "contractDescription": "Treasury Bonds, Australia, 3-year (SFE)",
+   "currency": "AUD",
+   "supported": "Y",
+   "assetClass": "Bond",
+   "exchange": "SFE",
+   "type": "Future",
+   "electronicVoice": "Both",
+   "blockTrade": "N",
+   "reqMaxPosition": 4000,
+   "reqMaxOrderQtyOutright": 1800,
+   "reqMaxOrderQtySpreads": 4000,
+   "notSupported": false,
+   "idx": 0
+  },
+  {
+   "qCode": "TS",
+   "tsTicker": "XT",
+   "bbgTicker": "XMA COMDTY",
+   "contractDescription": "Treasury Bonds, Australia, 10-year (SFE)",
+   "currency": "AUD",
+   "supported": "Y",
+   "assetClass": "Bond",
+   "exchange": "SFE",
+   "type": "Future",
+   "electronicVoice": "Both",
+   "blockTrade": "N",
+   "reqMaxPosition": 8000,
+   "reqMaxOrderQtyOutright": 4000,
+   "reqMaxOrderQtySpreads": 8000,
+   "notSupported": false,
+   "idx": 1
+  },
+  {
+   "qCode": "GX",
+   "tsTicker": "GBL",
+   "bbgTicker": "RXA COMDTY",
+   "contractDescription": "Euro Bund (10Y) (EUREX)",
+   "currency": "EUR",
+   "supported": "Y",
+   "assetClass": "Bond",
+   "exchange": "EUREX",
+   "type": "Future",
+   "electronicVoice": "Both",
+   "blockTrade": "N",
+   "reqMaxPosition": 6000,
+   "reqMaxOrderQtyOutright": 2500,
+   "reqMaxOrderQtySpreads": 6000,
+   "notSupported": false,
+   "idx": 2
+  },
+  {
+   "qCode": "JB",
+   "tsTicker": "JBL",
+   "bbgTicker": "JBA COMDTY",
+   "contractDescription": "Japanese Gov't Bond (JGB), 10-year (TSE)",
+   "currency": "JPY",
+   "supported": "Y",
+   "assetClass": "Bond",
+   "exchange": "JPX",
+   "type": "Future",
+   "electronicVoice": "Both",
+   "blockTrade": "N",
+   "reqMaxPosition": 7000,
+   "reqMaxOrderQtyOutright": 3500,
+   "reqMaxOrderQtySpreads": 7000,
+   "notSupported": false,
+   "idx": 3
+  },
+  {
+   "qCode": "ZZ",
+   "tsTicker": "ZZZ",
+   "bbgTicker": "ZZZ COMDTY",
+   "contractDescription": "Fictional New Product (TEST)",
+   "currency": "USD",
+   "supported": "Y",
+   "assetClass": "Commodity",
+   "exchange": "CME",
+   "type": "Future",
+   "electronicVoice": "Both",
+   "blockTrade": "N",
+   "reqMaxPosition": 400,
+   "reqMaxOrderQtyOutright": 80,
+   "reqMaxOrderQtySpreads": 400,
+   "notSupported": false,
+   "idx": 4
+  },
+  {
+   "qCode": "KE",
+   "tsTicker": "KE",
+   "bbgTicker": "KEA COMDTY",
+   "contractDescription": "Korea 3-Year Bond (KFE)",
+   "currency": "KRW",
+   "supported": "N",
+   "assetClass": "Bond",
+   "exchange": "KFE",
+   "type": "Future",
+   "electronicVoice": "Both",
+   "blockTrade": "N",
+   "reqMaxPosition": 999,
+   "reqMaxOrderQtyOutright": 999,
+   "reqMaxOrderQtySpreads": 999,
+   "notSupported": true,
+   "idx": 5
+  }
+ ],
+ "qe_systems": [
+  {
+   "account": "CB-EXAMPLEFUND",
+   "exchange": "ASX",
+   "family": "YT",
+   "type": "Future",
+   "product": "YT - ASX 3 Year Treasury Bond",
+   "curMaxPosition": 2500,
+   "curMaxOrderQty": 1200,
+   "curSpreadMaxOrderQty": 2500,
+   "sourceFile": "system_sample.csv"
+  },
+  {
+   "account": "CB-EXAMPLEFUND",
+   "exchange": "ASX",
+   "family": "XT",
+   "type": "Future",
+   "product": "XT - ASX 10 Year Treasury Bond",
+   "curMaxPosition": 12000,
+   "curMaxOrderQty": 6000,
+   "curSpreadMaxOrderQty": 12000,
+   "sourceFile": "system_sample.csv"
+  },
+  {
+   "account": "CB-EXAMPLEFUND",
+   "exchange": "EUREX",
+   "family": "FGBL",
+   "type": "Future",
+   "product": "FGBL - Euro Bund",
+   "curMaxPosition": 6000,
+   "curMaxOrderQty": 2000,
+   "curSpreadMaxOrderQty": 6000,
+   "sourceFile": "system_sample.csv"
+  },
+  {
+   "account": "CB-EXAMPLEFUND",
+   "exchange": "JPX",
+   "family": "JBL",
+   "type": "Future",
+   "product": "JBL - 10-Year JGB Futures",
+   "curMaxPosition": 7000,
+   "curMaxOrderQty": 3500,
+   "curSpreadMaxOrderQty": 7000,
+   "sourceFile": "system_sample.csv"
+  },
+  {
+   "account": "EXAMPLEFUND CME",
+   "exchange": "CME",
+   "family": "LC",
+   "type": "Future",
+   "product": "LC - Live Cattle",
+   "curMaxPosition": 1200,
+   "curMaxOrderQty": 600,
+   "curSpreadMaxOrderQty": 1200,
+   "sourceFile": "system_sample.csv"
+  }
+ ],
+ "qe_diff": {
+  "no_map": {
+   "counts": {
+    "increase": 1,
+    "decrease": 1,
+    "unchanged": 1,
+    "new": 2,
+    "systemOnly": 2,
+    "notSupported": 1
+   },
+   "unmatched": [
+    "client-2",
+    "client-4"
+   ],
+   "rows": [
+    {
+     "key": "client-0",
+     "category": "increase",
+     "matchMethod": "direct",
+     "tsTicker": "YT",
+     "family": "YT",
+     "account": "CB-EXAMPLEFUND",
+     "maxPosition": {
+      "current": 2500,
+      "requested": 4000,
+      "category": "increase"
+     },
+     "maxOrderQtyOutright": {
+      "current": 1200,
+      "requested": 1800,
+      "category": "increase"
+     },
+     "maxOrderQtySpreads": {
+      "current": 2500,
+      "requested": 4000,
+      "category": "increase"
+     }
+    },
+    {
+     "key": "client-1",
+     "category": "decrease",
+     "matchMethod": "direct",
+     "tsTicker": "XT",
+     "family": "XT",
+     "account": "CB-EXAMPLEFUND",
+     "maxPosition": {
+      "current": 12000,
+      "requested": 8000,
+      "category": "decrease"
+     },
+     "maxOrderQtyOutright": {
+      "current": 6000,
+      "requested": 4000,
+      "category": "decrease"
+     },
+     "maxOrderQtySpreads": {
+      "current": 12000,
+      "requested": 8000,
+      "category": "decrease"
+     }
+    },
+    {
+     "key": "client-2",
+     "category": "new",
+     "matchMethod": "none",
+     "tsTicker": "GBL",
+     "family": null,
+     "account": "",
+     "maxPosition": {
+      "current": null,
+      "requested": 6000,
+      "category": "new"
+     },
+     "maxOrderQtyOutright": {
+      "current": null,
+      "requested": 2500,
+      "category": "new"
+     },
+     "maxOrderQtySpreads": {
+      "current": null,
+      "requested": 6000,
+      "category": "new"
+     }
+    },
+    {
+     "key": "client-3",
+     "category": "unchanged",
+     "matchMethod": "direct",
+     "tsTicker": "JBL",
+     "family": "JBL",
+     "account": "CB-EXAMPLEFUND",
+     "maxPosition": {
+      "current": 7000,
+      "requested": 7000,
+      "category": "same"
+     },
+     "maxOrderQtyOutright": {
+      "current": 3500,
+      "requested": 3500,
+      "category": "same"
+     },
+     "maxOrderQtySpreads": {
+      "current": 7000,
+      "requested": 7000,
+      "category": "same"
+     }
+    },
+    {
+     "key": "client-4",
+     "category": "new",
+     "matchMethod": "none",
+     "tsTicker": "ZZZ",
+     "family": null,
+     "account": "",
+     "maxPosition": {
+      "current": null,
+      "requested": 400,
+      "category": "new"
+     },
+     "maxOrderQtyOutright": {
+      "current": null,
+      "requested": 80,
+      "category": "new"
+     },
+     "maxOrderQtySpreads": {
+      "current": null,
+      "requested": 400,
+      "category": "new"
+     }
+    },
+    {
+     "key": "client-5",
+     "category": "notSupported",
+     "matchMethod": "none",
+     "tsTicker": "KE",
+     "family": null,
+     "account": "",
+     "maxPosition": {
+      "current": null,
+      "requested": null,
+      "category": "na"
+     },
+     "maxOrderQtyOutright": {
+      "current": null,
+      "requested": null,
+      "category": "na"
+     },
+     "maxOrderQtySpreads": {
+      "current": null,
+      "requested": null,
+      "category": "na"
+     }
+    },
+    {
+     "key": "system-0",
+     "category": "systemOnly",
+     "matchMethod": "systemOnly",
+     "tsTicker": null,
+     "family": "FGBL",
+     "account": "CB-EXAMPLEFUND",
+     "maxPosition": {
+      "current": 6000,
+      "requested": null,
+      "category": "na"
+     },
+     "maxOrderQtyOutright": {
+      "current": 2000,
+      "requested": null,
+      "category": "na"
+     },
+     "maxOrderQtySpreads": {
+      "current": 6000,
+      "requested": null,
+      "category": "na"
+     }
+    },
+    {
+     "key": "system-1",
+     "category": "systemOnly",
+     "matchMethod": "systemOnly",
+     "tsTicker": null,
+     "family": "LC",
+     "account": "EXAMPLEFUND CME",
+     "maxPosition": {
+      "current": 1200,
+      "requested": null,
+      "category": "na"
+     },
+     "maxOrderQtyOutright": {
+      "current": 600,
+      "requested": null,
+      "category": "na"
+     },
+     "maxOrderQtySpreads": {
+      "current": 1200,
+      "requested": null,
+      "category": "na"
+     }
+    }
+   ]
+  },
+  "with_map": {
+   "counts": {
+    "increase": 2,
+    "decrease": 1,
+    "unchanged": 1,
+    "new": 1,
+    "systemOnly": 1,
+    "notSupported": 1
+   },
+   "unmatched": [
+    "client-4"
+   ],
+   "rows": [
+    {
+     "key": "client-0",
+     "category": "increase",
+     "matchMethod": "direct",
+     "tsTicker": "YT",
+     "family": "YT",
+     "account": "CB-EXAMPLEFUND",
+     "maxPosition": {
+      "current": 2500,
+      "requested": 4000,
+      "category": "increase"
+     },
+     "maxOrderQtyOutright": {
+      "current": 1200,
+      "requested": 1800,
+      "category": "increase"
+     },
+     "maxOrderQtySpreads": {
+      "current": 2500,
+      "requested": 4000,
+      "category": "increase"
+     }
+    },
+    {
+     "key": "client-1",
+     "category": "decrease",
+     "matchMethod": "direct",
+     "tsTicker": "XT",
+     "family": "XT",
+     "account": "CB-EXAMPLEFUND",
+     "maxPosition": {
+      "current": 12000,
+      "requested": 8000,
+      "category": "decrease"
+     },
+     "maxOrderQtyOutright": {
+      "current": 6000,
+      "requested": 4000,
+      "category": "decrease"
+     },
+     "maxOrderQtySpreads": {
+      "current": 12000,
+      "requested": 8000,
+      "category": "decrease"
+     }
+    },
+    {
+     "key": "client-2",
+     "category": "increase",
+     "matchMethod": "mapped",
+     "tsTicker": "GBL",
+     "family": "FGBL",
+     "account": "CB-EXAMPLEFUND",
+     "maxPosition": {
+      "current": 6000,
+      "requested": 6000,
+      "category": "same"
+     },
+     "maxOrderQtyOutright": {
+      "current": 2000,
+      "requested": 2500,
+      "category": "increase"
+     },
+     "maxOrderQtySpreads": {
+      "current": 6000,
+      "requested": 6000,
+      "category": "same"
+     }
+    },
+    {
+     "key": "client-3",
+     "category": "unchanged",
+     "matchMethod": "direct",
+     "tsTicker": "JBL",
+     "family": "JBL",
+     "account": "CB-EXAMPLEFUND",
+     "maxPosition": {
+      "current": 7000,
+      "requested": 7000,
+      "category": "same"
+     },
+     "maxOrderQtyOutright": {
+      "current": 3500,
+      "requested": 3500,
+      "category": "same"
+     },
+     "maxOrderQtySpreads": {
+      "current": 7000,
+      "requested": 7000,
+      "category": "same"
+     }
+    },
+    {
+     "key": "client-4",
+     "category": "new",
+     "matchMethod": "none",
+     "tsTicker": "ZZZ",
+     "family": null,
+     "account": "",
+     "maxPosition": {
+      "current": null,
+      "requested": 400,
+      "category": "new"
+     },
+     "maxOrderQtyOutright": {
+      "current": null,
+      "requested": 80,
+      "category": "new"
+     },
+     "maxOrderQtySpreads": {
+      "current": null,
+      "requested": 400,
+      "category": "new"
+     }
+    },
+    {
+     "key": "client-5",
+     "category": "notSupported",
+     "matchMethod": "none",
+     "tsTicker": "KE",
+     "family": null,
+     "account": "",
+     "maxPosition": {
+      "current": null,
+      "requested": null,
+      "category": "na"
+     },
+     "maxOrderQtyOutright": {
+      "current": null,
+      "requested": null,
+      "category": "na"
+     },
+     "maxOrderQtySpreads": {
+      "current": null,
+      "requested": null,
+      "category": "na"
+     }
+    },
+    {
+     "key": "system-0",
+     "category": "systemOnly",
+     "matchMethod": "systemOnly",
+     "tsTicker": null,
+     "family": "LC",
+     "account": "EXAMPLEFUND CME",
+     "maxPosition": {
+      "current": 1200,
+      "requested": null,
+      "category": "na"
+     },
+     "maxOrderQtyOutright": {
+      "current": 600,
+      "requested": null,
+      "category": "na"
+     },
+     "maxOrderQtySpreads": {
+      "current": 1200,
+      "requested": null,
+      "category": "na"
+     }
+    }
+   ]
+  }
+ },
+ "qe_parse_limit": [
+  {
+   "text": "",
+   "value": null
+  },
+  {
+   "text": " ",
+   "value": null
+  },
+  {
+   "text": "Not Set",
+   "value": null
+  },
+  {
+   "text": "n/a",
+   "value": null
+  },
+  {
+   "text": "NA",
+   "value": null
+  },
+  {
+   "text": "-",
+   "value": null
+  },
+  {
+   "text": "—",
+   "value": null
+  },
+  {
+   "text": "1,000",
+   "value": 1000
+  },
+  {
+   "text": " 2 000 ",
+   "value": 2000
+  },
+  {
+   "text": "$500",
+   "value": 500
+  },
+  {
+   "text": "50%",
+   "value": 50
+  },
+  {
+   "text": "1.5",
+   "value": 1.5
+  },
+  {
+   "text": "-3",
+   "value": -3
+  },
+  {
+   "text": "abc",
+   "value": null
+  },
+  {
+   "text": "1e3",
+   "value": 1000
+  },
+  {
+   "text": "0",
+   "value": 0
+  },
+  {
+   "text": "Infinity",
+   "value": null
+  },
+  {
+   "text": "0x10",
+   "value": 16
+  }
+ ]
+}

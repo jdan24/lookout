@@ -1,0 +1,6 @@
+TeName,Exchange,Family,Type,Product,Product Code Path,Applied margin %,Max long position per contract,Max order quantity,Max position product (net),Max short position per contract,Spreads: Applied margin %,Spreads: Max order quantity,Spreads: Trading allowed,Trading allowed
+CB-EXAMPLEFUND,ASX,YT,Future,YT - ASX 3 Year Treasury Bond,,100,Not Set,1200,2500,Not Set,100,2500,TRUE,TRUE
+CB-EXAMPLEFUND,ASX,XT,Future,XT - ASX 10 Year Treasury Bond,,100,Not Set,6000,12000,Not Set,100,12000,TRUE,TRUE
+CB-EXAMPLEFUND,EUREX,FGBL,Future,FGBL - Euro Bund,,100,Not Set,2000,6000,Not Set,100,6000,TRUE,TRUE
+CB-EXAMPLEFUND,JPX,JBL,Future,JBL - 10-Year JGB Futures,,100,Not Set,3500,7000,Not Set,100,7000,TRUE,TRUE
+EXAMPLEFUND CME,CME,LC,Future,LC - Live Cattle,,100,Not Set,600,1200,Not Set,100,1200,TRUE,TRUE

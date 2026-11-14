@@ -1,0 +1,149 @@
+# Example client profile for Setup Verification.
+#
+# Every name, id and value in this file is invented; it matches the synthetic test
+# fixture (tests/fixtures/synthetic.py). Copy it, rename it to <client>.toml and fill
+# in your own values. Real profiles hold client data: keep them OUT of the repo, in
+#     %LOCALAPPDATA%\Lookout\clients\        (or [clients] directory in config.toml)
+#
+# How levels work
+#   Each [[trees]] entry is one hierarchy the client lives in. `path` walks from a
+#   top-level account down to the client's start account (depth 0). Every account
+#   below it gets the [[trees.levels]] entry for its depth. Several entries may share
+#   a depth: the first one that fits (account_type / match_regex) wins. An account
+#   that fits no entry is shown amber and no other rule checks it. Accounts deeper
+#   than the deepest level use the deepest level's rules and show as "Sub-account".
+#
+# Values: apply_limits / apply_restrictions = "on" | "off" | "any" (not checked)
+#         users = "here" (assigned at this level) | "inherited" (none repeated here) | "any"
+
+client = "example"            # snapshot folder name: letters, digits, - _ .
+label = "Example client"
+# Order Tag Default fields shown on the "Checked by hand" tab (name contains the text).
+display_only_fields = ["SMP", "Operator", "Authorized Trader"]
+
+# ---------------------------------------------------------------------------------
+[[trees]]
+name = "member"
+label = "Member markets"
+path = ["TOPBANK", "DESK", "CLI"]   # top-level account ... start account
+start_id = "100"                    # optional; checked against the name
+id_verified = true                  # false: an id mismatch is only a note
+# Markets allowed in limit rows in this tree (market id = exchange name).
+markets = { "7" = "CME", "2" = "Eurex", "32" = "ICE", "92" = "ICE LIFFE", "93" = "CFE" }
+
+  [[trees.levels]]
+  depth = 0
+  label = "Client group"
+  users = "here"
+
+  [[trees.levels]]
+  depth = 1
+  label = "Pod"
+  account_type = 3                  # Non-Routing; anything else here does not fit
+  name_regex = "^CLI-.+$"           # naming rule: red when the name does not match
+  name_hint = "CLI-<POD>"
+  apply_limits = "on"
+  limit_rows_required = true
+  apply_restrictions = "on"
+  users = "inherited"
+  may_be_empty = true               # a new pod with nothing below it is amber, not red
+
+  [[trees.levels]]
+  depth = 2
+  label = "Trading account"
+  name_regex = "^[A-Z]{4}[0-9]{4}[A-Z]{3}$"
+  name_hint = "<GMI account><3-letter pod code>"
+  apply_limits = "off"
+  apply_restrictions = "off"
+  users = "inherited"
+
+  # Expected Order Tag Default ("Exchanges" tab) values.
+  [[trees.order_tag_defaults]]
+  label = "Clearing Account"
+  level = "Trading account"
+  field_id = "1859"
+  markets = ["7", "2", "32", "92", "93"]
+  value_from_name = '^(?P<base>.*\d)[A-Za-z]+$'   # the name minus its letter suffix
+  set_on = "self"                   # must be on the account itself, not inherited
+  except_names = "NX$"
+
+  [[trees.order_tag_defaults]]
+  label = "Exchange Account"
+  level = "Trading account"
+  fields = { "32" = "25", "92" = "26" }   # market id = field id
+  value = "EXCHCLIENT"
+  set_on = "inherited_ok"
+  except_names = "NX$"
+
+  [[trees.order_tag_defaults]]
+  label = "Clearing Firm ID"
+  level = "Trading account"
+  fields = { "32" = "27", "92" = "28" }
+  value = "55555"
+  except_names = "NX$"
+
+  [[trees.order_tag_defaults]]
+  label = "Exchange Account"
+  level = "Trading account"
+  fields = { "32" = "25" }
+  value = "EXCHENDEX"
+  only_names = "NX$"
+
+  [[trees.order_tag_defaults]]
+  label = "Clearing Firm ID"
+  level = "Trading account"
+  fields = { "32" = "27" }
+  value = "55555"
+  only_names = "NX$"
+
+# ---------------------------------------------------------------------------------
+[[trees]]
+name = "non_member"
+label = "Non-member markets"
+path = ["CBTOP", "CB-CLI"]
+start_id = "500"
+markets = { "24" = "ASX", "30" = "Euronext", "64" = "SGX" }
+
+  [[trees.levels]]
+  depth = 0
+  label = "Client group"
+  apply_restrictions = "on"
+  users = "here"
+
+  [[trees.levels]]
+  depth = 1
+  label = "Pod"
+  account_type = 3
+  name_regex = "^CB-CLI-.+$"
+  name_hint = "CB-CLI-<POD>"
+  apply_limits = "on"
+  limit_rows_required = true
+  apply_restrictions = "off"
+  users = "inherited"
+  may_be_empty = true
+
+  [[trees.levels]]
+  depth = 2
+  label = "Trading account"
+  name_regex = "^CB-[A-Z]{4}[0-9]{4}[A-Z]{3}$"
+  name_hint = "CB-<GMI account><3-letter pod code>"
+  apply_limits = "off"
+  apply_restrictions = "off"
+  users = "inherited"
+
+# ---------------------------------------------------------------------------------
+# Optional rules. Leave a section out to switch the rule off.
+
+# A pod with a limit on one of these products needs an account whose name ends in
+# `suffix` below it; such an account under a pod without the limit is flagged.
+[rules.companion_account]
+label = "Endex account"
+level = "Pod"
+market = "32"
+products = ["TFM", "TTL", "TFO", "TGN"]
+suffix = "NX"
+unnecessary = "amber"             # amber | red
+
+# Groups with the client's naming that sit outside the start accounts.
+[rules.legacy_groups]
+name_regex = "^(CB-)?CLI-"

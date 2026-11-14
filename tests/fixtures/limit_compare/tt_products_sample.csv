@@ -1,0 +1,79 @@
+Exchange,Product Name,Product Symbol,Alternate Symbol,Product Type,Asset Class,Sub-Asset Class,Currency,Market Data Channel
+ASX,ASX 10 Year Treasury Bond Spreads,XT,,Spread,Interest Rates,Government Bond,AUD,SFE
+Eurex,Euro-Bund,FGBL,,Spread,Interest Rates,Government Bond,EUR,ALL
+CME,5-Year T-Note Futures,ZF,,Spread,Interest Rates,U.S. Treasuries,USD,Chicago Board of Trade
+CME,5-Year T-Note Futures,ZF,,Future,Interest Rates,U.S. Treasuries,USD,Chicago Board of Trade
+CME,E-Mini S&P 500 Futures,ES,,Future,Equities,Index,USD,Chicago Mercantile Exchange
+CME,Conway Natural Gasoline (OPIS) BALMO Futures,CGB,,Future,Energy,Petrochemicals,USD,New York Mercantile Exchange
+CME,10-Year T-Note Futures,ZN,,Spread,Interest Rates,U.S. Treasuries,USD,Chicago Board of Trade
+ICE_L,STND OPT Coca-Cola Hbc Ag,CL,,Option Strategy,,,GBX,IFEU Financials
+CME,Soybean Futures,ZS,,Spread,Agriculture,Grain and Oilseed,USD,Chicago Board of Trade
+CME_Delayed,,ZC,,Spread,,,USD,ALL
+ICE_L,ICEU Short Gilt Future,G,IFLL.G,Future,,,GBP,IFEU Financials
+Kraken,,ES,,Currency,,,CURRENCY,ALL
+ASX,ASX SA Base Load Monthly Electricity Futures,ES,,Future,Energy,Electricity,AUD,SFE
+ICE,ICEU London Cocoa Future,C,IFLX.C,Future,,,GBP,IFEU Commodities
+CME,Euro FX Option (European),XT,,Option Strategy,FX,Majors,USD,Chicago Mercantile Exchange
+CME,Crude Oil Futures,CL,,Future,Energy,Crude Oil,USD,New York Mercantile Exchange
+CME,E-Mini S&P 500 Options,ES,,Option,Equities,Index,USD,Chicago Mercantile Exchange
+Eurex,Euro-Bobl,FGBM,,Spread,Interest Rates,Government Bond,EUR,ALL
+ICE_L,ICEU Long Gilt Future,R,IFLL.R,Future,,,GBP,IFEU Financials
+LME,,ZS,,Spread,,,USD,ALL
+ICE_L,ICEU Long Gilt Future,R,,Option Strategy,,,GBP,IFEU Financials
+CME_Delayed,,ZF,,Spread,,,USD,ALL
+ICE,ICEU London Cocoa Future,C,,Option Strategy,,,GBP,IFEU Commodities
+CME,E-Mini S&P 500 Futures,ES,,Spread,Equities,Index,USD,Chicago Mercantile Exchange
+KuCoin,,ES,,Currency,,,CURRENCY,KuCoin
+Huobi,,G,,Currency,,,CURRENCY,Huobi
+ICE,ICEU London Cocoa Future,C,IFLX.C,Option,,,GBP,IFEU Commodities
+ASX,ASX 3 Year Treasury Bond Options,YT,,Option,Interest Rates,Government Bond,AUD,SFE
+MX,Ten-Year Government of Canada Bond,CGB,,Future,Interest Rates,Government Bond,CAD,ALL
+ICE_L,ICEU Short Gilt Future Spr,G,IFLL.G,Spread,,,GBP,IFEU Financials
+ICE,ICEU London Cocoa Future Spr,C,IFLX.C,Spread,,,GBP,IFEU Commodities
+CME_Delayed,,ES,,Option Strategy,,,USD,ALL
+ASX,ASX 3 Year Treasury Bond Futures,YT,,Future,Interest Rates,Government Bond,AUD,SFE
+CME,10-Year T-Note Futures,ZN,,Future,Interest Rates,U.S. Treasuries,USD,Chicago Board of Trade
+Huobi,,ES,,Currency,,,CURRENCY,Huobi
+ICE_L,ICEU Coca-Cola Hbc Ag - STND OPT,CL,IFLO.CL,Future,,,GBX,IFEU Financials
+CME_Delayed,,ES,,Option,,,USD,ALL
+ICE,ULSD-ARA LS Gas Oil Futures,G,IPE e-Gas Oil,Future,,,USD,IFEU Commodities
+ASX,ASX 3 Year Treasury Bond Spreads,YT,,Spread,Interest Rates,Government Bond,AUD,SFE
+ASX,ASX 10 Year Treasury Bond Options,XT,,Option,Interest Rates,Government Bond,AUD,SFE
+CME_Delayed,,CL,,Future,,,USD,ALL
+CME_Delayed,,ES,,Spread,,,USD,ALL
+CME_Delayed,,ZS,,Future,,,USD,ALL
+ICE_L,ICEU Long Gilt Future Spr,R,IFLL.R,Spread,,,GBP,IFEU Financials
+ICE,ULSD-ARA LS Gas Oil Futures,G,,Option Strategy,,,USD,IFEU Commodities
+ICE_L,STND OPT Coca-Cola Hbc Ag,CL,IFLO.CL,Option,,,GBX,IFEU Financials
+ICE_L,ICEU Coca-Cola Hbc Ag,CL,IFLO.CL,Common Stock,,,GBX,IFEU Financials
+MX,Ten-Year Government of Canada Bond,CGB,,Spread,Interest Rates,Government Bond,CAD,ALL
+Kraken,,G,,Currency,,,CURRENCY,ALL
+CME_Delayed,,ZS,,Spread,,,USD,ALL
+CME_Delayed,,CL,,Spread,,,USD,ALL
+CME_Delayed,,ES,,Future,,,USD,ALL
+ASX,ASX 10 Year Treasury Bond Futures,XT,,Future,Interest Rates,Government Bond,AUD,SFE
+ICE,ULSD-ARA LS Gas Oil Spr,G,IPE e-Gas Oil,Spread,,,USD,IFEU Commodities
+CME,Corn Futures,ZC,,Future,Agriculture,Grain and Oilseed,USD,Chicago Board of Trade
+KuCoin,,G,,Currency,,,CURRENCY,KuCoin
+Eurex,Euro-Bund,FGBL,,Future,Interest Rates,Government Bond,EUR,ALL
+MX,,G,,Option Strategy,,,CAD,ALL
+BINANCE_US,,G,,Currency,,,CURRENCY,BINANCE_US
+ASX,,CL,,Future,,,AUD,SFE
+OKX,,G,,Currency,,,CURRENCY,OKX
+CME_Delayed,,ZC,,Future,,,USD,ALL
+CME_Delayed,,ZN,,Future,,,USD,ALL
+CME_Delayed,,ZN,,Spread,,,USD,ALL
+BINANCE,,C,,Currency,,,CURRENCY,BINANCE
+CME_Delayed,,ZF,,Future,,,USD,ALL
+KuCoin,,C,,Currency,,,CURRENCY,KuCoin
+ICE,ULSD-ARA LS Gas Oil Futures,G,IPE e-Gas Oil,Option,,,USD,IFEU Commodities
+MX,,CGB,,US Treasury Bond,,,CAD,ALL
+ICE_L,ICEU Long Gilt Future,R,IFLL.R,Option,,,GBP,IFEU Financials
+LME,Special High Grade Zinc,ZS,,Future,,,USD,ALL
+CME,Corn Futures,ZC,,Spread,Agriculture,Grain and Oilseed,USD,Chicago Board of Trade
+CME,Soybean Futures,ZS,,Future,Agriculture,Grain and Oilseed,USD,Chicago Board of Trade
+CME,E-Mini S&P 500 Futures,ES,,Option Strategy,Equities,Index,USD,Chicago Mercantile Exchange
+BINANCE,,G,,Currency,,,CURRENCY,BINANCE
+Coinbase,,G,,Currency,,,USD,ALL
+Eurex,Euro-Bobl,FGBM,,Future,Interest Rates,Government Bond,EUR,ALL
+CME,Crude Oil,CL,,Spread,Energy,Crude Oil,USD,New York Mercantile Exchange
