@@ -33,8 +33,13 @@ def pull_setup(
     *,
     resolve_roots: Callable[[AccountTree], list[str]],
     otd_max_pages: int = 1000,
+    progress: Callable[[str], None] | None = None,
 ) -> Snapshot:
-    """Read the setup under the roots chosen by ``resolve_roots`` and save it."""
+    """Read the setup under the roots chosen by ``resolve_roots`` and save it.
+
+    ``progress`` (optional) is called with a short line of text as the pull goes on.
+    """
+    say = progress or (lambda message: None)
     errors: list[str] = []
     notes: list[str] = []
     page_counts: dict[str, int] = {}
@@ -66,6 +71,7 @@ def pull_setup(
     accounts: list[dict[str, Any]] = []
     try:
         for page in tt.pages("ttaccount", "accounts"):
+            say(f"Accounts list: page {page.number}")
             writer.save_raw(
                 ACCOUNTS_LIST, f"page{page.number}", page.response.text, node_key=GLOBAL_KEY
             )
@@ -105,7 +111,8 @@ def pull_setup(
         else:
             writer.save_raw(endpoint, raw_id, response.text, node_key=node_key)
 
-    for account in scope:
+    for number, account in enumerate(scope, start=1):
+        say(f"Account {number} of {len(scope)}: {account.name}")
         read("ttaccount", f"account/{account.id}", ACCOUNT_DETAIL, account.id, account.key)
         read("ttaccount", f"account/{account.id}/users", ACCOUNT_USERS, account.id, account.key)
     read("ttsetup", "ordertagdefaults/fields", OTD_FIELDS, "global", GLOBAL_KEY)
@@ -117,7 +124,7 @@ def pull_setup(
         writer.note_unread(OTD_LIST, node_key=GLOBAL_KEY, status="not read")
     else:
         reached_end = _pull_order_tag_defaults(
-            tt, writer, scope, roots, otd_max_pages, errors, notes, page_counts
+            tt, writer, scope, roots, otd_max_pages, errors, notes, page_counts, say
         )
 
     complete = not errors and reached_end
@@ -133,6 +140,7 @@ def _pull_order_tag_defaults(
     errors: list[str],
     notes: list[str],
     page_counts: dict[str, int],
+    say: Callable[[str], None],
 ) -> bool:
     """Returns True when everything relevant was read to the end."""
     wanted = {account.id for account in scope} | {""}  # "" is account 0: the company default
@@ -146,6 +154,7 @@ def _pull_order_tag_defaults(
         at_end = False
         for page in tt.pages("ttsetup", "ordertagdefaults", params, max_pages=max_pages - pages):
             pages += 1
+            say(f"Order Tag Defaults: page {pages}")
             entries = page.response.body.get("orderTagDefaults") or []
             entries_read += len(entries)
             kept.extend(e for e in entries if norm_id(e.get("accountId")) in wanted)

@@ -14,8 +14,9 @@ from checks.setup.levels import LevelError, levels_table
 from checks.setup.profile import Profile, list_profiles
 from checks.setup.verify import verify_snapshot
 from core.hierarchy import HierarchyError
-from core.snapshots import SnapshotError
+from core.snapshots import SnapshotError, list_snapshots
 from ui import components
+from ui.pull import pull_panel
 
 TITLE = "Setup Verification"
 DESCRIPTION = "Checks a client's account setup in TT against the levels and values in its profile."
@@ -48,6 +49,12 @@ def render() -> None:
     if profile is None:
         return
     snapshot_dir = app_config.load_config().snapshots.path
+    pull_panel(
+        profile,
+        key="sv",
+        select_key="sv_snapshot",
+        expanded=not list_snapshots(snapshot_dir, profile.client),
+    )
     snapshot = components.snapshot_picker(snapshot_dir, profile.client, key="sv")
     if snapshot is None:
         return

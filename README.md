@@ -28,8 +28,10 @@ called TT yet.
   optional companion-account and legacy-group rules, plus display-only views), Limit
   Verification (ported from limit_compare, with parity tests in
   `tests/fixtures/limit_compare/`), credential storage, Windows launcher.
-- Not done: product-family names from `ttpds`; a pull button in the UI (pulls are only
-  available as `checks.setup.pull.pull_client`).
+- Pulling: the Setup Verification page has a "Pull a new snapshot from TT" panel. It
+  needs stored credentials and a ticked confirmation, shows progress, and selects the
+  new snapshot when done.
+- Not done: product-family names from `ttpds`.
 - To confirm on the first supervised pull: the request conventions in
   `core/tt_client.py` (headers, `requestId`, token form fields), the path
   `/ttaccount/ext_prod_live/account/{id}/users`, any `start_id` marked
@@ -59,7 +61,7 @@ values appear in the repo.
       `uv run python scripts/set_credentials.py`.
 - [ ] On each user's PC, copy the client profiles (`*.toml`) into
       `%LOCALAPPDATA%\Lookout\clients` (they are not in the release).
-- [ ] Run a first supervised pull and confirm the request conventions in
+- [ ] Run a first supervised pull (Setup Verification → "Pull a new snapshot from TT") and confirm the request conventions in
       `core/tt_client.py`, the `/account/{id}/users` path, and any `start_id` marked
       `id_verified = false` in a profile (then set it to true).
 - [ ] Check `Start-Lookout.bat` on a Windows 11 PC, including behind the corporate proxy.

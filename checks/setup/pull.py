@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from datetime import datetime
 from pathlib import Path
 
@@ -25,6 +26,7 @@ def pull_client(
     *,
     otd_max_pages: int = 1000,
     now: datetime | None = None,
+    progress: Callable[[str], None] | None = None,
 ) -> Snapshot:
     writer = SnapshotWriter(snapshot_dir, profile.client, now=now)
     return pull_setup(
@@ -32,4 +34,5 @@ def pull_client(
         writer,
         resolve_roots=lambda tree: start_ids(tree, profile),
         otd_max_pages=otd_max_pages,
+        progress=progress,
     )

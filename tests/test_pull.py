@@ -256,3 +256,17 @@ def test_pull_stays_within_a_small_call_budget(tmp_path: Path, honour: bool) -> 
     accounts = len(IN_SCOPE)
     # token + 3 list pages + 2 per account + fields + markets + OTD probe + OTD pages
     assert snapshot.manifest["calls"] <= 1 + 3 + 2 * accounts + 2 + 1 + accounts + 1
+
+
+def test_progress_is_reported(tmp_path: Path) -> None:
+    lines: list[str] = []
+    client = TTClient(
+        ReadOnlyClient(transport=FakeTT().transport),
+        parse_secret(SECRET),
+        clock=lambda: 0.0,
+        sleep=lambda seconds: None,
+    )
+    pull_client(client, tmp_path, PROFILE, now=WHEN, progress=lines.append)
+    assert lines[0] == "Accounts list: page 1"
+    assert f"Account 1 of {len(IN_SCOPE)}: FUND" in lines
+    assert any(line.startswith("Order Tag Defaults: page") for line in lines)

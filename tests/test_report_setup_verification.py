@@ -26,6 +26,9 @@ def folders(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> tuple[Path, Path
         {"snapshots": {"directory": str(snaps)}, "clients": {"directory": str(profiles)}}
     )
     monkeypatch.setattr(app_config, "load_config", lambda: settings)
+    from core import credentials
+
+    monkeypatch.setattr(credentials, "has_credentials", lambda: False)  # never the real store
     return snaps, profiles
 
 
@@ -58,7 +61,7 @@ def test_broken_profile_is_reported(folders: tuple[Path, Path]) -> None:
 
 def test_no_snapshots_yet(folders: tuple[Path, Path]) -> None:
     app = run()
-    assert "No snapshots found for example" in app.warning[0].value
+    assert any("No snapshots found for example" in w.value for w in app.warning)
     assert len(app.dataframe) == 0
 
 
@@ -117,7 +120,7 @@ def test_older_snapshot_can_be_picked(folders: tuple[Path, Path]) -> None:
     )
     app = run()
     assert app.selectbox[1].options == ["20261114_080000 (latest)", "20261113_093000"]
-    assert "Partial" in app.warning[0].value
+    assert any("Partial" in w.value for w in app.warning)
     app.selectbox[1].set_value("20261113_093000")
     app.run()
     assert "Complete" in app.success[0].value
@@ -135,3 +138,75 @@ def test_unexpected_data_shows_a_message_not_a_traceback(
     monkeypatch.setattr(verify, "run_checks", broken)
     app = run()
     assert "did not expect" in app.error[0].value
+
+
+# --- pulling -------------------------------------------------------------------
+
+
+def _fake_tt(monkeypatch: pytest.MonkeyPatch, *, stored: bool = True):  # noqa: ANN202
+    from core import credentials
+    from core.credentials import parse_secret
+    from core.readonly_http import ReadOnlyClient
+    from core.tt_client import TTClient
+    from tests.fixtures.fake_tt import SECRET, FakeTT
+    from ui import pull
+
+    tt = FakeTT()
+
+    def make(settings: AppConfig):  # noqa: ANN202
+        http = ReadOnlyClient(transport=tt.transport)
+        client = TTClient(http, parse_secret(SECRET), clock=lambda: 0.0, sleep=lambda seconds: None)
+        return client, http.close
+
+    monkeypatch.setattr(pull, "make_tt_client", make)
+    monkeypatch.setattr(credentials, "has_credentials", lambda: stored)
+    return tt
+
+
+def test_pull_needs_stored_credentials(
+    folders: tuple[Path, Path], monkeypatch: pytest.MonkeyPatch
+) -> None:
+    tt = _fake_tt(monkeypatch, stored=False)
+    app = run()
+    assert any("No TT credentials" in w.value for w in app.warning)
+    assert not [b for b in app.button if b.key == "sv_pull"]
+    assert tt.requests == []
+
+
+def test_pull_only_after_confirming_then_new_snapshot_is_shown(
+    folders: tuple[Path, Path], monkeypatch: pytest.MonkeyPatch
+) -> None:
+    tt = _fake_tt(monkeypatch)
+    app = run()
+    assert app.button(key="sv_pull").disabled  # not confirmed yet
+    assert tt.requests == []
+
+    app.checkbox(key="sv_pull_ok_0").check().run()
+    app.button(key="sv_pull").click().run()
+    assert not app.exception, app.exception
+    assert tt.requests and {r.method for r in tt.requests} <= {"GET", "POST"}
+    assert any("saved" in s.value for s in app.success)
+    from core.snapshots import list_snapshots
+
+    (new_id,) = list_snapshots(folders[0], "example")
+    assert app.selectbox(key="sv_snapshot").value == new_id
+    assert app.dataframe  # the new snapshot was checked
+    # on the next run the confirmation starts unticked again, and the new snapshot stays
+    app.run()
+    assert app.checkbox(key="sv_pull_ok_1").value is False
+    assert app.selectbox(key="sv_snapshot").value == new_id
+
+
+def test_pull_that_cannot_find_the_client_says_so(
+    folders: tuple[Path, Path], monkeypatch: pytest.MonkeyPatch
+) -> None:
+    text = synthetic.EXAMPLE_PROFILE.read_text(encoding="utf-8")
+    (folders[1] / "example.toml").write_text(
+        text.replace('path = ["SOUTHCO", "S-FUND"]', 'path = ["SOUTHCO", "NOPE"]'), encoding="utf-8"
+    )
+    _fake_tt(monkeypatch)
+    app = run()
+    app.checkbox(key="sv_pull_ok_0").check().run()
+    app.button(key="sv_pull").click().run()
+    assert not app.exception, app.exception
+    assert any("pull failed" in e.value for e in app.error)
