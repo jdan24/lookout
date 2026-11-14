@@ -22,8 +22,9 @@ if errorlevel 1 (
     echo.
     echo  1. Open PowerShell
     echo  2. Paste this line and press Enter:
+    rem The pipe below is inside quotes, so cmd prints it as is: no caret escape needed.
     echo.
-    echo     powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 ^| iex"
+    echo     powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
     echo.
     echo  3. Close this window and start Lookout again.
     echo.

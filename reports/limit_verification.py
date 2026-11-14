@@ -153,6 +153,9 @@ def render() -> None:
     except (HierarchyError, SnapshotError) as exc:
         st.error(f"This snapshot could not be read: {exc}")
         return
+    except (ValueError, TypeError, KeyError) as exc:  # data TT sent in a shape we did not expect
+        st.error(f"This snapshot holds data Lookout did not expect ({type(exc).__name__}: {exc}).")
+        return
 
     accounts = lv.accounts_with_limits(setup)
     if not accounts:
@@ -172,7 +175,16 @@ def render() -> None:
     sheet_format, cols = _columns(raw)
     if sheet_format is None:
         return
-    result = lv.verify_limits(setup, account_id, raw, sheet_format, cols, **_extras(sheet_format))
+    try:
+        result = lv.verify_limits(
+            setup, account_id, raw, sheet_format, cols, **_extras(sheet_format)
+        )
+    except (ValueError, TypeError, KeyError) as exc:
+        st.error(
+            "The comparison could not be run on this data "
+            f"({type(exc).__name__}: {exc}). Please report this with the snapshot id."
+        )
+        return
 
     if result.conflicts:
         st.warning(

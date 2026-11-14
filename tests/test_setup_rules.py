@@ -189,3 +189,19 @@ def test_verify_snapshot(tmp_path: Path) -> None:
     result = verify_snapshot(synthetic.build_snapshot(tmp_path), synthetic.profile())
     counts = {c: sum(r.colour.value == c for r in result.rows) for c in ("green", "amber", "red")}
     assert counts["red"] > 0 and counts["amber"] > 0 and counts["green"] > counts["red"]
+
+
+def test_users_endpoint_not_read_is_unknown_even_when_the_detail_was(tmp_path: Path) -> None:
+    got = run(load_setup(synthetic.build_snapshot(tmp_path, skip_users=(210,))))
+    beta = [r for key, r in got.items() if key[0] == "USERS" and key[1] == "CLI-BETA"]
+    assert [outcome(r) for r in beta] == [("amber", "UNKNOWN")]
+
+
+def test_unexpected_or_missing_checkbox_values_are_amber_not_a_crash(setup: SetupData) -> None:
+    setup.details["200"]["riskLimitSettings"]["noLimits"] = 2
+    del setup.details["210"]["restrictions"]["applyRestrictions"]
+    got = run(setup)
+    odd = got[("LIMITS", "CLI-ALPHA", "Apply Limits")]
+    assert outcome(odd) == ("amber", "UNKNOWN") and "noLimits = 2" in odd.message
+    gone = got[("RESTRICTIONS", "CLI-BETA", "Apply Restrictions")]
+    assert outcome(gone) == ("amber", "UNKNOWN") and "no Apply Restrictions value" in gone.message

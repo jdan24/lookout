@@ -121,3 +121,17 @@ def test_older_snapshot_can_be_picked(folders: tuple[Path, Path]) -> None:
     app.selectbox[1].set_value("20261113_093000")
     app.run()
     assert "Complete" in app.success[0].value
+
+
+def test_unexpected_data_shows_a_message_not_a_traceback(
+    folders: tuple[Path, Path], monkeypatch: pytest.MonkeyPatch
+) -> None:
+    synthetic.build_snapshot(folders[0], client="example")
+    from checks.setup import verify
+
+    def broken(*args: object) -> None:
+        raise ValueError("Not an id: {}")
+
+    monkeypatch.setattr(verify, "run_checks", broken)
+    app = run()
+    assert "did not expect" in app.error[0].value

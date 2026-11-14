@@ -23,6 +23,24 @@ MARKETS = "markets"
 LIMIT_KINDS = ("productLimits", "contractLimits", "interProductLimits")
 
 
+class UnexpectedValue(ValueError):
+    """TT sent a value Lookout does not understand (e.g. a checkbox that is not 0 or 1)."""
+
+    def __init__(self, account_id: str, field_name: str, value: Any) -> None:
+        super().__init__(f"TT sent {field_name} = {value!r} on account {account_id}")
+        self.account_id = account_id
+        self.field_name = field_name
+        self.value = value
+
+
+def _box(account_id: str, section: dict[str, Any] | None, name: str) -> bool | None:
+    value = (section or {}).get(name)
+    try:
+        return tt_bool(value)
+    except ValueError:
+        raise UnexpectedValue(account_id, name, value) from None
+
+
 @dataclass
 class SetupData:
     tree: AccountTree
@@ -42,7 +60,7 @@ class SetupData:
         record = self.detail(account_id)
         if record is None:
             return None
-        no_limits = tt_bool((record.get("riskLimitSettings") or {}).get("noLimits"))
+        no_limits = _box(account_id, record.get("riskLimitSettings"), "noLimits")
         return None if no_limits is None else not no_limits
 
     def apply_restrictions(self, account_id: str) -> bool | None:
@@ -50,7 +68,7 @@ class SetupData:
         record = self.detail(account_id)
         if record is None:
             return None
-        return tt_bool((record.get("restrictions") or {}).get("applyRestrictions"))
+        return _box(account_id, record.get("restrictions"), "applyRestrictions")
 
     def limit_rows(self, account_id: str, kind: str | None = None) -> list[dict[str, Any]]:
         """Limit rows on the account; all three kinds unless one is named."""
@@ -60,16 +78,17 @@ class SetupData:
         return [row for k in kinds for row in (limits.get(k) or [])]
 
     def direct_users(self, account_id: str) -> list[dict[str, str]] | None:
-        """Users assigned on this account itself, as ``{id, name}``. None = not read."""
+        """Users assigned on this account itself, as ``{id, name}``. None = not read.
+
+        Only the account's users endpoint counts. The ``users`` list inside the account
+        detail is not used: it may hold order permissions rather than assignments, so
+        a failed users read must show as unknown, never as "no users".
+        """
         key = norm_id(account_id)
-        if key in self.users:
-            source = self.users[key]
-        elif key in self.details and "users" in self.details[key]:
-            source = self.details[key]["users"] or []
-        else:
+        if key not in self.users:
             return None
         found = []
-        for user in source:
+        for user in self.users[key]:
             user_id = norm_id(user.get("userId")) or norm_id(user.get("id"))
             if user_id != NO_ID:
                 found.append({"id": user_id, "name": str(user.get("userName") or "")})

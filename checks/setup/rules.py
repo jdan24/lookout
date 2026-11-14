@@ -7,13 +7,14 @@ result shape (``core.results``) and runs on a saved snapshot.
 from __future__ import annotations
 
 import re
+from collections.abc import Callable
 from typing import Any
 
 from checks.setup.levels import LevelMap, Place
 from checks.setup.profile import CompanionAccountRule, Profile, Tree
 from core.normalize import norm_id
 from core.results import Colour, Reason, ResultRow
-from core.setup_model import SetupData
+from core.setup_model import SetupData, UnexpectedValue
 
 
 def row(place: Place, rule_id: str, setting: str, colour: Colour, **fields: Any) -> ResultRow:
@@ -35,6 +36,45 @@ def unread(place: Place, rule_id: str, setting: str) -> ResultRow:
         Colour.AMBER,
         reason=Reason.UNKNOWN,
         message=f"{place.account.name} was not read in this snapshot. Pull again to check it.",
+    )
+
+
+def read_box(
+    setup: SetupData,
+    read: Callable[[str], bool | None],
+    place: Place,
+    rule_id: str,
+    setting: str,
+) -> tuple[bool | None, ResultRow | None]:
+    """A checkbox value, or an amber row saying why it could not be judged."""
+    name = place.account.name
+    try:
+        value = read(place.account.id)
+    except UnexpectedValue as exc:
+        return None, row(
+            place,
+            rule_id,
+            setting,
+            Colour.AMBER,
+            actual=f"{exc.field_name} = {exc.value!r}",
+            reason=Reason.UNKNOWN,
+            message=(
+                f"TT sent an unexpected value for {setting} on {name} ({exc.field_name} = "
+                f"{exc.value!r}). Check it by hand in TT."
+            ),
+        )
+    if value is not None:
+        return value, None
+    if setup.detail(place.account.id) is None:
+        return None, unread(place, rule_id, setting)
+    return None, row(
+        place,
+        rule_id,
+        setting,
+        Colour.AMBER,
+        actual="Not sent by TT",
+        reason=Reason.UNKNOWN,
+        message=f"TT's record for {name} has no {setting} value. Check it by hand in TT.",
     )
 
 
@@ -125,9 +165,9 @@ def check_apply_limits(setup: SetupData, levels: LevelMap) -> list[ResultRow]:
             continue
         name = place.account.name
         where = _where(place.tree, "apply_limits", place.root.name)
-        ticked = setup.apply_limits(place.account.id)
-        if ticked is None:
-            rows.append(unread(place, "LIMITS", "Apply Limits"))
+        ticked, problem = read_box(setup, setup.apply_limits, place, "LIMITS", "Apply Limits")
+        if problem is not None or ticked is None:
+            rows.append(problem or unread(place, "LIMITS", "Apply Limits"))
             continue
         if want == "off":
             rows.append(
@@ -205,9 +245,11 @@ def check_apply_restrictions(setup: SetupData, levels: LevelMap) -> list[ResultR
             continue
         name = place.account.name
         where = _where(place.tree, "apply_restrictions", place.root.name)
-        ticked = setup.apply_restrictions(place.account.id)
-        if ticked is None:
-            rows.append(unread(place, "RESTRICTIONS", "Apply Restrictions"))
+        ticked, problem = read_box(
+            setup, setup.apply_restrictions, place, "RESTRICTIONS", "Apply Restrictions"
+        )
+        if problem is not None or ticked is None:
+            rows.append(problem or unread(place, "RESTRICTIONS", "Apply Restrictions"))
             continue
         expected = want == "on"
         if place.empty and expected and not ticked:

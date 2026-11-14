@@ -53,8 +53,9 @@ def test_direct_users(tmp_path: Path) -> None:
         {"id": "9002", "name": "bob.trader"},
     ]
     assert setup.direct_users("200") == []
-    # users endpoint not read: falls back to the detail record's users list
-    assert setup.direct_users("210") == []
+    # users endpoint not read: unknown, even though the account detail was read
+    assert setup.detail("210") is not None
+    assert setup.direct_users("210") is None
     assert setup.direct_users("51") is None
 
 

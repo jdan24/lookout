@@ -160,5 +160,7 @@ def test_launcher_is_a_windows_batch_file() -> None:
     assert "%LOCALAPPDATA%\\Lookout\\app" in text
     assert "streamlit run app.py --server.address localhost --server.headless true" in text
     assert "where uv" in text and "astral.sh/uv/install.ps1" in text
+    # Inside quotes cmd prints a caret literally, which would break the pasted command.
+    assert '-c "irm https://astral.sh/uv/install.ps1 | iex"' in text and "^|" not in text
     assert "http://localhost:%PORT%" in text and 'set "PORT=8501"' in text
     assert "/XD .venv" in text  # updating must not wipe the local environment

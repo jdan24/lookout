@@ -57,6 +57,12 @@ def render() -> None:
     except (LevelError, HierarchyError, SnapshotError) as exc:
         st.error(f"This snapshot could not be checked: {exc}")
         return
+    except (ValueError, TypeError, KeyError) as exc:  # data TT sent in a shape we did not expect
+        st.error(
+            "This snapshot holds data Lookout did not expect, so it could not be checked "
+            f"({type(exc).__name__}: {exc}). Please report this with the snapshot id."
+        )
+        return
     for note in result.levels.notes:
         st.warning(note)
 
