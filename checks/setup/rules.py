@@ -83,7 +83,7 @@ def _on_off(value: bool) -> str:
 
 
 def _where(tree: Tree, setting: str, root_name: str) -> str:
-    """Where a box should be ticked in this tree, e.g. "Pod" or "Client group (CLI)"."""
+    """Where a box should be ticked in this tree, e.g. "Team" or "Client group (FUND)"."""
     labels = []
     for level in tree.levels:
         if getattr(level, setting) == "on" and level.label not in labels:

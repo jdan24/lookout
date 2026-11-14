@@ -159,7 +159,7 @@ def test_one_failing_account_makes_the_snapshot_partial(tmp_path: Path) -> None:
     assert detail_ids(tt) == IN_SCOPE  # the pull carried on with the other accounts
 
     rows = verify_snapshot(snapshot, PROFILE).rows
-    unknown = [r for r in rows if r.node.startswith("ABCD2000BET") and r.rule_id == "LIMITS"]
+    unknown = [r for r in rows if r.node.startswith("ABC20002BE") and r.rule_id == "LIMITS"]
     assert [(r.colour.value, r.reason.value) for r in unknown] == [("amber", "UNKNOWN")]
 
 

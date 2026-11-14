@@ -30,15 +30,15 @@ def acct(id_: Any, name: str, parent: Any = 0, type_: Any = 3, **extra: Any) -> 
 # A fictional company with one client tree and one unrelated tree.
 ACCOUNTS = [
     acct(10, "BANK"),
-    acct(11, "DESK", 10),
-    acct(100, "CLI", 11),
-    acct(210, "CLI-BETA", 100),
-    acct(200, "CLI-ALPHA", 100),
+    acct(11, "BROKER", 10),
+    acct(100, "FUND", 11),
+    acct(210, "FUND-BETA", 100),
+    acct(200, "FUND-ALPHA", 100),
     acct(301, "ABCD1001ALP", 200, 1),
-    acct(300, "ABCD1000ALP", 200, 1),
-    acct(310, "ABCD2000BET", 210, 1),
-    acct(311, "ABCD2000SUB", 310, 1),
-    acct(220, "CLI-EMPTY", 100),
+    acct(300, "ABC10001AL", 200, 1),
+    acct(310, "ABC20002BE", 210, 1),
+    acct(311, "ABC20002SUB", 310, 1),
+    acct(220, "FUND-EMPTY", 100),
     acct(50, "OTHERCO"),
     acct(51, "OTHER-ACCT", 50, 1),
 ]
@@ -78,9 +78,9 @@ def test_accounts_are_indexed_by_string_id(tree: AccountTree) -> None:
     assert len(tree) == 12
     assert 100 in tree and "100" in tree and 999 not in tree
     cli = tree.get(100)
-    assert (cli.id, cli.name, cli.parent_id, cli.account_type) == ("100", "CLI", "11", 3)
+    assert (cli.id, cli.name, cli.parent_id, cli.account_type) == ("100", "FUND", "11", 3)
     assert cli.key == "acct:100"
-    assert cli.display == "CLI (100)"
+    assert cli.display == "FUND (100)"
     assert tree.get("300").account_type == 1
     with pytest.raises(HierarchyError):
         tree.get(999)
@@ -88,27 +88,27 @@ def test_accounts_are_indexed_by_string_id(tree: AccountTree) -> None:
 
 def test_roots_parents_children(tree: AccountTree) -> None:
     assert names(tree.roots()) == ["BANK", "OTHERCO"]
-    assert tree.parent(100).name == "DESK"
+    assert tree.parent(100).name == "BROKER"
     assert tree.parent(10) is None
-    assert names(tree.children(100)) == ["CLI-ALPHA", "CLI-BETA", "CLI-EMPTY"]
-    assert names(tree.children(200)) == ["ABCD1000ALP", "ABCD1001ALP"]
+    assert names(tree.children(100)) == ["FUND-ALPHA", "FUND-BETA", "FUND-EMPTY"]
+    assert names(tree.children(200)) == ["ABC10001AL", "ABCD1001ALP"]
     assert tree.is_leaf(300) and tree.is_leaf(220)
     assert not tree.is_leaf(200)
 
 
 def test_ancestors_and_descendants(tree: AccountTree) -> None:
-    assert names(tree.ancestors(311)) == ["ABCD2000BET", "CLI-BETA", "CLI", "DESK", "BANK"]
+    assert names(tree.ancestors(311)) == ["ABC20002BE", "FUND-BETA", "FUND", "BROKER", "BANK"]
     assert tree.ancestors(10) == []
     assert names(tree.descendants(100)) == [
-        "CLI-ALPHA",
-        "ABCD1000ALP",
+        "FUND-ALPHA",
+        "ABC10001AL",
         "ABCD1001ALP",
-        "CLI-BETA",
-        "ABCD2000BET",
-        "ABCD2000SUB",
-        "CLI-EMPTY",
+        "FUND-BETA",
+        "ABC20002BE",
+        "ABC20002SUB",
+        "FUND-EMPTY",
     ]
-    assert names(tree.subtree(210)) == ["CLI-BETA", "ABCD2000BET", "ABCD2000SUB"]
+    assert names(tree.subtree(210)) == ["FUND-BETA", "ABC20002BE", "ABC20002SUB"]
     assert tree.descendants(300) == []
 
 
@@ -131,7 +131,7 @@ def test_depth_and_labels(tree: AccountTree) -> None:
 
 
 def test_find_by_name(tree: AccountTree) -> None:
-    assert [a.id for a in tree.find_by_name("CLI")] == ["100"]
+    assert [a.id for a in tree.find_by_name("FUND")] == ["100"]
     assert tree.find_by_name("NOPE") == []
 
 

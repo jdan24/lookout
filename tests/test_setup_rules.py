@@ -42,33 +42,35 @@ def test_every_non_green_row_says_what_to_do(setup: SetupData) -> None:
 def test_messages(setup: SetupData) -> None:
     got = run(setup)
     assert (
-        got[("LIMITS", "CLI-BETA", "Apply Limits")].message == "Tick Apply Limits on pod CLI-BETA."
+        got[("LIMITS", "FUND-BETA", "Apply Limits")].message
+        == "Tick Apply Limits on team FUND-BETA."
     )
     assert (
-        "Limits belong on the Pod level" in got[("LIMITS", "ABCD2000BET", "Apply Limits")].message
+        "Limits belong on the Team level" in got[("LIMITS", "ABC20002BE", "Apply Limits")].message
     )
-    restr = got[("RESTRICTIONS", "CB-CLI-BETA", "Apply Restrictions")]
-    assert restr.expected_level == "Client group (CB-CLI)"
-    assert "set on Client group (CB-CLI) only" in restr.message
-    assert "Move them from CLI-BETA" in got[("MARKETS", "CLI-BETA", "Limit market: ASX")].message
+    restr = got[("RESTRICTIONS", "S-FUND-BETA", "Apply Restrictions")]
+    assert restr.expected_level == "Client group (S-FUND)"
+    assert "set on Client group (S-FUND) only" in restr.message
+    assert "Move them from FUND-BETA" in got[("MARKETS", "FUND-BETA", "Limit market: ASX")].message
     assert (
-        "not listed in any tree" in got[("MARKETS", "CLI-BETA", "Limit market: market 216")].message
+        "not listed in any tree"
+        in got[("MARKETS", "FUND-BETA", "Limit market: market 216")].message
     )
-    naming = got[("NAMING", "ABCD2002BET", "Name")]
-    assert naming.expected == "CB-<GMI account><3-letter pod code>"
+    naming = got[("NAMING", "ABC20022BE", "Name")]
+    assert naming.expected == "S-<account number><2-letter team code>"
     assert (
-        "Add the NX account under CLI-GAMMA"
-        in got[("COMPANION", "CLI-GAMMA", "Endex account")].message
+        "Add the IX account under FUND-GAMMA"
+        in got[("COMPANION", "FUND-GAMMA", "Index account")].message
     )
-    level = got[("LEVEL", "LONE4000AAA", "Level")]
-    assert level.expected == "Pod, account type 3" and "does not fit any level" in level.message
-    assert got[("OTD", "ABCD2000BET", "Clearing Account (CME)")].actual_level == "Pod"
-    firm = got[("OTD", "ABCD3000GAM", "Clearing Firm ID (ICE)")]
-    assert firm.expected_level == "Trading account, Pod or Client group"
-    assert "Set 55555 on ABCD3000GAM" in firm.message
-    assert got[("USERS", "CLI-BETA", "User bob.trader")].expected_level == "Client group (CLI)"
-    legacy = got[("LEGACY", "CLI-OLDPOD", "Legacy group")]
-    assert legacy.expected == "Under CLI or CB-CLI"
+    level = got[("LEVEL", "LON40004AA", "Level")]
+    assert level.expected == "Team, account type 3" and "does not fit any level" in level.message
+    assert got[("OTD", "ABC20002BE", "Clearing Account (CME)")].actual_level == "Team"
+    firm = got[("OTD", "ABC30003GA", "Clearing Firm ID (Euronext)")]
+    assert firm.expected_level == "Trading account, Team or Client group"
+    assert "Set 77777 on ABC30003GA" in firm.message
+    assert got[("USERS", "FUND-BETA", "User bob.trader")].expected_level == "Client group (FUND)"
+    legacy = got[("LEGACY", "FUND-OLDPOD", "Legacy group")]
+    assert legacy.expected == "Under FUND or S-FUND"
 
 
 def test_unread_accounts_are_amber_unknown(tmp_path: Path) -> None:
@@ -77,23 +79,23 @@ def test_unread_accounts_are_amber_unknown(tmp_path: Path) -> None:
     )
     got = run(setup)
     for key in [
-        ("LIMITS", "CLI-BETA", "Apply Limits"),
-        ("RESTRICTIONS", "ABCD2000BET", "Apply Restrictions"),
-        ("COMPANION", "CLI-BETA", "Endex account"),
-        ("USERS", "CLI", "Users"),
-        ("USERS", "CLI-ALPHA", "Users"),
+        ("LIMITS", "FUND-BETA", "Apply Limits"),
+        ("RESTRICTIONS", "ABC20002BE", "Apply Restrictions"),
+        ("COMPANION", "FUND-BETA", "Index account"),
+        ("USERS", "FUND", "Users"),
+        ("USERS", "FUND-ALPHA", "Users"),
     ]:
         assert outcome(got[key]) == ("amber", "UNKNOWN"), key
-    # the CB tree's users were read, so they are still judged
-    assert outcome(got[("USERS", "CB-CLI-ALPHA", "Users")]) == ("green", "")
+    # the south tree's users were read, so they are still judged
+    assert outcome(got[("USERS", "S-FUND-ALPHA", "Users")]) == ("green", "")
 
 
 def test_partial_order_tag_defaults_give_unknown_not_missing(tmp_path: Path) -> None:
     got = run(load_setup(synthetic.build_snapshot(tmp_path, otd_reached_end=False)))
-    unknown = got[("OTD", "ABCD2000BET", "Clearing Account (Eurex)")]
+    unknown = got[("OTD", "ABC20002BE", "Clearing Account (Eurex)")]
     assert outcome(unknown) == ("amber", "UNKNOWN") and "not read to the end" in unknown.message
-    assert outcome(got[("OTD", "ABCD1000ALP", "Clearing Account (CFE)")]) == ("red", "MISMATCH")
-    assert outcome(got[("OTD", "ABCD2000BET", "Clearing Account (CME)")]) == ("red", "WRONG_LEVEL")
+    assert outcome(got[("OTD", "ABC10001AL", "Clearing Account (MX)")]) == ("red", "MISMATCH")
+    assert outcome(got[("OTD", "ABC20002BE", "Clearing Account (CME)")]) == ("red", "WRONG_LEVEL")
 
 
 def test_enum_values_are_shown_by_name(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
@@ -117,7 +119,7 @@ def test_enum_values_are_shown_by_name(tmp_path: Path, monkeypatch: pytest.Monke
     index = otd.OrderTagDefaultIndex(setup, synthetic.profile().otd_default_key)
     assert index.on_account("300", "7", "77") == "Third"
     assert index.on_account("300", "2", "77") is None
-    assert index.on_account("300", "7", "1859") == "ABCD1000"  # the user-specific entry is ignored
+    assert index.on_account("300", "7", "1859") == "ABC10001"  # the user-specific entry is ignored
 
 
 def test_optional_rules_can_be_switched_off(setup: SetupData) -> None:
@@ -136,25 +138,25 @@ def test_unnecessary_companion_can_be_red(setup: SetupData) -> None:
             )
         }
     )
-    row = run(setup, red)[("COMPANION", "ABCD2001BNX", "Endex account")]
+    row = run(setup, red)[("COMPANION", "ABC20012IX", "Index account")]
     assert outcome(row) == ("red", "WRONG_LEVEL")
 
 
 def test_inherited_users_need_a_level_with_users_here(setup: SetupData) -> None:
     profile = synthetic.profile()
-    member = profile.tree("member")
-    root = member.levels[0].model_copy(update={"users": "any"})
-    trees = [member.model_copy(update={"levels": [root, *member.levels[1:]]}), profile.trees[1]]
+    north = profile.tree("north")
+    root = north.levels[0].model_copy(update={"users": "any"})
+    trees = [north.model_copy(update={"levels": [root, *north.levels[1:]]}), profile.trees[1]]
     got = run(setup, profile.model_copy(update={"trees": trees}))
-    assert outcome(got[("USERS", "CLI-ALPHA", "Users")]) == ("amber", "NO_RULE")
-    assert "Fix the profile" in got[("USERS", "CLI-ALPHA", "Users")].message
+    assert outcome(got[("USERS", "FUND-ALPHA", "Users")]) == ("amber", "NO_RULE")
+    assert "Fix the profile" in got[("USERS", "FUND-ALPHA", "Users")].message
 
 
 def test_display_only_values_are_listed_not_judged(setup: SetupData) -> None:
     profile = synthetic.profile()
     shown = rules.manual_check_values(setup, assign_levels(setup.tree, profile), profile)
     items = {(r["node"], r["item"]) for r in shown}
-    assert ("CLI-ALPHA (200)", "Description") in items
+    assert ("FUND-ALPHA (200)", "Description") in items
     assert ("Company default (any account)", "Operator ID (user 9001)") in items
     assert not any(r["node"].startswith("OTHER") for r in shown)
 
@@ -165,24 +167,24 @@ def test_views(tmp_path: Path) -> None:
     levels = assign_levels(setup.tree, profile)
     limits = views.limits_by_level(setup, levels, profile)
     assert {r["Account"] for r in limits} == {
-        "CLI-ALPHA (200)",
-        "CLI-BETA (210)",
-        "CLI-GAMMA (220)",
-        "CB-CLI-ALPHA (600)",
-        "CB-CLI-BETA (610)",
+        "FUND-ALPHA (200)",
+        "FUND-BETA (210)",
+        "FUND-GAMMA (220)",
+        "S-FUND-ALPHA (600)",
+        "S-FUND-BETA (610)",
     }
     first: dict[str, Any] = limits[0]
-    assert (first["Level"], first["Start account"], first["Exchange"]) == ("Pod", "CLI", "CME")
+    assert (first["Level"], first["Start account"], first["Exchange"]) == ("Team", "FUND", "CME")
     assert first["Product family id"] == synthetic.BIG_FAMILY_ID
     assert next(r for r in limits if r["Product"] == "QQ")["Exchange"] == "market 216"
     assert all(isinstance(v, str) for row in limits for v in row.values())
 
     settings = views.settings_by_node(setup, levels)
-    pod = {r["json_path"]: r for r in settings if r["node"] == "CLI-ALPHA (200)"}
-    assert pod["riskLimitSettings.noLimits"]["value"] == "0"
+    team = {r["json_path"]: r for r in settings if r["node"] == "FUND-ALPHA (200)"}
+    assert team["riskLimitSettings.noLimits"]["value"] == "0"
     nodes = {r["node"] for r in settings}
-    assert "ABCD1000ALP (300)" not in nodes
-    assert not any("OTHER" in n or "TOPBANK" in n for n in nodes)
+    assert "ABC10001AL (300)" not in nodes
+    assert not any("OTHER" in n or "NORTHCO" in n for n in nodes)
 
 
 def test_verify_snapshot(tmp_path: Path) -> None:
@@ -193,7 +195,7 @@ def test_verify_snapshot(tmp_path: Path) -> None:
 
 def test_users_endpoint_not_read_is_unknown_even_when_the_detail_was(tmp_path: Path) -> None:
     got = run(load_setup(synthetic.build_snapshot(tmp_path, skip_users=(210,))))
-    beta = [r for key, r in got.items() if key[0] == "USERS" and key[1] == "CLI-BETA"]
+    beta = [r for key, r in got.items() if key[0] == "USERS" and key[1] == "FUND-BETA"]
     assert [outcome(r) for r in beta] == [("amber", "UNKNOWN")]
 
 
@@ -201,7 +203,7 @@ def test_unexpected_or_missing_checkbox_values_are_amber_not_a_crash(setup: Setu
     setup.details["200"]["riskLimitSettings"]["noLimits"] = 2
     del setup.details["210"]["restrictions"]["applyRestrictions"]
     got = run(setup)
-    odd = got[("LIMITS", "CLI-ALPHA", "Apply Limits")]
+    odd = got[("LIMITS", "FUND-ALPHA", "Apply Limits")]
     assert outcome(odd) == ("amber", "UNKNOWN") and "noLimits = 2" in odd.message
-    gone = got[("RESTRICTIONS", "CLI-BETA", "Apply Restrictions")]
+    gone = got[("RESTRICTIONS", "FUND-BETA", "Apply Restrictions")]
     assert outcome(gone) == ("amber", "UNKNOWN") and "no Apply Restrictions value" in gone.message

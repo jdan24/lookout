@@ -3,21 +3,21 @@
 It follows TT's response shapes and contains one
 deliberate fault for each rule, so each check has something to find.
 
-    TOPBANK (10) > DESK (11) > CLI (100)                 member-side client group
-        CLI-ALPHA (200)   a correct pod
-            ABCD1000ALP (300), ABCD1000ANX (301)
-        CLI-BETA (210)    a pod with faults
-            ABCD2000BET (310), BETA-ACCT (311), ABCD2001BNX (312)
-        CLI-GAMMA (220)   Endex limit but no NX account
-            ABCD3000GAM (320)
-        CLI-EMPTY (230)   new, empty pod group
-        LONE4000AAA (240) standalone account, no pod group
-      CLI-OLDPOD (900)    legacy group outside the client group (under DESK)
-    CBTOP (20) > CB-CLI (500)                            non-member client group
-        CB-CLI-ALPHA (600)  a correct pod
-            CB-ABCD1000ALP (700)
-        CB-CLI-BETA (610)   a pod with faults
-            CB-ABCD2000BET (710), ABCD2002BET (711)
+    NORTHCO (10) > BROKER (11) > FUND (100)                 north client group
+        FUND-ALPHA (200)   a correct team
+            ABC10001AL (300), ABC10001IX (301)
+        FUND-BETA (210)    a team with faults
+            ABC20002BE (310), BETA-ACCT (311), ABC20012IX (312)
+        FUND-GAMMA (220)   index-product limit but no IX account
+            ABC30003GA (320)
+        FUND-EMPTY (230)   new, empty team group
+        LON40004AA (240) standalone account, no team group
+      FUND-OLDPOD (900)    legacy group outside the client group (under BROKER)
+    SOUTHCO (20) > S-FUND (500)                            south client group
+        S-FUND-ALPHA (600)  a correct team
+            S-ABC10001AL (700)
+        S-FUND-BETA (610)   a team with faults
+            S-ABC20002BE (710), ABC20022BE (711)
     OTHERCO (50) > OTHER-ACCT (51)                       unrelated client
 """
 
@@ -55,28 +55,28 @@ def _list_item(id_: int, name: str, parent: int, type_: int) -> dict[str, Any]:
 
 # (id, name, parent, accountType)
 ACCOUNTS: list[tuple[int, str, int, int]] = [
-    (10, "TOPBANK", 0, 3),
-    (11, "DESK", 10, 3),
-    (100, "CLI", 11, 3),
-    (200, "CLI-ALPHA", 100, 3),
-    (300, "ABCD1000ALP", 200, 1),
-    (301, "ABCD1000ANX", 200, 1),
-    (210, "CLI-BETA", 100, 3),
-    (310, "ABCD2000BET", 210, 1),
+    (10, "NORTHCO", 0, 3),
+    (11, "BROKER", 10, 3),
+    (100, "FUND", 11, 3),
+    (200, "FUND-ALPHA", 100, 3),
+    (300, "ABC10001AL", 200, 1),
+    (301, "ABC10001IX", 200, 1),
+    (210, "FUND-BETA", 100, 3),
+    (310, "ABC20002BE", 210, 1),
     (311, "BETA-ACCT", 210, 1),
-    (312, "ABCD2001BNX", 210, 1),
-    (220, "CLI-GAMMA", 100, 3),
-    (320, "ABCD3000GAM", 220, 1),
-    (230, "CLI-EMPTY", 100, 3),
-    (240, "LONE4000AAA", 100, 1),
-    (900, "CLI-OLDPOD", 11, 3),
-    (20, "CBTOP", 0, 3),
-    (500, "CB-CLI", 20, 3),
-    (600, "CB-CLI-ALPHA", 500, 3),
-    (700, "CB-ABCD1000ALP", 600, 4),
-    (610, "CB-CLI-BETA", 500, 3),
-    (710, "CB-ABCD2000BET", 610, 4),
-    (711, "ABCD2002BET", 610, 4),
+    (312, "ABC20012IX", 210, 1),
+    (220, "FUND-GAMMA", 100, 3),
+    (320, "ABC30003GA", 220, 1),
+    (230, "FUND-EMPTY", 100, 3),
+    (240, "LON40004AA", 100, 1),
+    (900, "FUND-OLDPOD", 11, 3),
+    (20, "SOUTHCO", 0, 3),
+    (500, "S-FUND", 20, 3),
+    (600, "S-FUND-ALPHA", 500, 3),
+    (700, "S-ABC10001AL", 600, 4),
+    (610, "S-FUND-BETA", 500, 3),
+    (710, "S-ABC20002BE", 610, 4),
+    (711, "ABC20022BE", 610, 4),
     (50, "OTHERCO", 0, 3),
     (51, "OTHER-ACCT", 50, 1),
 ]
@@ -105,25 +105,25 @@ def limit(market: int, symbol: str, max_pos: int = 100) -> dict[str, Any]:
 # account id -> (Apply Limits ticked, Apply Restrictions ticked, product limit rows)
 SETTINGS: dict[int, tuple[bool, bool, list[dict[str, Any]]]] = {
     100: (False, False, []),
-    200: (True, True, [limit(7, "ZN"), limit(2, "FGBL"), limit(32, "TFM")]),
+    200: (True, True, [limit(7, "ZN"), limit(2, "FGBL"), limit(30, "jFCE")]),
     300: (False, False, []),
     301: (False, False, []),
-    # faults: Apply Limits off; a non-member market (24); an unmapped market (216)
-    210: (False, True, [limit(7, "ZN"), limit(24, "XT"), limit(216, "QQ"), limit(32, "BRN")]),
+    # faults: Apply Limits off; a south market (24); an unmapped market (216)
+    210: (False, True, [limit(7, "ZN"), limit(24, "XT"), limit(216, "QQ"), limit(30, "yEBM")]),
     310: (True, True, []),  # faults: both boxes ticked on a trading account
     311: (False, False, []),  # fault: name
-    312: (False, False, []),  # NX account with no Endex limit on the pod
-    220: (True, True, [limit(32, "TFM")]),  # fault: Endex limit, no NX account
+    312: (False, False, []),  # IX account with no index-product limit on the team
+    220: (True, True, [limit(30, "jFCE")]),  # fault: index-product limit, no IX account
     320: (False, False, []),
-    230: (False, False, []),  # new empty pod
+    230: (False, False, []),  # new empty team
     240: (False, False, []),  # standalone
     500: (False, True, []),
-    600: (True, False, [limit(24, "XT"), limit(64, "NK")]),
+    600: (True, False, [limit(24, "XT"), limit(66, "IBX")]),
     700: (False, False, []),
-    # faults: Apply Restrictions ticked below CB-CLI; a member market (7)
+    # faults: Apply Restrictions ticked below S-FUND; a north market (7)
     610: (True, True, [limit(24, "XT"), limit(7, "ZN")]),
     710: (False, False, []),
-    711: (False, False, []),  # fault: missing CB- prefix
+    711: (False, False, []),  # fault: missing S- prefix
 }
 
 USER_ANN = {"userId": 9001, "userName": "ann.trader", "orderPermissions": {}}
@@ -133,7 +133,7 @@ USER_CAT = {"userId": 9003, "userName": "cat.trader", "orderPermissions": {}}
 # account id -> users assigned directly on it (accounts not listed have none)
 USERS: dict[int, list[dict[str, Any]]] = {
     100: [USER_ANN, USER_BOB],
-    210: [USER_BOB, USER_CAT],  # faults: Bob duplicates the client group; Cat is pod-only
+    210: [USER_BOB, USER_CAT],  # faults: Bob duplicates the client group; Cat is team-only
     500: [USER_ANN],
 }
 
@@ -174,50 +174,50 @@ CLEARING = 1859
 OTD_ENTRIES: list[dict[str, Any]] = [
     # company defaults (account 0): per-user values, shown not judged
     otd(1, 0, 7, 501, "OPER1", userId=9001),
-    # client group: ICE / ICE LIFFE exchange account and clearing firm, inherited by pods
-    otd(10, 100, 32, 25, "EXCHCLIENT"),
-    otd(11, 100, 92, 26, "EXCHCLIENT"),
-    otd(12, 100, 32, 27, "55555"),
-    otd(13, 100, 92, 28, "55555"),
-    # ABCD1000ALP: clearing account on the account itself; CFE (93) has the wrong value
-    otd(20, 300, 7, CLEARING, "ABCD1000"),
-    otd(21, 300, 2, CLEARING, "ABCD1000"),
-    otd(22, 300, 32, CLEARING, "ABCD1000"),
-    otd(23, 300, 92, CLEARING, "ABCD1000"),
-    otd(24, 300, 93, CLEARING, "ABCD9999"),
+    # client group: Euronext / HKEX exchange account and clearing firm, inherited by teams
+    otd(10, 100, 30, 25, "ACCTSTD"),
+    otd(11, 100, 107, 26, "ACCTSTD"),
+    otd(12, 100, 30, 27, "77777"),
+    otd(13, 100, 107, 28, "77777"),
+    # ABC10001AL: clearing account on the account itself; MX (91) has the wrong value
+    otd(20, 300, 7, CLEARING, "ABC10001"),
+    otd(21, 300, 2, CLEARING, "ABC10001"),
+    otd(22, 300, 30, CLEARING, "ABC10001"),
+    otd(23, 300, 107, CLEARING, "ABC10001"),
+    otd(24, 300, 91, CLEARING, "ABC99999"),
     otd(25, 300, 7, CLEARING, "IGNORED", userId=9001),  # not a default entry
-    # ABCD1000ANX: Endex exchange account set on the NX account
-    otd(30, 301, 32, 25, "EXCHENDEX"),
-    # CLI-BETA pod: clearing account for CME set on the pod, not on the trading account
-    otd(40, 210, 7, CLEARING, "ABCD2000"),
-    # ABCD3000GAM: clearing account correct everywhere; ICE clearing firm overridden wrongly
-    otd(50, 320, 7, CLEARING, "ABCD3000"),
-    otd(51, 320, 2, CLEARING, "ABCD3000"),
-    otd(52, 320, 32, CLEARING, "ABCD3000"),
-    otd(53, 320, 92, CLEARING, "ABCD3000"),
-    otd(54, 320, 93, CLEARING, "ABCD3000"),
-    otd(55, 320, 32, 27, "99999"),
+    # ABC10001IX: index exchange account set on the IX account
+    otd(30, 301, 30, 25, "ACCTIDX"),
+    # FUND-BETA team: clearing account for CME set on the team, not on the trading account
+    otd(40, 210, 7, CLEARING, "ABC20002"),
+    # ABC30003GA: clearing account correct everywhere; ICE clearing firm overridden wrongly
+    otd(50, 320, 7, CLEARING, "ABC30003"),
+    otd(51, 320, 2, CLEARING, "ABC30003"),
+    otd(52, 320, 30, CLEARING, "ABC30003"),
+    otd(53, 320, 107, CLEARING, "ABC30003"),
+    otd(54, 320, 91, CLEARING, "ABC30003"),
+    otd(55, 320, 30, 27, "88888"),
     # an unrelated client's entry, which a scoped read must not keep
     otd(90, 51, 7, CLEARING, "OTHER"),
 ]
 
 OTD_FIELDS = [
     {"fieldId": 1859, "name": "Clearing Account", "marketId": 0, "valueTypeId": 1},
-    {"fieldId": 25, "name": "Exchange Account", "marketId": 32, "valueTypeId": 1},
-    {"fieldId": 26, "name": "Exchange Account", "marketId": 92, "valueTypeId": 1},
-    {"fieldId": 27, "name": "Clearing Firm ID", "marketId": 32, "valueTypeId": 1},
-    {"fieldId": 28, "name": "Clearing Firm ID", "marketId": 92, "valueTypeId": 1},
+    {"fieldId": 25, "name": "Exchange Account", "marketId": 30, "valueTypeId": 1},
+    {"fieldId": 26, "name": "Exchange Account", "marketId": 107, "valueTypeId": 1},
+    {"fieldId": 27, "name": "Clearing Firm ID", "marketId": 30, "valueTypeId": 1},
+    {"fieldId": 28, "name": "Clearing Firm ID", "marketId": 107, "valueTypeId": 1},
     {"fieldId": 501, "name": "Operator ID", "marketId": 7, "valueTypeId": 1},
 ]
 
 MARKETS = [
     {"id": 7, "name": "CME"},
     {"id": 2, "name": "Eurex"},
-    {"id": 32, "name": "ICE"},
-    {"id": 92, "name": "ICE_L"},
-    {"id": 93, "name": "CFE"},
+    {"id": 30, "name": "Euronext"},
+    {"id": 107, "name": "HKEX"},
+    {"id": 91, "name": "MX"},
     {"id": 24, "name": "ASX"},
-    {"id": 64, "name": "SGX"},
+    {"id": 66, "name": "MEFF"},
 ]
 
 

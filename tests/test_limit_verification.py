@@ -13,11 +13,11 @@ from core.results import ResultRow
 from core.setup_model import SetupData, load_setup
 from tests.fixtures import synthetic
 
-# CLI-ALPHA (200) has ZN (CME), FGBL (Eurex) and TFM (ICE): maxPos 100, order 10, spread 20.
+# FUND-ALPHA (200) has ZN (CME), FGBL (Eurex) and jFCE (Euronext): maxPos 100, order 10, spread 20.
 RIC_SHEET = """Exch\tRIC\tDescription\tMax Order\tMax Net
 CBT\tTY\tUS 10yr Note\t10\t100
 EUX\tFGBL\tEuro Bund\t10\t200
-ICE\tTFMBM\tDutch TTF\t5\t100
+PAR\tFCE\tCAC 40 Index\t5\t100
 CBT\tC\tCorn\t1\t1
 """
 
@@ -52,17 +52,17 @@ def run(setup: SetupData, text: str, **kwargs) -> lv.LimitVerification:  # noqa:
 def test_snapshot_side(setup: SetupData) -> None:
     accounts = [(a.name, n) for a, n in lv.accounts_with_limits(setup)]
     assert accounts == [
-        ("CB-CLI-ALPHA", 2),
-        ("CB-CLI-BETA", 2),
-        ("CLI-ALPHA", 3),
-        ("CLI-BETA", 4),
-        ("CLI-GAMMA", 1),
+        ("FUND-ALPHA", 3),
+        ("FUND-BETA", 4),
+        ("FUND-GAMMA", 1),
+        ("S-FUND-ALPHA", 2),
+        ("S-FUND-BETA", 2),
     ]
     current = lv.current_limits(setup, "200")
     assert [(s.exchange, s.family, s.type, s.account) for s in current] == [
-        ("CME", "ZN", "Future", "CLI-ALPHA"),
-        ("Eurex", "FGBL", "Future", "CLI-ALPHA"),
-        ("ICE", "TFM", "Future", "CLI-ALPHA"),
+        ("CME", "ZN", "Future", "FUND-ALPHA"),
+        ("Eurex", "FGBL", "Future", "FUND-ALPHA"),
+        ("Euronext", "jFCE", "Future", "FUND-ALPHA"),
     ]
     assert (current[0].cur_max_position, current[0].cur_max_order_qty) == (100, 10)
     assert current[0].cur_spread_max_order_qty == 20
@@ -82,7 +82,7 @@ def test_ric_sheet(setup: SetupData) -> None:
     assert [(r.ric_root, r.status, r.tt_exchange, r.tt_symbol) for r in result.enriched.rows] == [
         ("TY", "known", "CME", "ZN"),
         ("FGBL", "known", "Eurex", "FGBL"),
-        ("TFMBM", "known", "ICE", "TFM"),
+        ("FCE", "known", "Euronext", "jFCE"),
         ("C", "unmatched", "", ""),
     ]
     assert outcomes(result.rows) == {
@@ -91,13 +91,13 @@ def test_ric_sheet(setup: SetupData) -> None:
         ("LV1", "TY → CME ZN: Outright max order quantity"): ("green", ""),
         ("LV1", "FGBL → Eurex FGBL: Max Position Product (net)"): ("red", "MISMATCH"),
         ("LV1", "FGBL → Eurex FGBL: Outright max order quantity"): ("green", ""),
-        ("LV1", "TFMBM → ICE TFM: Max Position Product (net)"): ("green", ""),
-        ("LV1", "TFMBM → ICE TFM: Outright max order quantity"): ("red", "MISMATCH"),
+        ("LV1", "FCE → Euronext jFCE: Max Position Product (net)"): ("green", ""),
+        ("LV1", "FCE → Euronext jFCE: Outright max order quantity"): ("red", "MISMATCH"),
     }
     fgbl = next(r for r in result.rows if r.setting.startswith("FGBL") and r.colour.value == "red")
-    assert (fgbl.expected, fgbl.actual, fgbl.node) == ("200", "100", "CLI-ALPHA (200)")
+    assert (fgbl.expected, fgbl.actual, fgbl.node) == ("200", "100", "FUND-ALPHA (200)")
     assert fgbl.message == (
-        "Set Max Position Product (net) for FGBL (Eurex) on CLI-ALPHA to 200 "
+        "Set Max Position Product (net) for FGBL (Eurex) on FUND-ALPHA to 200 "
         "(TT has 100; the request is higher)."
     )
     corn = next(r for r in result.rows if r.rule_id == "LV2")
@@ -111,10 +111,10 @@ def test_ric_sheet_product_missing_from_tt_and_not_requested(setup: SetupData) -
     got = outcomes(result.rows)
     assert got[("LV1", "C → CME ZC: Max Position Product (net)")] == ("red", "MISSING")
     assert got[("LV3", "FGBL (Eurex, Future)")] == ("amber", "NO_RULE")
-    assert got[("LV3", "TFM (ICE, Future)")] == ("amber", "NO_RULE")
+    assert got[("LV3", "jFCE (Euronext, Future)")] == ("amber", "NO_RULE")
     missing = next(r for r in result.rows if r.reason and r.reason.value == "MISSING")
     assert missing.message == (
-        "There is no ZC (CME) limit row on CLI-ALPHA. Add it with Max Position Product (net) = 1."
+        "There is no ZC (CME) limit row on FUND-ALPHA. Add it with Max Position Product (net) = 1."
     )
 
 
@@ -144,7 +144,7 @@ def test_universe_sheet(setup: SetupData) -> None:
         ("LV1", "ZZZ (Future): Max Position Product (net)"): ("red", "MISSING"),
         ("LV1", "ZZZ (Future): Outright max order quantity"): ("red", "MISSING"),
         ("LV1", "ZZZ (Future): Sprd/Strat max order quantity"): ("red", "MISSING"),
-        ("LV3", "TFM (ICE, Future)"): ("amber", "NO_RULE"),
+        ("LV3", "jFCE (Euronext, Future)"): ("amber", "NO_RULE"),
     }
 
 

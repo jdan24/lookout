@@ -79,11 +79,11 @@ def test_same_expected_and_actual_values(results: dict) -> None:
         if k[0] not in ("LEVEL", "LEGACY")
         and (old[k][2], old[k][4]) != (results[k][2], results[k][4])
     }
-    # The generic companion rule names the products instead of saying "Endex".
-    unnecessary = ("COMPANION", "ABCD2001BNX (312)", "Endex account")
+    # The generic companion rule names the products; the old rule named the product group.
+    unnecessary = ("COMPANION", "ABC20012IX (312)", "Index account")
     assert differences.pop(unnecessary)[1][:3] == [
-        "A limit on TFM, TTL, TFO, TGN on CLI-BETA",
-        "Pod",
+        "A limit on jFCE, iFIB, lPSI, bBEL on FUND-BETA",
+        "Team",
         "No such limit",
     ]
     assert differences == {}

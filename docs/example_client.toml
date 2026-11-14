@@ -19,17 +19,17 @@
 client = "example"            # snapshot folder name: letters, digits, - _ .
 label = "Example client"
 # Order Tag Default fields shown on the "Checked by hand" tab (name contains the text).
-display_only_fields = ["SMP", "Operator", "Authorized Trader"]
+display_only_fields = ["Operator", "Authorized Trader"]
 
 # ---------------------------------------------------------------------------------
 [[trees]]
-name = "member"
-label = "Member markets"
-path = ["TOPBANK", "DESK", "CLI"]   # top-level account ... start account
+name = "north"
+label = "North company"
+path = ["NORTHCO", "BROKER", "FUND"]   # top-level account ... start account
 start_id = "100"                    # optional; checked against the name
 id_verified = true                  # false: an id mismatch is only a note
 # Markets allowed in limit rows in this tree (market id = exchange name).
-markets = { "7" = "CME", "2" = "Eurex", "32" = "ICE", "92" = "ICE LIFFE", "93" = "CFE" }
+markets = { "7" = "CME", "2" = "Eurex", "30" = "Euronext", "107" = "HKEX", "91" = "MX" }
 
   [[trees.levels]]
   depth = 0
@@ -38,21 +38,21 @@ markets = { "7" = "CME", "2" = "Eurex", "32" = "ICE", "92" = "ICE LIFFE", "93" =
 
   [[trees.levels]]
   depth = 1
-  label = "Pod"
+  label = "Team"
   account_type = 3                  # Non-Routing; anything else here does not fit
-  name_regex = "^CLI-.+$"           # naming rule: red when the name does not match
-  name_hint = "CLI-<POD>"
+  name_regex = "^FUND-.+$"           # naming rule: red when the name does not match
+  name_hint = "FUND-<TEAM>"
   apply_limits = "on"
   limit_rows_required = true
   apply_restrictions = "on"
   users = "inherited"
-  may_be_empty = true               # a new pod with nothing below it is amber, not red
+  may_be_empty = true               # a new team with nothing below it is amber, not red
 
   [[trees.levels]]
   depth = 2
   label = "Trading account"
-  name_regex = "^[A-Z]{4}[0-9]{4}[A-Z]{3}$"
-  name_hint = "<GMI account><3-letter pod code>"
+  name_regex = "^[A-Z]{3}[0-9]{5}[A-Z]{2}$"
+  name_hint = "<account number><2-letter team code>"
   apply_limits = "off"
   apply_restrictions = "off"
   users = "inherited"
@@ -62,47 +62,47 @@ markets = { "7" = "CME", "2" = "Eurex", "32" = "ICE", "92" = "ICE LIFFE", "93" =
   label = "Clearing Account"
   level = "Trading account"
   field_id = "1859"
-  markets = ["7", "2", "32", "92", "93"]
+  markets = ["7", "2", "30", "107", "91"]
   value_from_name = '^(?P<base>.*\d)[A-Za-z]+$'   # the name minus its letter suffix
   set_on = "self"                   # must be on the account itself, not inherited
-  except_names = "NX$"
+  except_names = "IX$"
 
   [[trees.order_tag_defaults]]
   label = "Exchange Account"
   level = "Trading account"
-  fields = { "32" = "25", "92" = "26" }   # market id = field id
-  value = "EXCHCLIENT"
+  fields = { "30" = "25", "107" = "26" }   # market id = field id
+  value = "ACCTSTD"
   set_on = "inherited_ok"
-  except_names = "NX$"
+  except_names = "IX$"
 
   [[trees.order_tag_defaults]]
   label = "Clearing Firm ID"
   level = "Trading account"
-  fields = { "32" = "27", "92" = "28" }
-  value = "55555"
-  except_names = "NX$"
+  fields = { "30" = "27", "107" = "28" }
+  value = "77777"
+  except_names = "IX$"
 
   [[trees.order_tag_defaults]]
   label = "Exchange Account"
   level = "Trading account"
-  fields = { "32" = "25" }
-  value = "EXCHENDEX"
-  only_names = "NX$"
+  fields = { "30" = "25" }
+  value = "ACCTIDX"
+  only_names = "IX$"
 
   [[trees.order_tag_defaults]]
   label = "Clearing Firm ID"
   level = "Trading account"
-  fields = { "32" = "27" }
-  value = "55555"
-  only_names = "NX$"
+  fields = { "30" = "27" }
+  value = "77777"
+  only_names = "IX$"
 
 # ---------------------------------------------------------------------------------
 [[trees]]
-name = "non_member"
-label = "Non-member markets"
-path = ["CBTOP", "CB-CLI"]
+name = "south"
+label = "South company"
+path = ["SOUTHCO", "S-FUND"]
 start_id = "500"
-markets = { "24" = "ASX", "30" = "Euronext", "64" = "SGX" }
+markets = { "24" = "ASX", "155" = "JPX", "66" = "MEFF" }
 
   [[trees.levels]]
   depth = 0
@@ -112,10 +112,10 @@ markets = { "24" = "ASX", "30" = "Euronext", "64" = "SGX" }
 
   [[trees.levels]]
   depth = 1
-  label = "Pod"
+  label = "Team"
   account_type = 3
-  name_regex = "^CB-CLI-.+$"
-  name_hint = "CB-CLI-<POD>"
+  name_regex = "^S-FUND-.+$"
+  name_hint = "S-FUND-<TEAM>"
   apply_limits = "on"
   limit_rows_required = true
   apply_restrictions = "off"
@@ -125,8 +125,8 @@ markets = { "24" = "ASX", "30" = "Euronext", "64" = "SGX" }
   [[trees.levels]]
   depth = 2
   label = "Trading account"
-  name_regex = "^CB-[A-Z]{4}[0-9]{4}[A-Z]{3}$"
-  name_hint = "CB-<GMI account><3-letter pod code>"
+  name_regex = "^S-[A-Z]{3}[0-9]{5}[A-Z]{2}$"
+  name_hint = "S-<account number><2-letter team code>"
   apply_limits = "off"
   apply_restrictions = "off"
   users = "inherited"
@@ -134,16 +134,16 @@ markets = { "24" = "ASX", "30" = "Euronext", "64" = "SGX" }
 # ---------------------------------------------------------------------------------
 # Optional rules. Leave a section out to switch the rule off.
 
-# A pod with a limit on one of these products needs an account whose name ends in
-# `suffix` below it; such an account under a pod without the limit is flagged.
+# A team with a limit on one of these products needs an account whose name ends in
+# `suffix` below it; such an account under a team without the limit is flagged.
 [rules.companion_account]
-label = "Endex account"
-level = "Pod"
-market = "32"
-products = ["TFM", "TTL", "TFO", "TGN"]
-suffix = "NX"
+label = "Index account"
+level = "Team"
+market = "30"
+products = ["jFCE", "iFIB", "lPSI", "bBEL"]
+suffix = "IX"
 unnecessary = "amber"             # amber | red
 
 # Groups with the client's naming that sit outside the start accounts.
 [rules.legacy_groups]
-name_regex = "^(CB-)?CLI-"
+name_regex = "^(S-)?FUND-"

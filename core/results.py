@@ -41,8 +41,8 @@ COLUMNS: tuple[str, ...] = (
 
 @dataclass(frozen=True)
 class ResultRow:
-    node: str  # the account or group the row is about, e.g. "CLI-ALPHA (200)"
-    node_label: str  # Client group / Pod / Trading account / Sub-account
+    node: str  # the account or group the row is about, e.g. "FUND-ALPHA (200)"
+    node_label: str  # Client group / Team / Trading account / Sub-account
     rule_id: str  # e.g. "A1", "B4"
     setting: str  # what was checked
     colour: Colour

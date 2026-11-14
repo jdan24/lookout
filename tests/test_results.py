@@ -9,14 +9,14 @@ from core.results import COLUMNS, Colour, Reason, ResultRow, summary, to_csv, to
 
 GREEN = ResultRow(
     node="POD-A (2001)",
-    node_label="Pod",
+    node_label="Team",
     rule_id="A1",
     setting="Apply Limits",
     colour=Colour.GREEN,
     expected="ON",
-    expected_level="Pod",
+    expected_level="Team",
     actual="ON",
-    actual_level="Pod",
+    actual_level="Team",
 )
 RED = ResultRow(
     node="ABCD1234XYZ (3001)",
@@ -26,14 +26,14 @@ RED = ResultRow(
     colour=Colour.RED,
     expected="ABCD1234",
     expected_level="Trading account",
-    actual="ABCD9999",
+    actual="ABC99999",
     actual_level="Trading account",
     reason=Reason.MISMATCH,
     message="Set Clearing Account for CME to ABCD1234 on ABCD1234XYZ.",
 )
 AMBER = ResultRow(
     node="LONE1234AAA (3009)",
-    node_label="Pod",
+    node_label="Team",
     rule_id="A1",
     setting="Placement",
     colour=Colour.AMBER,
@@ -78,7 +78,7 @@ def test_row_as_dict() -> None:
         "setting": "Clearing Account (CME)",
         "expected": "ABCD1234",
         "expected_level": "Trading account",
-        "actual": "ABCD9999",
+        "actual": "ABC99999",
         "actual_level": "Trading account",
         "colour": "red",
         "reason": "MISMATCH",
@@ -90,7 +90,7 @@ def test_row_as_dict() -> None:
 def test_plain_strings_are_accepted_for_colour_and_reason() -> None:
     row = ResultRow(
         node="n",
-        node_label="Pod",
+        node_label="Team",
         rule_id="B9",
         setting="Legacy group",
         colour="amber",  # type: ignore[arg-type]
@@ -115,7 +115,7 @@ def test_plain_strings_are_accepted_for_colour_and_reason() -> None:
 )
 def test_invalid_rows_are_rejected(kwargs: dict) -> None:
     with pytest.raises(ValueError):
-        ResultRow(node="n", node_label="Pod", rule_id="A1", setting="s", **kwargs)
+        ResultRow(node="n", node_label="Team", rule_id="A1", setting="s", **kwargs)
 
 
 def test_frame_has_standard_columns_and_text_only() -> None:
@@ -135,7 +135,7 @@ def test_empty_frame_still_has_the_columns() -> None:
 def test_csv_round_trip_keeps_long_ids_and_leading_zeros() -> None:
     row = ResultRow(
         node="X (1)",
-        node_label="Pod",
+        node_label="Team",
         rule_id="B1",
         setting="Product family",
         colour=Colour.GREEN,

@@ -11,7 +11,7 @@ def test_setup_is_rebuilt_from_a_snapshot(tmp_path: Path) -> None:
 
     assert len(setup.tree) == len(synthetic.ACCOUNTS)
     assert setup.snapshot_status == "complete"
-    assert setup.tree.get(200).name == "CLI-ALPHA"
+    assert setup.tree.get(200).name == "FUND-ALPHA"
 
     # details exist for in-scope accounts only
     assert set(setup.details) == {str(i) for i in synthetic.in_scope_ids()}
@@ -39,7 +39,7 @@ def test_checkbox_helpers_handle_the_inverted_no_limits_flag(tmp_path: Path) -> 
 def test_limit_rows_and_long_ids(tmp_path: Path) -> None:
     setup = load_setup(synthetic.build_snapshot(tmp_path))
     rows = setup.limit_rows("200")
-    assert [r["productSymbol"] for r in rows] == ["ZN", "FGBL", "TFM"]
+    assert [r["productSymbol"] for r in rows] == ["ZN", "FGBL", "jFCE"]
     assert rows[0]["productFamilyId"] == synthetic.BIG_FAMILY_ID
     assert setup.limit_rows("200", "contractLimits") == []
     assert setup.limit_rows("300") == []
@@ -71,5 +71,5 @@ def test_unread_parts_are_reported_as_unknown(tmp_path: Path) -> None:
 def test_market_name_lookup(tmp_path: Path) -> None:
     setup = load_setup(synthetic.build_snapshot(tmp_path))
     assert setup.market_name(7) == "CME"
-    assert setup.market_name("92", {"92": "ICE LIFFE"}) == "ICE LIFFE"
+    assert setup.market_name("107", {"107": "HKEX"}) == "HKEX"
     assert setup.market_name(216) == "market 216"

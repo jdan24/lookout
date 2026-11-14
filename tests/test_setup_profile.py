@@ -26,24 +26,24 @@ def example() -> dict[str, Any]:
 def test_example_profile() -> None:
     profile = load_profile(synthetic.EXAMPLE_PROFILE)
     assert profile.client == "example" and profile.title == "Example client"
-    assert [t.name for t in profile.trees] == ["member", "non_member"]
-    member = profile.tree("member")
-    assert member.start_name == "CLI" and member.max_depth == 2
-    assert [lv.label for lv in member.levels_at(5)] == ["Trading account"]
-    assert member.markets["92"] == "ICE LIFFE"
-    assert profile.tree_of_market("64").name == "non_member"
+    assert [t.name for t in profile.trees] == ["north", "south"]
+    north = profile.tree("north")
+    assert north.start_name == "FUND" and north.max_depth == 2
+    assert [lv.label for lv in north.levels_at(5)] == ["Trading account"]
+    assert north.markets["107"] == "HKEX"
+    assert profile.tree_of_market("66").name == "south"
     assert profile.tree_of_market("216") is None
     assert profile.otd_default_key == DEFAULT_OTD_KEY
-    clearing = member.order_tag_defaults[0]
-    assert clearing.field_by_market() == {m: "1859" for m in ["7", "2", "32", "92", "93"]}
-    assert clearing.applies_to("ABCD1000ALP") and not clearing.applies_to("ABCD1000ANX")
-    assert profile.rules.companion_account.market == "32"
+    clearing = north.order_tag_defaults[0]
+    assert clearing.field_by_market() == {m: "1859" for m in ["7", "2", "30", "107", "91"]}
+    assert clearing.applies_to("ABC10001AL") and not clearing.applies_to("ABC10001IX")
+    assert profile.rules.companion_account.market == "30"
 
 
 def test_levels_fit_by_account_type_and_pattern() -> None:
-    pod = load_profile(synthetic.EXAMPLE_PROFILE).tree("member").levels_at(1)[0]
-    assert pod.fits(Account("1", "CLI-X", "0", 3))
-    assert not pod.fits(Account("1", "LONE4000AAA", "0", 1))
+    team = load_profile(synthetic.EXAMPLE_PROFILE).tree("north").levels_at(1)[0]
+    assert team.fits(Account("1", "FUND-X", "0", 3))
+    assert not team.fits(Account("1", "LON40004AA", "0", 1))
 
 
 def _with(path: list[Any], value: Any) -> dict[str, Any]:
@@ -59,7 +59,7 @@ def _with(path: list[Any], value: Any) -> dict[str, Any]:
     ("path", "value", "message"),
     [
         (["client"], "../x", "client"),
-        (["trees", 0, "levels"], [{"depth": 1, "label": "Pod"}], "depth = 0"),
+        (["trees", 0, "levels"], [{"depth": 1, "label": "Team"}], "depth = 0"),
         (["trees", 0, "levels", 1, "name_regex"], "([", "regular expression"),
         (["trees", 0, "levels", 1, "apply_limits"], "yes", "apply_limits"),
         (["trees", 0, "order_tag_defaults", 0, "level"], "Nope", "Nope"),
@@ -67,7 +67,7 @@ def _with(path: list[Any], value: Any) -> dict[str, Any]:
         (["trees", 0, "order_tag_defaults", 0, "value_from_name"], "^(.*)$", "base"),
         (["trees", 0, "order_tag_defaults", 1, "field_id"], "9", "either fields"),
         (["trees", 1, "markets"], {"7": "CME"}, "market 7"),
-        (["trees", 1, "name"], "member", "different"),
+        (["trees", 1, "name"], "north", "different"),
         (["trees", 0, "colour"], "blue", "colour"),
     ],
 )

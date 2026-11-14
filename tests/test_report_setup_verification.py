@@ -72,7 +72,7 @@ def test_results_from_the_latest_snapshot(folders: tuple[Path, Path]) -> None:
     assert metrics["Red"] > 0 and metrics["Amber"] > 0 and metrics["Green"] > 0
     table = app.dataframe[0].value
     assert set(table["colour"]) == {"red", "amber"}  # green is hidden by default
-    assert "Tick Apply Limits on pod CLI-BETA." in set(table["message"])
+    assert "Tick Apply Limits on team FUND-BETA." in set(table["message"])
 
     rules = app.multiselect[1]
     assert set(rules.options) == {
@@ -103,7 +103,7 @@ def test_snapshot_that_does_not_match_the_profile_shows_an_error(
 ) -> None:
     text = synthetic.EXAMPLE_PROFILE.read_text(encoding="utf-8")
     (folders[1] / "example.toml").write_text(
-        text.replace('path = ["CBTOP", "CB-CLI"]', 'path = ["CBTOP", "NOPE"]'), encoding="utf-8"
+        text.replace('path = ["SOUTHCO", "S-FUND"]', 'path = ["SOUTHCO", "NOPE"]'), encoding="utf-8"
     )
     synthetic.build_snapshot(folders[0], client="example")
     app = run()

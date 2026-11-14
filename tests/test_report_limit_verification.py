@@ -46,8 +46,7 @@ def test_compare_a_pasted_sheet(snapshot_dir: Path) -> None:
     app = run()
     assert app.selectbox[0].value == "synthetic"
     account = app.selectbox(key="lv_account")
-    assert account.value == "600"  # CB-CLI-ALPHA, first by name
-    account.set_value("200").run()
+    assert account.value == "200"  # FUND-ALPHA, first by name
     assert "Paste or upload" in app.info[0].value
 
     app.text_area(key="lv_paste").set_value(SHEET).run()
@@ -58,9 +57,9 @@ def test_compare_a_pasted_sheet(snapshot_dir: Path) -> None:
     results = app.dataframe[0].value
     assert list(results["colour"]) == ["red", "amber"]
     assert results.iloc[0]["setting"] == "FGBL → Eurex FGBL: Max Position Product (net)"
-    assert results.iloc[1]["setting"] == "TFM (ICE, Future)"
+    assert results.iloc[1]["setting"] == "jFCE (Euronext, Future)"
     current = app.dataframe[1].value
-    assert list(current["Product"]) == ["ZN", "FGBL", "TFM"]
+    assert list(current["Product"]) == ["ZN", "FGBL", "jFCE"]
     matching = app.dataframe[2].value
     assert list(matching["Match"]) == ["known", "known"]
 

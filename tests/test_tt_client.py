@@ -169,7 +169,7 @@ def test_credentials_can_be_a_provider_called_only_when_needed(
 
 def test_body_and_text_are_returned(tt: FakeTT, fake_time: FakeTime) -> None:
     response = make(tt, fake_time).get("ttaccount", "account/200")
-    assert response.body["account"][0]["name"] == "CLI-ALPHA"
+    assert response.body["account"][0]["name"] == "FUND-ALPHA"
     assert synthetic.BIG_FAMILY_ID in response.text
     limit = response.body["account"][0]["riskLimits"]["productLimits"][0]
     assert limit["productFamilyId"] == synthetic.BIG_FAMILY_ID

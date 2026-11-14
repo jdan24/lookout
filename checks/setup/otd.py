@@ -94,7 +94,7 @@ def _holder_name(found: Found, setup: SetupData) -> str:
 
 
 def _inherit_text(tree: Tree, level: str) -> str:
-    """e.g. "Trading account, Pod or Client group": the level and every level above it."""
+    """e.g. "Trading account, Team or Client group": the level and every level above it."""
     depth = next(lv.depth for lv in tree.levels if lv.label == level)
     labels: list[str] = []
     for lv in sorted(tree.levels, key=lambda lv: -lv.depth):

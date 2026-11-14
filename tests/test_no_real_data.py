@@ -56,13 +56,13 @@ def tracked_files() -> list[Path]:
 
 
 def pattern(term: str) -> re.Pattern[str]:
-    # Whole words only, so "CLI" does not match inside "CLIENT" and ids not inside longer ids.
+    # Whole words only, so "FUND" does not match inside "FUNDING" and ids not inside longer ids.
     return re.compile(rf"(?<![A-Za-z0-9]){re.escape(term)}(?![A-Za-z0-9])", re.IGNORECASE)
 
 
 def test_terms_are_found_as_whole_words() -> None:
-    assert pattern("CLI").search("pod CLI-ALPHA")
-    assert not pattern("CLI").search("CLIENT")
+    assert pattern("FUND").search("team FUND-ALPHA")
+    assert not pattern("FUND").search("FUNDING")
     assert not pattern("1234").search("912345")
 
 

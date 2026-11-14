@@ -26,7 +26,7 @@ class Place:
     root: Account  # the tree's start account
     depth: int  # 0 = the start account
     level: Level | None  # None: no configured level fits this account
-    label: str  # shown in results, e.g. "Client group (CLI)", "Pod", "Sub-account"
+    label: str  # shown in results, e.g. "Client group (FUND)", "Team", "Sub-account"
     leaf: bool  # nothing below it
 
     @property
