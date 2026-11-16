@@ -28,8 +28,9 @@ Tests never call TT; real sockets are blocked in `tests/conftest.py`.
 
 ## Status
 
-Built and tested on a synthetic setup (`tests/fixtures/synthetic.py`); nothing here has
-called TT yet.
+Built and tested on a synthetic setup (`tests/fixtures/synthetic.py`). The first
+production pull signed in but TT refused the first data call over the `requestId` form,
+since fixed; no full pull has completed yet.
 
 - Done: read-only guard, TT client, pull -> snapshot -> rebuild, account tree, result
   model, landing page with report discovery, Setup Verification (profile-driven rules:
@@ -42,7 +43,8 @@ called TT yet.
   new snapshot when done.
 - Not done: product-family names from `ttpds`.
 - To confirm on the first supervised pull: the request conventions in
-  `core/tt_client.py` (headers, `requestId`, token form fields), the path
+  `core/tt_client.py` (headers, token form fields; the `requestId` form
+  `<app>-<company>--<guid>` came from TT's own reply on the first pull), the path
   `/ttaccount/ext_prod_live/account/{id}/users`, any `start_id` marked
   `id_verified = false` in a profile; that TT's market names from `ttpds` match the
   exchange names in TT's product list (e.g. `ICE_L`), which Limit Verification relies
@@ -71,6 +73,10 @@ values appear in the repo.
       `python scripts\check_environment.py` lists anything missing or too old. The
       launcher runs the same check on every start, then starts anyway; it never installs
       or downloads anything.
+- [ ] Set `request_id_prefix` in `config.toml` to `Lookout-<YourCompany>` (letters and
+      digits only, no spaces). TT rejects calls without the company name, and Lookout
+      will not pull while it still says `CHANGEME`. The launcher copies `config.toml`
+      from the release share on every start, so make the edit in the share's copy.
 - [ ] On each user's PC, store the TT credentials once:
       `python scripts\set_credentials.py`.
 - [ ] On each user's PC, copy the client profiles (`*.toml`) into

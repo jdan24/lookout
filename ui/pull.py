@@ -21,10 +21,17 @@ from core.snapshots import Snapshot
 from core.tt_client import TTClient
 
 DAILY_CALL_LIMIT = 15_000  # the TT plan's limit, shared by everyone using the same key
+HOW_TO_SET_REQUEST_ID = (
+    "TT needs your company name in every request. In config.toml, change "
+    'request_id_prefix = "Lookout-CHANGEME" to "Lookout-YourCompany" '
+    "(letters and digits only, no spaces), then start Lookout again."
+)
 
 
 def make_tt_client(settings: AppConfig) -> tuple[TTClient, Callable[[], None]]:
     """A TT client built from the app settings, and a function that closes it."""
+    if not settings.tt.request_id_is_set:
+        raise ValueError(HOW_TO_SET_REQUEST_ID)
     http = ReadOnlyClient(settings.tt.host)
     client = TTClient(
         http,
@@ -94,6 +101,9 @@ def pull_panel(profile: Profile, *, key: str, select_key: str, expanded: bool = 
         )
         if not credentials.has_credentials():
             st.warning("No TT credentials are stored on this PC. " + credentials.HOW_TO_SET)
+            return
+        if not settings.tt.request_id_is_set:
+            st.warning(HOW_TO_SET_REQUEST_ID)
             return
         # The confirmation box gets a new key after each pull, so it starts unticked again.
         round_key = f"{key}_pull_round"

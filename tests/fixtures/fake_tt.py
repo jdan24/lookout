@@ -6,6 +6,7 @@ It records every request, so tests can assert exactly what was asked of "TT".
 from __future__ import annotations
 
 import json
+import re
 from collections.abc import Callable
 from typing import Any
 from urllib.parse import parse_qs
@@ -17,6 +18,8 @@ from tests.fixtures import synthetic
 ENV = "ext_prod_live"
 SECRET = "fakekey:fakesecretvalue"
 TOKEN = "fake-access-token"
+# TT's rule for the requestId query parameter: <app>-<company>--<guid>, no spaces.
+REQUEST_ID = re.compile(r"^[A-Za-z0-9]+-[A-Za-z0-9]+--[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}$")
 
 
 class FakeTT:
@@ -68,6 +71,13 @@ class FakeTT:
             return httpx.Response(403, json={"status": "Forbidden"})
 
         params = {k: v[0] for k, v in parse_qs(request.url.query.decode()).items()}
+        request_id = params.get("requestId", "")
+        if not REQUEST_ID.match(request_id):
+            message = (
+                f"requestId query parameter [{request_id}] is in incorrect form. The value "
+                "must be in the given format: <app_name><company_name>--<new_guid>."
+            )
+            return httpx.Response(400, json={"status": "StatusFail", "status_message": message})
         parts = path.strip("/").split("/")
         service, resource = parts[0], parts[2:]
 

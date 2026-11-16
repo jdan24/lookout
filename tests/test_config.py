@@ -64,6 +64,13 @@ def test_overrides(tmp_path: Path) -> None:
         '[tt]\napp_secret = "key:secret"',
         '[secrets]\napp_secret = "key:secret"',
         "[pacing]\nrequests_per_secnd = 2",
+        # TT only accepts <app>-<company> before the "--<guid>"
+        '[tt]\nrequest_id_prefix = "Lookout"',
+        '[tt]\nrequest_id_prefix = "Lookout--Acme"',
+        '[tt]\nrequest_id_prefix = "Look out-Acme"',
+        '[tt]\nrequest_id_prefix = "Lookout-Acme-Trading"',
+        '[tt]\nrequest_id_prefix = "Lookout-Acme_Trading"',
+        '[tt]\nrequest_id_prefix = "Lookout-"',
     ],
 )
 def test_invalid_settings_are_rejected(tmp_path: Path, text: str) -> None:
@@ -95,3 +102,13 @@ def test_snapshot_directory_expands_user_and_env(
     monkeypatch.setenv("LOOKOUT_TEST_DIR", str(tmp_path))
     cfg = AppConfig.model_validate({"snapshots": {"directory": "$LOOKOUT_TEST_DIR/snaps"}})
     assert cfg.snapshots.path == tmp_path / "snaps"
+
+
+def test_request_id_needs_a_real_company_name(tmp_path: Path) -> None:
+    shipped = load_config()
+    assert shipped.tt.request_id_prefix == "Lookout-CHANGEME"
+    assert not shipped.tt.request_id_is_set
+
+    cfg = load_config(write(tmp_path, '[tt]\nrequest_id_prefix = "Lookout-AcmeTrading"'))
+    assert cfg.tt.request_id_prefix == "Lookout-AcmeTrading"
+    assert cfg.tt.request_id_is_set

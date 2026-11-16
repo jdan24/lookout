@@ -7,6 +7,9 @@ The request conventions below (``x-api-key`` and ``Authorization: Bearer`` heade
 a ``requestId`` query parameter, and the form fields of the token call) follow TT's
 public REST API documentation. They were NOT taken from the previous tool's code and
 must be confirmed on the first supervised pull.
+
+The ``requestId`` must be ``<app>-<company>--<guid>``: TT answered HTTP 400 to
+``Lookout--<guid>`` on the first production pull. ``core.config`` enforces the prefix.
 """
 
 from __future__ import annotations
@@ -61,7 +64,7 @@ class TTClient:
         *,
         requests_per_second: float = 2.0,
         max_calls: int = 1500,
-        request_id_prefix: str = "Lookout",
+        request_id_prefix: str = "Lookout-CHANGEME",
         clock: Callable[[], float] = time.monotonic,
         sleep: Callable[[float], None] = time.sleep,
     ) -> None:

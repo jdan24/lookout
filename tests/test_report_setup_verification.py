@@ -23,7 +23,11 @@ def folders(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> tuple[Path, Path
     profiles.mkdir()
     (profiles / "example.toml").write_bytes(synthetic.EXAMPLE_PROFILE.read_bytes())
     settings = AppConfig.model_validate(
-        {"snapshots": {"directory": str(snaps)}, "clients": {"directory": str(profiles)}}
+        {
+            "tt": {"request_id_prefix": "Lookout-Acme"},
+            "snapshots": {"directory": str(snaps)},
+            "clients": {"directory": str(profiles)},
+        }
     )
     monkeypatch.setattr(app_config, "load_config", lambda: settings)
     from core import credentials
@@ -171,6 +175,27 @@ def test_pull_needs_stored_credentials(
     assert any("No TT credentials" in w.value for w in app.warning)
     assert not [b for b in app.button if b.key == "sv_pull"]
     assert tt.requests == []
+
+
+def test_pull_needs_the_company_name_in_the_request_id(
+    folders: tuple[Path, Path], monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from ui import pull
+
+    real_make_tt_client = pull.make_tt_client
+    tt = _fake_tt(monkeypatch)
+    placeholder = AppConfig.model_validate(
+        {"snapshots": {"directory": str(folders[0])}, "clients": {"directory": str(folders[1])}}
+    )
+    monkeypatch.setattr(app_config, "load_config", lambda: placeholder)
+    app = run()
+    assert any("Lookout-CHANGEME" in w.value for w in app.warning)
+    assert not [b for b in app.button if b.key == "sv_pull"]
+    assert tt.requests == []
+
+    # The real client factory refuses too, before any connection is prepared.
+    with pytest.raises(ValueError, match="company name"):
+        real_make_tt_client(placeholder)
 
 
 def test_pull_only_after_confirming_then_new_snapshot_is_shown(

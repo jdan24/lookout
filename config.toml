@@ -6,7 +6,10 @@
 # Changing this cannot widen the allow-list; an unknown host is refused.
 host = "ttrestapi.trade.tt"
 environment = "ext_prod_live"
-request_id_prefix = "Lookout"   # sent as requestId=<prefix>--<random id>
+# Sent to TT with every call as requestId=<app>-<company>--<random id>.
+# Replace CHANGEME with your company name: letters and digits only, no spaces.
+# TT rejects calls without it, so Lookout will not pull until this is set.
+request_id_prefix = "Lookout-CHANGEME"
 
 [pacing]
 requests_per_second = 2      # TT plan allows 5/s and 15,000/day (shared by the team)

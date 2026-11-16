@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import re
+
 import httpx
 import pytest
 
@@ -67,12 +69,23 @@ def test_first_get_signs_in_once_then_reuses_the_token(tt: FakeTT, fake_time: Fa
 
 
 def test_every_request_carries_a_fresh_request_id(tt: FakeTT, fake_time: FakeTime) -> None:
-    client = make(tt, fake_time, request_id_prefix="Lookout")
+    client = make(tt, fake_time, request_id_prefix="Lookout-Acme")
     client.get("ttpds", "markets")
     client.get("ttpds", "markets")
     ids = [r.url.params["requestId"] for r in tt.requests]
-    assert all(i.startswith("Lookout--") for i in ids)
+    guid = r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"
+    assert all(re.fullmatch(rf"Lookout-Acme--{guid}", i) for i in ids)
     assert len(set(ids)) == 3
+
+
+def test_a_request_id_without_a_company_name_is_refused_by_tt(
+    tt: FakeTT, fake_time: FakeTime
+) -> None:
+    """What happened on the first production pull: TT answers HTTP 400."""
+    client = make(tt, fake_time, request_id_prefix="Lookout")
+    with pytest.raises(TTApiError, match="requestId query parameter") as caught:
+        client.get("ttpds", "markets")
+    assert caught.value.status_code == 400
 
 
 def test_token_is_renewed_before_it_expires(fake_time: FakeTime) -> None:

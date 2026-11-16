@@ -12,6 +12,8 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator
 from core.readonly_http import ALLOWED_ENVIRONMENT, ALLOWED_HOSTS
 
 APP_NAME = "Lookout"
+# Stands in for the company name in the shipped config. No pull runs while it is there.
+REQUEST_ID_PLACEHOLDER = "CHANGEME"
 DEFAULT_CONFIG_PATH = Path(__file__).resolve().parent.parent / "config.toml"
 
 
@@ -22,8 +24,19 @@ class _Section(BaseModel):
 class TTSettings(_Section):
     host: str = "ttrestapi.trade.tt"
     environment: str = ALLOWED_ENVIRONMENT
-    # Sent with every call as requestId=<prefix>--<random id>, so TT can trace our calls.
-    request_id_prefix: str = Field(default="Lookout", pattern=r"^[A-Za-z0-9_-]{1,40}$")
+    # Sent with every call as requestId=<app>-<company>--<random id>. TT rejects any
+    # other form (HTTP 400), so the prefix must be exactly <app>-<company>: letters and
+    # digits only, one dash, no spaces.
+    request_id_prefix: str = Field(
+        default=f"{APP_NAME}-{REQUEST_ID_PLACEHOLDER}",
+        max_length=60,
+        pattern=r"^[A-Za-z0-9]+-[A-Za-z0-9]+$",
+    )
+
+    @property
+    def request_id_is_set(self) -> bool:
+        """False while the company name is still the shipped placeholder."""
+        return self.request_id_prefix.split("-")[1] != REQUEST_ID_PLACEHOLDER
 
     @field_validator("host")
     @classmethod
