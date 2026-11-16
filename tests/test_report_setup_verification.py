@@ -32,7 +32,7 @@ def folders(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> tuple[Path, Path
     monkeypatch.setattr(app_config, "load_config", lambda: settings)
     from core import credentials
 
-    monkeypatch.setattr(credentials, "has_credentials", lambda: False)  # never the real store
+    monkeypatch.setattr(credentials, "has_credentials", lambda env: False)  # never the real store
     return snaps, profiles
 
 
@@ -164,7 +164,7 @@ def _fake_tt(monkeypatch: pytest.MonkeyPatch, *, stored: bool = True):  # noqa: 
         return client, http.close
 
     monkeypatch.setattr(pull, "make_tt_client", make)
-    monkeypatch.setattr(credentials, "has_credentials", lambda: stored)
+    monkeypatch.setattr(credentials, "has_credentials", lambda env: stored)
     return tt
 
 
@@ -197,6 +197,39 @@ def test_pull_needs_the_company_name_in_the_request_id(
     # The real client factory refuses too, before any connection is prepared.
     with pytest.raises(ValueError, match="company name"):
         real_make_tt_client(placeholder)
+
+
+def test_uat_pull_says_uat_and_uses_uat_credentials_and_folders(
+    folders: tuple[Path, Path], monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from core import credentials
+
+    uat = AppConfig.model_validate(
+        {
+            "tt": {"request_id_prefix": "Lookout-Acme", "environment": "ext_uat_cert"},
+            "snapshots": {"directory": str(folders[0])},
+            "clients": {"directory": str(folders[1])},
+        }
+    )
+    monkeypatch.setattr(app_config, "load_config", lambda: uat)
+    asked: list[str] = []
+    monkeypatch.setattr(credentials, "has_credentials", lambda env: asked.append(env) or False)
+
+    # Live profiles are not offered in UAT: UAT has its own profiles folder
+    app = run()
+    assert any("No client profiles" in str(e.value) for e in [*app.warning, *app.info, *app.error])
+
+    (folders[1] / "uat").mkdir()
+    (folders[1] / "uat" / "example.toml").write_bytes(synthetic.EXAMPLE_PROFILE.read_bytes())
+    synthetic.build_snapshot(folders[0], client="example")  # a Live snapshot: not shown in UAT
+    app = run()
+    assert asked and set(asked) == {"ext_uat_cert"}
+    assert any("No TT UAT credentials" in w.value and "--uat" in w.value for w in app.warning)
+    assert any("No snapshots found" in w.value and "uat" in w.value for w in app.warning)
+
+    monkeypatch.setattr(credentials, "has_credentials", lambda env: True)
+    app = run()
+    assert "from TT UAT now" in app.checkbox(key="sv_pull_ok_0").label
 
 
 def test_pull_only_after_confirming_then_new_snapshot_is_shown(

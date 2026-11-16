@@ -371,3 +371,19 @@ def test_a_repeated_page_key_stops_instead_of_looping(tt: FakeTT, fake_time: Fak
     with pytest.raises(TTApiError, match="repeated a page key"):
         list(client.pages("ttaccount", "accounts"))
     assert len(tt.data_requests()) == 2
+
+
+def test_a_uat_client_only_talks_to_uat(fake_time: FakeTime) -> None:
+    tt = FakeTT(environment="ext_uat_cert")
+    client = TTClient(
+        ReadOnlyClient(environment="ext_uat_cert", transport=tt.transport),
+        parse_secret(SECRET),
+        clock=fake_time.clock,
+        sleep=fake_time.sleep,
+    )
+    assert client.environment == "ext_uat_cert"
+    assert client.get("ttpds", "markets").body["status"] == "Ok"
+    assert [(r.method, r.url.path) for r in tt.requests] == [
+        ("POST", "/ttid/ext_uat_cert/token"),
+        ("GET", "/ttpds/ext_uat_cert/markets"),
+    ]

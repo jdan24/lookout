@@ -29,7 +29,9 @@ class FakeTT:
         honour_otd_filter: bool = False,
         otd_page_size: int = 8,
         token_lifetime: int = 3600,
+        environment: str = ENV,
     ) -> None:
+        self.environment = environment  # like TT, it only answers for its own environment
         self.honour_otd_filter = honour_otd_filter
         self.otd_page_size = otd_page_size
         self.token_lifetime = token_lifetime
@@ -61,7 +63,7 @@ class FakeTT:
             code, body = self.fail[path]
             return httpx.Response(code, json=body)
 
-        if request.method == "POST" and path == f"/ttid/{ENV}/token":
+        if request.method == "POST" and path == f"/ttid/{self.environment}/token":
             return self._token(request)
         if request.method != "GET":
             return httpx.Response(405, json={"status": "Error"})
@@ -79,6 +81,8 @@ class FakeTT:
             )
             return httpx.Response(400, json={"status": "StatusFail", "status_message": message})
         parts = path.strip("/").split("/")
+        if len(parts) < 3 or parts[1] != self.environment:
+            return httpx.Response(404, json={"status": "Not Found"})
         service, resource = parts[0], parts[2:]
 
         if service == "ttaccount" and resource == ["accounts"]:

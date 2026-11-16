@@ -9,11 +9,41 @@ from typing import Any
 import pandas as pd
 import streamlit as st
 
+from core.config import MODE_NAMES, AppConfig
+from core.readonly_http import LIVE_ENVIRONMENT
 from core.results import Colour, ResultRow, summary, to_csv, to_frame, worst_first
 from core.snapshots import Snapshot, SnapshotError, latest_id, list_snapshots, load_snapshot
 from ui.discovery import ReportError, ReportSpec, by_category
 
 TILES_PER_ROW = 3
+
+# --- Live / UAT ------------------------------------------------------------------
+
+_UAT_BANNER = (
+    '<div style="background-color:#ff8c00;color:#1a1a1a;padding:0.6rem 1rem;'
+    'border-radius:0.4rem;font-weight:700;font-size:1.1rem;text-align:center;'
+    'margin-bottom:0.8rem">UAT MODE - TT test environment ({environment}). '
+    "This is not production data.</div>"
+)
+_LIVE_LABEL = (
+    '<div style="border:1px solid #2e7d32;color:#2e7d32;padding:0.2rem 0.8rem;'
+    'border-radius:0.4rem;font-weight:700;display:inline-block;margin-bottom:0.6rem">'
+    "LIVE - TT production ({environment})</div>"
+)
+
+
+def page_title(settings: AppConfig) -> str:
+    """The browser tab title: "Lookout" in Live, "Lookout UAT" in UAT."""
+    return "Lookout UAT" if settings.tt.is_uat else "Lookout"
+
+
+def mode_banner(settings: AppConfig) -> None:
+    """Says on every page, and in the sidebar, which TT environment this session uses."""
+    template = _UAT_BANNER if settings.tt.is_uat else _LIVE_LABEL
+    html = template.format(environment=settings.tt.environment)
+    st.markdown(html, unsafe_allow_html=True)
+    st.sidebar.markdown(html, unsafe_allow_html=True)
+
 
 
 def report_tiles(specs: list[ReportSpec], pages: Mapping[str, Any]) -> None:
@@ -50,8 +80,12 @@ _STATUS_NOTE = {
 }
 
 
-def snapshot_picker(base_dir: Path, client: str, *, key: str) -> Snapshot | None:
-    """Choose a saved snapshot (latest first). Returns None when there is nothing to open."""
+def snapshot_picker(
+    base_dir: Path, client: str, *, key: str, environment: str | None = None
+) -> Snapshot | None:
+    """Choose a saved snapshot (latest first). Returns None when there is nothing to open.
+
+    With ``environment``, a snapshot pulled from another TT environment is not opened."""
     available = list_snapshots(base_dir, client)
     if not available:
         st.warning(
@@ -69,7 +103,7 @@ def snapshot_picker(base_dir: Path, client: str, *, key: str) -> Snapshot | None
         key=f"{key}_snapshot",
     )
     try:
-        snapshot = load_snapshot(base_dir, client, chosen)
+        snapshot = load_snapshot(base_dir, client, chosen, environment=environment)
     except SnapshotError as exc:
         st.error(f"Snapshot {chosen} could not be opened: {exc}")
         return None
@@ -79,8 +113,10 @@ def snapshot_picker(base_dir: Path, client: str, *, key: str) -> Snapshot | None
 
 def snapshot_status(snapshot: Snapshot) -> None:
     manifest = snapshot.manifest
+    pulled_from = manifest.get("environment") or LIVE_ENVIRONMENT
     st.caption(
         f"Snapshot {snapshot.id} · taken {manifest.get('created_at', '?')} · "
+        f"from TT {MODE_NAMES.get(pulled_from, pulled_from)} · "
         f"{manifest.get('calls', 0)} TT calls · tool v{manifest.get('tool_version', '?')}"
     )
     note = _STATUS_NOTE.get(snapshot.status, snapshot.status)

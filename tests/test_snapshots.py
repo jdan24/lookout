@@ -61,6 +61,7 @@ def test_round_trip(tmp_path: Path) -> None:
         "created_at": "2026-11-13T09:30:00",
         "status": "partial",
         "tool_version": __version__,
+        "environment": "ext_prod_live",
         "calls": 1,
         "errors": 1,
         "scope": {"roots": ["1001"]},
@@ -223,3 +224,23 @@ def test_list_clients(tmp_path: Path) -> None:
     SnapshotWriter(tmp_path, "unfinished", now=T2)  # no manifest: not listed
     (tmp_path / "stray.txt").write_text("x")
     assert list_clients(tmp_path) == ["acme", "other"]
+
+
+def test_a_snapshot_from_the_other_environment_is_refused(tmp_path: Path) -> None:
+    uat = SnapshotWriter(tmp_path, "acme", now=T1, environment="ext_uat_cert").finish(
+        status="complete"
+    )
+    assert uat.manifest["environment"] == "ext_uat_cert"
+    assert load_snapshot(tmp_path, "acme", uat.id, environment="ext_uat_cert").id == uat.id
+    with pytest.raises(SnapshotError, match="pulled from ext_uat_cert"):
+        load_snapshot(tmp_path, "acme", uat.id, environment="ext_prod_live")
+
+    # snapshots saved before UAT existed carry no environment: they are Live
+    live = SnapshotWriter(tmp_path, "acme", now=T2).finish(status="complete")
+    manifest = live.path / "manifest.json"
+    data = json.loads(manifest.read_text(encoding="utf-8"))
+    del data["environment"]
+    manifest.write_text(json.dumps(data), encoding="utf-8")
+    assert load_snapshot(tmp_path, "acme", live.id, environment="ext_prod_live").id == live.id
+    with pytest.raises(SnapshotError, match="pulled from ext_prod_live"):
+        load_snapshot(tmp_path, "acme", live.id, environment="ext_uat_cert")

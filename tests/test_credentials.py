@@ -169,3 +169,57 @@ def test_launcher_is_a_windows_batch_file() -> None:
     assert text.index("check_environment.py") < text.index("python -m streamlit")
     assert "http://localhost:%PORT%" in text and 'set "PORT=8501"' in text
     assert "/XD .venv" in text  # updating must not wipe the local environment
+
+
+# --- Live and UAT credentials are separate entries ------------------------------------
+
+UAT = "ext_uat_cert"
+UAT_SECRET = "uatkey456:uatsecretvalue"
+
+
+def test_uat_credentials_are_a_separate_entry(vault: MemoryKeyring) -> None:
+    credentials.store_secret(SECRET)
+    assert credentials.has_credentials() and not credentials.has_credentials(UAT)
+    with pytest.raises(CredentialError, match="No TT UAT credentials.*--uat"):
+        credentials.load_credentials(UAT)
+
+    credentials.store_secret(UAT_SECRET, UAT)
+    assert vault.store == {
+        ("Lookout", "tt_app_secret"): SECRET,
+        ("Lookout", "tt_app_secret_uat"): UAT_SECRET,
+    }
+    assert credentials.load_credentials().app_key == "appkey123"
+    assert credentials.load_credentials(UAT).app_key == "uatkey456"
+
+    credentials.delete_secret(UAT)
+    assert credentials.has_credentials() and not credentials.has_credentials(UAT)
+    with pytest.raises(CredentialError, match="Unknown TT environment"):
+        credentials.load_credentials("ext_prod_sim")
+
+
+def test_script_uat_flag(
+    vault: MemoryKeyring, script, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture
+) -> None:
+    monkeypatch.setattr(script.getpass, "getpass", lambda prompt: UAT_SECRET)
+    assert script.main(["--uat", "--check"]) == 1
+    assert script.main(["--uat"]) == 0
+    assert vault.store == {("Lookout", "tt_app_secret_uat"): UAT_SECRET}
+    assert script.main(["--check", "--uat"]) == 0
+    assert script.main(["--check"]) == 1  # Live is still not set
+    assert script.main(["--uat", "--delete"]) == 0
+    assert vault.store == {}
+    output = capsys.readouterr().out
+    assert "TT UAT" in output and "uatsecretvalue" not in output
+
+
+def test_uat_launcher_calls_the_main_one_in_uat_mode() -> None:
+    main = (ROOT / "scripts" / "Start-Lookout.bat").read_bytes().decode("ascii")
+    # Live unless asked for UAT; UAT gets its own port so both can be open
+    assert main.index('set "LOOKOUT_ENVIRONMENT=ext_prod_live"') < main.index('if /i "%~1"=="uat"')
+    uat_block = main[main.index('if /i "%~1"=="uat"') :].split(")")[0]
+    assert 'set "LOOKOUT_ENVIRONMENT=ext_uat_cert"' in uat_block and 'set "PORT=8502"' in uat_block
+    assert "Mode: %MODE%" in main
+
+    raw = (ROOT / "scripts" / "Start-Lookout-UAT.bat").read_bytes()
+    assert raw.isascii() and b"\r\n" in raw and b"\n" not in raw.replace(b"\r\n", b"")
+    assert 'call "%~dp0Start-Lookout.bat" uat' in raw.decode("ascii")

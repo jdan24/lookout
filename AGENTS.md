@@ -10,9 +10,13 @@ user when you need them.
 ## Ground rules (non-negotiable)
 
 1. **Read-only.** Only HTTP `GET` to TT data services, plus the single token
-   `POST` to `/ttid/ext_prod_live/token`. This is enforced in
+   `POST` to `/ttid/<environment>/token`. This is enforced in
    `core/readonly_http.py`. **Never loosen the guard, never widen its allow-list,
    never add a write call.** If a task seems to need one, stop and ask the user.
+   Two environments are allowed, `ext_prod_live` (Live) and `ext_uat_cert` (UAT, added
+   at the user's request). A client is tied to one when created and cannot reach the
+   other. Live and UAT also keep separate credentials, profiles and snapshots; never
+   mix them.
 2. **All TT access goes through** `core/tt_client.py` → `core/readonly_http.py`.
    No other module may import an HTTP library. A test enforces this.
 3. **No live TT calls during development or in tests.** Tests run on fixtures;
@@ -72,6 +76,8 @@ user when you need them.
 - Run `python -m pytest` and `python -m ruff check` before considering any change done.
 - Small steps: each change ends with passing tests and one commit.
 - Do not push; the user decides when to push.
+- The mode (Live or UAT) comes only from the launcher, through `LOOKOUT_ENVIRONMENT`.
+  Do not add an in-app switch.
 - Target is Windows 11. Keep paths, keyring and certificate handling
   cross-platform; do not assume a POSIX shell at runtime.
 - No PyInstaller, no `.exe`, no scheduler, no database.

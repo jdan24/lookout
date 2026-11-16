@@ -25,7 +25,7 @@ CATEGORY = "Setup"
 
 
 def _pick_profile() -> Profile | None:
-    folder = app_config.load_config().clients.path
+    folder = app_config.load_config().clients_dir
     found = list_profiles(folder)
     for broken in (f for f in found if f.profile is None):
         st.error(f"Could not read the profile {broken.path.name}: {broken.error}")
@@ -48,14 +48,17 @@ def render() -> None:
     profile = _pick_profile()
     if profile is None:
         return
-    snapshot_dir = app_config.load_config().snapshots.path
+    settings = app_config.load_config()
+    snapshot_dir = settings.snapshot_dir
     pull_panel(
         profile,
         key="sv",
         select_key="sv_snapshot",
         expanded=not list_snapshots(snapshot_dir, profile.client),
     )
-    snapshot = components.snapshot_picker(snapshot_dir, profile.client, key="sv")
+    snapshot = components.snapshot_picker(
+        snapshot_dir, profile.client, key="sv", environment=settings.tt.environment
+    )
     if snapshot is None:
         return
 

@@ -23,7 +23,7 @@ from typing import Any
 
 from core.credentials import TTCredentials
 from core.normalize import is_on
-from core.readonly_http import ALLOWED_ENVIRONMENT, ReadOnlyClient, Response, TransportError
+from core.readonly_http import ReadOnlyClient, Response, TransportError
 
 TOKEN_REFRESH_MARGIN_SECONDS = 60
 MAX_RATE_LIMIT_RETRIES = 2
@@ -69,6 +69,7 @@ class TTClient:
         sleep: Callable[[float], None] = time.sleep,
     ) -> None:
         self._http = http
+        self.environment = http.environment  # Live or UAT, fixed by the guarded client
         self._credentials = credentials
         self._interval = 1.0 / requests_per_second
         self._max_calls = max_calls
@@ -138,7 +139,7 @@ class TTClient:
 
     def _fetch_token(self) -> None:
         creds = self._creds()
-        path = f"/ttid/{ALLOWED_ENVIRONMENT}/token"
+        path = f"/ttid/{self.environment}/token"
         response = self._send(
             "POST",
             path,
@@ -181,8 +182,8 @@ class TTClient:
     def get(
         self, service: str, resource: str, params: Mapping[str, Any] | None = None
     ) -> TTResponse:
-        """GET ``/<service>/ext_prod_live/<resource>`` and return the checked JSON body."""
-        path = f"/{service}/{ALLOWED_ENVIRONMENT}/{resource.strip('/')}"
+        """GET ``/<service>/<environment>/<resource>`` and return the checked JSON body."""
+        path = f"/{service}/{self.environment}/{resource.strip('/')}"
         refreshed = False
         rate_limited = 0
         while True:

@@ -51,6 +51,29 @@ since fixed; no full pull has completed yet.
   exchange names in TT's product list (e.g. `ICE_L`), which Limit Verification relies
   on; and which `productTypeId` values besides 34 (Future) occur.
 
+## Live and UAT
+
+Lookout runs against one TT environment per session, chosen by the launcher:
+
+| | Live | UAT |
+|---|---|---|
+| Start with | `scripts\Start-Lookout.bat` | `scripts\Start-Lookout-UAT.bat` |
+| TT environment | `ext_prod_live` | `ext_uat_cert` |
+| Address | http://localhost:8501 | http://localhost:8502 |
+| Credentials | `python scripts\set_credentials.py` | `python scripts\set_credentials.py --uat` |
+| Profiles | `%LOCALAPPDATA%\Lookout\clients` | `%LOCALAPPDATA%\Lookout\uat\clients` |
+| Snapshots | `%LOCALAPPDATA%\Lookout\snapshots` | `%LOCALAPPDATA%\Lookout\uat\snapshots` |
+
+UAT shows an orange "UAT MODE" banner on every page and in the sidebar; Live shows a
+green "LIVE" label. Both can be open at the same time. The read-only guard ties each
+session to its environment, and a snapshot pulled from one is refused by the other. If
+`[snapshots]` or `[clients] directory` is set in `config.toml`, UAT uses its `uat`
+subfolder. Keep the two `.bat` files in the same folder. Account ids differ in UAT, so
+UAT needs its own profiles.
+
+Without a launcher (development), set the mode yourself before starting:
+`LOOKOUT_ENVIRONMENT=ext_uat_cert python -m streamlit run app.py`.
+
 ## Client profiles
 
 Setup Verification reads one TOML profile per client from the profiles folder
@@ -86,3 +109,7 @@ values appear in the repo.
       `core/tt_client.py`, the `/account/{id}/users` path, and any `start_id` marked
       `id_verified = false` in a profile (then set it to true).
 - [ ] Check `Start-Lookout.bat` on a Windows 11 PC, including behind the corporate proxy.
+- [ ] For UAT: store the UAT credentials (`python scripts\set_credentials.py --uat`), put
+      UAT profiles in `%LOCALAPPDATA%\Lookout\uat\clients`, start `Start-Lookout-UAT.bat`
+      and run a first supervised UAT pull. To confirm there: that UAT is served from the
+      same host with `/ext_uat_cert/` in the path, and accepts the same `requestId` form.

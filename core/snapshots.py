@@ -23,6 +23,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Literal
 
+from core.readonly_http import LIVE_ENVIRONMENT
 from core.version import __version__
 
 Status = Literal["complete", "partial", "failed"]
@@ -130,7 +131,9 @@ class SnapshotWriter:
         *,
         now: datetime | None = None,
         tool_version: str = __version__,
+        environment: str = LIVE_ENVIRONMENT,
     ) -> None:
+        self.environment = environment  # the TT environment the data comes from
         self.client = _safe(client, "client name")
         self.base_dir = Path(base_dir)
         self.tool_version = tool_version
@@ -221,6 +224,7 @@ class SnapshotWriter:
                 "created_at": self.created_at.isoformat(timespec="seconds"),
                 "status": status,
                 "tool_version": self.tool_version,
+                "environment": self.environment,
                 "calls": len(calls),
                 "errors": len(errors),
                 "scope": dict(scope or {}),
@@ -228,7 +232,7 @@ class SnapshotWriter:
         )
         if status != "failed":
             _write_atomic(self.base_dir / self.client / LATEST_FILE, self.id)
-        return load_snapshot(self.base_dir, self.client, self.id)
+        return load_snapshot(self.base_dir, self.client, self.id, environment=self.environment)
 
     def _check_open(self) -> None:
         if self._finished:
@@ -277,8 +281,19 @@ def latest_id(base_dir: Path, client: str) -> str | None:
     return None
 
 
-def load_snapshot(base_dir: Path, client: str, snapshot_id: str | None = None) -> Snapshot:
-    """Load a snapshot by id, or the latest one when no id is given."""
+def load_snapshot(
+    base_dir: Path,
+    client: str,
+    snapshot_id: str | None = None,
+    *,
+    environment: str | None = None,
+) -> Snapshot:
+    """Load a snapshot by id, or the latest one when no id is given.
+
+    With ``environment``, a snapshot pulled from another TT environment is refused, so
+    UAT data is never checked as if it were Live. Older snapshots carry no environment
+    and are Live.
+    """
     chosen = snapshot_id or latest_id(base_dir, client)
     if chosen is None:
         raise SnapshotError(f"No snapshots found for client {client!r} in {base_dir}")
@@ -288,6 +303,12 @@ def load_snapshot(base_dir: Path, client: str, snapshot_id: str | None = None) -
     manifest = _read_json(path / "manifest.json")
     if manifest.get("status") not in STATUSES:
         raise SnapshotError(f"Snapshot {chosen} has an unknown status: {manifest.get('status')!r}")
+    pulled_from = manifest.get("environment") or LIVE_ENVIRONMENT
+    if environment is not None and pulled_from != environment:
+        raise SnapshotError(
+            f"Snapshot {chosen} was pulled from {pulled_from}, but Lookout is running "
+            f"against {environment}. It is not shown here."
+        )
     return Snapshot(
         client=client,
         id=chosen,

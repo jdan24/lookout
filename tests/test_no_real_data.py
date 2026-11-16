@@ -18,6 +18,7 @@ import pytest
 
 from checks.setup.profile import Profile, list_profiles
 from core.config import load_config
+from core.readonly_http import LIVE_ENVIRONMENT, UAT_ENVIRONMENT
 
 ROOT = Path(__file__).resolve().parent.parent
 EXTRA_TERMS = "scrub_terms.txt"
@@ -67,8 +68,9 @@ def test_terms_are_found_as_whole_words() -> None:
 
 
 def test_no_tracked_file_contains_a_real_client_detail() -> None:
-    folder = load_config().clients.path
-    terms = real_terms(folder)
+    settings = load_config()
+    folder = settings.clients.path_for(LIVE_ENVIRONMENT)
+    terms = real_terms(folder) | real_terms(settings.clients.path_for(UAT_ENVIRONMENT))
     if not terms:
         pytest.skip(f"no client profiles in {folder}")
     patterns = {term: pattern(term) for term in sorted(terms)}

@@ -32,10 +32,11 @@ def make_tt_client(settings: AppConfig) -> tuple[TTClient, Callable[[], None]]:
     """A TT client built from the app settings, and a function that closes it."""
     if not settings.tt.request_id_is_set:
         raise ValueError(HOW_TO_SET_REQUEST_ID)
-    http = ReadOnlyClient(settings.tt.host)
+    environment = settings.tt.environment
+    http = ReadOnlyClient(settings.tt.host, environment=environment)
     client = TTClient(
         http,
-        credentials.load_credentials,
+        lambda: credentials.load_credentials(environment),
         requests_per_second=settings.pacing.requests_per_second,
         max_calls=settings.pacing.max_calls_per_pull,
         request_id_prefix=settings.tt.request_id_prefix,
@@ -51,10 +52,12 @@ def _run_pull(profile: Profile, settings: AppConfig) -> Snapshot | None:
         return None
     line = st.empty()
     try:
-        with st.spinner(f"Reading {profile.title} from TT. This can take several minutes."):
+        with st.spinner(
+            f"Reading {profile.title} from TT {settings.tt.mode}. This can take several minutes."
+        ):
             return pull_client(
                 tt,
-                settings.snapshots.path,
+                settings.snapshot_dir,
                 profile,
                 otd_max_pages=settings.pacing.max_order_tag_default_pages,
                 progress=lambda message: line.caption(message),
@@ -93,14 +96,20 @@ def pull_panel(profile: Profile, *, key: str, select_key: str, expanded: bool = 
     usable snapshot is selected there. Call this before the picker is drawn."""
     settings = app_config.load_config()
     cap = settings.pacing.max_calls_per_pull
-    with st.expander("Pull a new snapshot from TT", expanded=expanded):
+    mode, environment = settings.tt.mode, settings.tt.environment
+    with st.expander(f"Pull a new snapshot from TT {mode}", expanded=expanded):
         st.caption(
-            f"Reads {profile.title}'s accounts from TT (read-only, nothing is changed). "
+            f"Reads {profile.title}'s accounts from TT {mode} ({environment}; read-only, "
+            "nothing is changed). "
             f"A pull uses up to {cap:,} calls of the team's {DAILY_CALL_LIMIT:,} a day, so "
             "use the latest snapshot when it is recent enough."
         )
-        if not credentials.has_credentials():
-            st.warning("No TT credentials are stored on this PC. " + credentials.HOW_TO_SET)
+        if not credentials.has_credentials(environment):
+            which = "TT UAT" if settings.tt.is_uat else "TT"
+            st.warning(
+                f"No {which} credentials are stored on this PC. "
+                + credentials.how_to_set(environment)
+            )
             return
         if not settings.tt.request_id_is_set:
             st.warning(HOW_TO_SET_REQUEST_ID)
@@ -109,7 +118,7 @@ def pull_panel(profile: Profile, *, key: str, select_key: str, expanded: bool = 
         round_key = f"{key}_pull_round"
         done = st.session_state.get(round_key, 0)
         agreed = st.checkbox(
-            f"Pull {profile.title} from TT now, using up to {cap:,} calls",
+            f"Pull {profile.title} from TT {mode} now, using up to {cap:,} calls",
             key=f"{key}_pull_ok_{done}",
         )
         if not st.button("Pull now", disabled=not agreed, key=f"{key}_pull"):

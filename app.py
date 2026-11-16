@@ -8,12 +8,15 @@ from __future__ import annotations
 
 import streamlit as st
 
-from ui.components import report_errors, report_tiles
+import core.config as app_config
+from ui.components import mode_banner, page_title, report_errors, report_tiles
 from ui.discovery import by_category, discover_reports
 
 
 def main() -> None:
-    st.set_page_config(page_title="Lookout", page_icon="🔭", layout="wide")
+    settings = app_config.load_config()
+    st.set_page_config(page_title=page_title(settings), page_icon="🔭", layout="wide")
+    mode_banner(settings)  # drawn before the page, so it is on every page
     specs, errors = discover_reports()
 
     pages = {
@@ -22,7 +25,7 @@ def main() -> None:
     }
 
     def home() -> None:
-        st.title("🔭 Lookout")
+        st.title("🔭 " + page_title(settings))
         st.caption("Read-only checks of trading setups in TT. Lookout never changes anything.")
         report_tiles(specs, pages)
         report_errors(errors)

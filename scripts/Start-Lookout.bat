@@ -4,6 +4,9 @@ rem  Start-Lookout.bat - starts Lookout on this PC and opens it in the browser.
 rem  No admin rights needed. Lookout is read-only: it never changes TT.
 rem  It uses the Python already on this PC. It checks that the packages are
 rem  there, but it never installs or downloads anything.
+rem
+rem  This starts LIVE (TT production). For UAT use Start-Lookout-UAT.bat, which
+rem  calls this file with the word "uat".
 rem ---------------------------------------------------------------------------
 setlocal
 
@@ -11,7 +14,17 @@ rem Where the released copy of Lookout lives. EDIT THIS when the share is decide
 set "RELEASE_SHARE=\\CHANGE-ME\Lookout\current"
 
 set "APP_DIR=%LOCALAPPDATA%\Lookout\app"
+
+rem The mode is set here and nowhere else, so a session can never switch by itself.
+set "LOOKOUT_ENVIRONMENT=ext_prod_live"
+set "MODE=LIVE"
 set "PORT=8501"
+if /i "%~1"=="uat" (
+    set "LOOKOUT_ENVIRONMENT=ext_uat_cert"
+    set "MODE=UAT"
+    set "PORT=8502"
+)
+title Lookout %MODE%
 
 rem Run Python rather than look for it: Windows has a Store placeholder called
 rem "python" that is found even when Python is not installed.
@@ -57,7 +70,10 @@ if errorlevel 1 (
     echo.
 )
 
-echo Starting Lookout at http://localhost:%PORT% ...
+echo.
+echo  Mode: %MODE%  (TT environment %LOOKOUT_ENVIRONMENT%)
+echo.
+echo Starting Lookout %MODE% at http://localhost:%PORT% ...
 echo Leave this window open while you use Lookout. Close it to stop Lookout.
 
 rem Open the browser a few seconds after the server starts.

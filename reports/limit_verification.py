@@ -137,7 +137,8 @@ def render() -> None:
     st.title(f"{ICON} {TITLE}")
     st.caption(DESCRIPTION + " Read-only: fixes are made by hand in TT.")
 
-    snapshot_dir = app_config.load_config().snapshots.path
+    settings = app_config.load_config()
+    snapshot_dir = settings.snapshot_dir
     clients = list_clients(snapshot_dir)
     if not clients:
         st.warning(
@@ -145,7 +146,9 @@ def render() -> None:
         )
         return
     client = st.selectbox("Client", clients, key="lv_client")
-    snapshot = components.snapshot_picker(snapshot_dir, client, key="lv")
+    snapshot = components.snapshot_picker(
+        snapshot_dir, client, key="lv", environment=settings.tt.environment
+    )
     if snapshot is None:
         return
     try:

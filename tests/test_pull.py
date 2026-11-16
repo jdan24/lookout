@@ -270,3 +270,18 @@ def test_progress_is_reported(tmp_path: Path) -> None:
     assert lines[0] == "Accounts list: page 1"
     assert f"Account 1 of {len(IN_SCOPE)}: FUND" in lines
     assert any(line.startswith("Order Tag Defaults: page") for line in lines)
+
+
+def test_a_uat_pull_is_marked_as_uat(tmp_path: Path) -> None:
+    tt = FakeTT(environment="ext_uat_cert")
+    client = TTClient(
+        ReadOnlyClient(environment="ext_uat_cert", transport=tt.transport),
+        parse_secret(SECRET),
+        clock=lambda: 0.0,
+        sleep=lambda seconds: None,
+    )
+    snapshot = pull_client(client, tmp_path, PROFILE, now=WHEN)
+    assert snapshot.status == "complete"
+    assert snapshot.manifest["environment"] == "ext_uat_cert"
+    assert all("/ext_uat_cert/" in path for path in tt.paths("GET") + tt.paths("POST"))
+    assert pull(FakeTT(), tmp_path / "live").manifest["environment"] == "ext_prod_live"

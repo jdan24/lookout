@@ -7,13 +7,16 @@ import pytest
 
 from core import readonly_http
 from core.readonly_http import (
+    ALLOWED_ENVIRONMENTS,
     ALLOWED_HOSTS,
+    LIVE_ENVIRONMENT,
     READ_SERVICES,
-    TOKEN_PATH,
+    UAT_ENVIRONMENT,
     GuardedTransport,
     ReadOnlyClient,
     ReadOnlyViolation,
     check_request,
+    token_path,
 )
 
 BASE = "https://ttrestapi.trade.tt"
@@ -44,8 +47,10 @@ def recorder() -> Recorder:
 def test_allow_list_is_exactly_the_agreed_one() -> None:
     assert ALLOWED_HOSTS == {"apigateway.trade.tt", "ttrestapi.trade.tt"}
     assert READ_SERVICES == {"ttaccount", "ttuser", "ttgroup", "ttsetup", "ttpds"}
-    assert TOKEN_PATH == "/ttid/ext_prod_live/token"
-    assert readonly_http.ALLOWED_ENVIRONMENT == "ext_prod_live"
+    assert ALLOWED_ENVIRONMENTS == {"ext_prod_live", "ext_uat_cert"}
+    assert (LIVE_ENVIRONMENT, UAT_ENVIRONMENT) == ("ext_prod_live", "ext_uat_cert")
+    assert token_path(LIVE_ENVIRONMENT) == "/ttid/ext_prod_live/token"
+    assert token_path(UAT_ENVIRONMENT) == "/ttid/ext_uat_cert/token"
 
 
 # --- check_request: allowed ------------------------------------------------------
@@ -277,7 +282,7 @@ def test_client_post_token_goes_to_the_token_path_only(recorder: Recorder) -> No
         client.post_token(data={"grant_type": "user_app"}, headers={"x-api-key": "key"})
     (request,) = recorder.requests
     assert request.method == "POST"
-    assert request.url.path == TOKEN_PATH
+    assert request.url.path == token_path(LIVE_ENVIRONMENT)
     assert request.url.host == "ttrestapi.trade.tt"
 
 
@@ -365,3 +370,65 @@ def test_system_proxy_lookup(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(readonly_http.urllib.request, "proxy_bypass", lambda host: False)
     monkeypatch.setattr(readonly_http.urllib.request, "getproxies", lambda: {})
     assert readonly_http.system_proxy_for("ttrestapi.trade.tt") is None
+
+
+# --- Live and UAT are kept apart -----------------------------------------------------
+
+UAT = "ext_uat_cert"
+UAT_ACCOUNTS = f"{BASE}/ttaccount/{UAT}/accounts"
+
+
+def test_uat_requests_pass_only_for_a_uat_guard() -> None:
+    check_request("GET", UAT_ACCOUNTS, UAT)
+    check_request("POST", f"{BASE}/ttid/{UAT}/token", UAT)
+    for method, url in [("GET", UAT_ACCOUNTS), ("POST", f"{BASE}/ttid/{UAT}/token")]:
+        with pytest.raises(ReadOnlyViolation):
+            check_request(method, url)  # the default guard is Live
+        with pytest.raises(ReadOnlyViolation):
+            check_request(method, url, LIVE_ENVIRONMENT)
+
+
+def test_a_uat_guard_refuses_live_and_everything_else() -> None:
+    for method, url in [
+        ("GET", ACCOUNTS),
+        ("POST", f"{BASE}/ttid/ext_prod_live/token"),
+        ("POST", UAT_ACCOUNTS),
+        ("PUT", UAT_ACCOUNTS),
+        ("DELETE", UAT_ACCOUNTS),
+        ("GET", f"{BASE}/ttid/{UAT}/token"),
+        ("POST", f"{BASE}/ttid/{UAT}/token/extra"),
+        ("GET", f"{BASE}/ttledger/{UAT}/fills"),
+        ("GET", f"https://evil.example/ttaccount/{UAT}/accounts"),
+        ("GET", f"{BASE}/ttaccount/ext_prod_sim/accounts"),
+    ]:
+        with pytest.raises(ReadOnlyViolation):
+            check_request(method, url, UAT)
+
+
+@pytest.mark.parametrize("environment", ["ext_prod_sim", "EXT_UAT_CERT", "", "ext_uat_cert/x", None])
+def test_no_other_environment_can_be_named(environment: object, recorder: Recorder) -> None:
+    with pytest.raises(ReadOnlyViolation, match="environment"):
+        check_request("GET", ACCOUNTS, environment)  # type: ignore[arg-type]
+    with pytest.raises(ReadOnlyViolation, match="environment"):
+        GuardedTransport(recorder.transport, environment)  # type: ignore[arg-type]
+    with pytest.raises(ReadOnlyViolation, match="environment"):
+        ReadOnlyClient(environment=environment, transport=recorder.transport)  # type: ignore[arg-type]
+    with pytest.raises(ReadOnlyViolation, match="environment"):
+        token_path(environment)  # type: ignore[arg-type]
+
+
+def test_a_client_stays_in_the_environment_it_was_made_for(recorder: Recorder) -> None:
+    with ReadOnlyClient(environment=UAT, transport=recorder.transport) as uat:
+        assert uat.environment == UAT
+        uat.get(f"/ttaccount/{UAT}/accounts")
+        uat.post_token(data={"grant_type": "user_app"})
+        with pytest.raises(ReadOnlyViolation):
+            uat.get("/ttaccount/ext_prod_live/accounts")
+    with ReadOnlyClient(transport=recorder.transport) as live:
+        assert live.environment == LIVE_ENVIRONMENT
+        with pytest.raises(ReadOnlyViolation):
+            live.get(f"/ttaccount/{UAT}/accounts")
+    assert [(r.method, r.url.path) for r in recorder.requests] == [
+        ("GET", f"/ttaccount/{UAT}/accounts"),
+        ("POST", f"/ttid/{UAT}/token"),
+    ]

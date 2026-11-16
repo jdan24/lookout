@@ -5,6 +5,8 @@
 # Must be one of the hosts allow-listed in core/readonly_http.py.
 # Changing this cannot widen the allow-list; an unknown host is refused.
 host = "ttrestapi.trade.tt"
+# Live. For UAT (ext_uat_cert) do not edit this: start Lookout with
+# scripts\Start-Lookout-UAT.bat, which sets the mode for that session.
 environment = "ext_prod_live"
 # Sent to TT with every call as requestId=<app>-<company>--<random id>.
 # Replace CHANGEME with your company name: letters and digits only, no spaces.

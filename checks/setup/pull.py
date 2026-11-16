@@ -28,7 +28,7 @@ def pull_client(
     now: datetime | None = None,
     progress: Callable[[str], None] | None = None,
 ) -> Snapshot:
-    writer = SnapshotWriter(snapshot_dir, profile.client, now=now)
+    writer = SnapshotWriter(snapshot_dir, profile.client, now=now, environment=tt.environment)
     return pull_setup(
         tt,
         writer,

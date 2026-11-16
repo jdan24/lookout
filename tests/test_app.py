@@ -115,3 +115,24 @@ def test_real_reports_folder_shows_the_report_tiles() -> None:
     assert not app.exception, app.exception
     assert [s.value for s in app.subheader] == ["Limits", "Setup"]
     assert "Setup Verification" in all_text(app)
+
+
+def test_live_mode_is_labelled_on_the_page_and_in_the_sidebar(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    app = run_app(monkeypatch, tmp_path)
+    assert "LIVE - TT production (ext_prod_live)" in app.markdown[0].value
+    assert "LIVE - TT production (ext_prod_live)" in app.sidebar.markdown[0].value
+    assert "UAT" not in all_text(app)
+
+
+def test_uat_mode_has_a_banner_on_the_page_and_in_the_sidebar(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    monkeypatch.setenv("LOOKOUT_ENVIRONMENT", "ext_uat_cert")
+    app = run_app(monkeypatch, tmp_path)
+    banner = "UAT MODE - TT test environment (ext_uat_cert)"
+    assert banner in app.markdown[0].value and "not production" in app.markdown[0].value
+    assert banner in app.sidebar.markdown[0].value
+    assert app.title[0].value == "🔭 Lookout UAT"
+    assert "LIVE" not in all_text(app)
