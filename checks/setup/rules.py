@@ -476,122 +476,77 @@ def check_companion(setup: SetupData, levels: LevelMap, profile: Profile) -> lis
 
 
 def check_users(setup: SetupData, levels: LevelMap) -> list[ResultRow]:
-    """Users are assigned at the "here" level and inherited below it, never repeated."""
-    rows: list[ResultRow] = []
-    assigned: dict[str, set[str]] = {}  # account id of a "here" place -> user ids
-    for place in levels.fitted():
-        assert place.level is not None
-        if place.level.users != "here":
-            continue
-        users = setup.direct_users(place.account.id)
-        if users is None:
-            rows.append(
-                row(
-                    place,
-                    "USERS",
-                    "Users",
-                    Colour.AMBER,
-                    reason=Reason.UNKNOWN,
-                    message=f"Users on {place.account.name} were not read. Pull again.",
-                )
-            )
-            continue
-        assigned[place.account.id] = {u["id"] for u in users}
-        rows.append(
-            row(
-                place,
-                "USERS",
-                "Users",
-                Colour.GREEN,
-                expected=f"Users assigned on the {place.level.label.lower()}",
-                expected_level=place.label,
-                actual=", ".join(sorted(u["name"] or u["id"] for u in users)) or "None",
-                actual_level=place.label,
-            )
-        )
+    """Every lowest-level account has all the tree's required users.
 
+    A user counts when assigned on the account itself or on any account above it, up to
+    the start account. Where a user is assigned is not judged, only that it is there.
+    """
+    names: dict[str, str] = {}
+    for assigned in setup.users:
+        for user in setup.direct_users(assigned) or []:
+            if user["name"]:
+                names.setdefault(user["id"], user["name"])
+
+    def who(user_id: str) -> str:
+        return f"{names[user_id]} ({user_id})" if user_id in names else f"user {user_id}"
+
+    rows: list[ResultRow] = []
     for place in levels.fitted():
-        assert place.level is not None
-        if place.level.users != "inherited":
+        required = place.tree.required_users
+        if not required or place.depth < place.tree.max_depth:
             continue
+        chain = levels.chain(place)
+        source: dict[str, str] = {}  # user id -> name of the nearest account it is assigned on
+        unread: list[str] = []
+        for above in chain:
+            users = setup.direct_users(above.account.id)
+            if users is None:
+                unread.append(above.account.name)
+                continue
+            for user in users:
+                source.setdefault(user["id"], above.account.name)
+        missing = [user_id for user_id in required if user_id not in source]
         name = place.account.name
-        owner = next(
-            (p for p in levels.chain(place)[1:] if p.level is not None and p.level.users == "here"),
-            None,
-        )
-        users = setup.direct_users(place.account.id)
-        if owner is None:
-            rows.append(
-                row(
-                    place,
-                    "USERS",
-                    "Users",
-                    Colour.AMBER,
-                    reason=Reason.NO_RULE,
-                    message=(
-                        f"The profile says users on {name} are inherited, but no level above it "
-                        'has users = "here". Fix the profile.'
-                    ),
-                )
-            )
-            continue
-        source = owner.account.name
-        if users is None or owner.account.id not in assigned:
-            rows.append(
-                row(
-                    place,
-                    "USERS",
-                    "Users",
-                    Colour.AMBER,
-                    reason=Reason.UNKNOWN,
-                    message=f"Users on {name} or {source} were not read. Pull again.",
-                )
-            )
-            continue
         common = {
-            "expected": f"Inherited from {source}",
-            "expected_level": owner.label,
+            "expected": ", ".join(who(user_id) for user_id in required),
+            "expected_level": "This account or any account above it",
             "actual_level": place.label,
         }
-        if not users:
+        found = ", ".join(f"{who(u)} from {source[u]}" for u in required if u in source)
+        if not missing:
+            rows.append(row(place, "USERS", "Users", Colour.GREEN, actual=found, **common))
+        elif unread:
             rows.append(
-                row(place, "USERS", "Users", Colour.GREEN, actual="None assigned here", **common)
+                row(
+                    place,
+                    "USERS",
+                    "Users",
+                    Colour.AMBER,
+                    actual=found or "None found",
+                    reason=Reason.UNKNOWN,
+                    message=(
+                        f"Users on {', '.join(unread)} were not read, so "
+                        f"{', '.join(who(u) for u in missing)} may be assigned there. Pull again."
+                    ),
+                    **common,
+                )
             )
-            continue
-        for user in users:
-            who = user["name"] or user["id"]
-            if user["id"] in assigned[owner.account.id]:
-                rows.append(
-                    row(
-                        place,
-                        "USERS",
-                        f"User {who}",
-                        Colour.RED,
-                        actual=f"Also assigned on {name}",
-                        reason=Reason.WRONG_LEVEL,
-                        message=(
-                            f"{who} is already assigned on {source}. Remove the duplicate "
-                            f"assignment from {name}."
-                        ),
-                        **common,
-                    )
+        else:
+            rows.append(
+                row(
+                    place,
+                    "USERS",
+                    "Users",
+                    Colour.RED,
+                    actual="Missing: " + ", ".join(who(u) for u in missing),
+                    reason=Reason.MISSING,
+                    message=(
+                        f"Assign {', '.join(who(u) for u in missing)} on {name} or on an "
+                        f"account above it, up to {place.root.name}."
+                    ),
+                    **common,
                 )
-            else:
-                rows.append(
-                    row(
-                        place,
-                        "USERS",
-                        f"User {who}",
-                        Colour.AMBER,
-                        actual=f"Assigned on {name} only",
-                        reason=Reason.NO_RULE,
-                        message=(
-                            f"{who} is assigned on {name} but not on {source}. Confirm whether "
-                            f"this user should be assigned on {source} instead."
-                        ),
-                        **common,
-                    )
-                )
+            )
     return rows
 
 

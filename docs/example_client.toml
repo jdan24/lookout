@@ -14,7 +14,10 @@
 #   than the deepest level use the deepest level's rules and show as "Sub-account".
 #
 # Values: apply_limits / apply_restrictions = "on" | "off" | "any" (not checked)
-#         users = "here" (assigned at this level) | "inherited" (none repeated here) | "any"
+#
+# Users: `required_users` on a tree lists the TT user ids every lowest-level account
+#   must have. A user counts when assigned on the account itself or on any account
+#   above it (up to the start account); where it is assigned is not checked.
 
 client = "example"            # snapshot folder name: letters, digits, - _ .
 label = "Example client"
@@ -30,11 +33,12 @@ start_id = "100"                    # optional; checked against the name
 id_verified = true                  # false: an id mismatch is only a note
 # Markets allowed in limit rows in this tree (market id = exchange name).
 markets = { "7" = "CME", "2" = "Eurex", "30" = "Euronext", "107" = "HKEX", "91" = "MX" }
+# Users every trading account must have, assigned on it or inherited from above.
+required_users = ["9001", "9002", "9003"]
 
   [[trees.levels]]
   depth = 0
   label = "Client group"
-  users = "here"
 
   [[trees.levels]]
   depth = 1
@@ -45,7 +49,6 @@ markets = { "7" = "CME", "2" = "Eurex", "30" = "Euronext", "107" = "HKEX", "91" 
   apply_limits = "on"
   limit_rows_required = true
   apply_restrictions = "on"
-  users = "inherited"
   may_be_empty = true               # a new team with nothing below it is amber, not red
 
   [[trees.levels]]
@@ -55,7 +58,6 @@ markets = { "7" = "CME", "2" = "Eurex", "30" = "Euronext", "107" = "HKEX", "91" 
   name_hint = "<account number><2-letter team code>"
   apply_limits = "off"
   apply_restrictions = "off"
-  users = "inherited"
 
   # Expected Order Tag Default ("Exchanges" tab) values.
   [[trees.order_tag_defaults]]
@@ -103,12 +105,12 @@ label = "South company"
 path = ["SOUTHCO", "S-FUND"]
 start_id = "500"
 markets = { "24" = "ASX", "155" = "JPX", "66" = "MEFF" }
+required_users = ["9001"]
 
   [[trees.levels]]
   depth = 0
   label = "Client group"
   apply_restrictions = "on"
-  users = "here"
 
   [[trees.levels]]
   depth = 1
@@ -119,7 +121,6 @@ markets = { "24" = "ASX", "155" = "JPX", "66" = "MEFF" }
   apply_limits = "on"
   limit_rows_required = true
   apply_restrictions = "off"
-  users = "inherited"
   may_be_empty = true
 
   [[trees.levels]]
@@ -129,7 +130,6 @@ markets = { "24" = "ASX", "155" = "JPX", "66" = "MEFF" }
   name_hint = "S-<account number><2-letter team code>"
   apply_limits = "off"
   apply_restrictions = "off"
-  users = "inherited"
 
 # ---------------------------------------------------------------------------------
 # Optional rules. Leave a section out to switch the rule off.

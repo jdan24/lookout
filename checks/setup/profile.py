@@ -68,7 +68,7 @@ class Level(_Model):
     apply_limits: OnOff = "any"
     limit_rows_required: bool = False
     apply_restrictions: OnOff = "any"
-    users: UsersRule = "any"
+    users: UsersRule = "any"  # no longer used; accepted so older profiles still load
     may_be_empty: bool = False
 
     _check = field_validator("match_regex", "name_regex")(_regex)
@@ -133,6 +133,8 @@ class Tree(_Model):
     start_id: str | None = None
     id_verified: bool = True
     markets: dict[str, str] = Field(default_factory=dict)  # market id -> exchange name
+    # User ids every lowest-level account must have, on itself or on an account above it.
+    required_users: list[str] = Field(default_factory=list)
     levels: list[Level] = Field(min_length=1)
     order_tag_defaults: list[OrderTagDefaultRule] = Field(default_factory=list)
 
@@ -140,6 +142,16 @@ class Tree(_Model):
     @classmethod
     def _market_ids(cls, value: dict[str, str]) -> dict[str, str]:
         return {norm_id(k): v for k, v in value.items()}
+
+    @field_validator("required_users", mode="before")
+    @classmethod
+    def _user_ids(cls, value: Any) -> Any:
+        if not isinstance(value, list):
+            return value
+        ids = _ids(value)
+        if "" in ids or len(set(ids)) != len(ids):
+            raise ValueError("required_users must be different, non-zero user ids")
+        return ids
 
     @model_validator(mode="after")
     def _levels(self) -> Tree:

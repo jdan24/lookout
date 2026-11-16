@@ -9,6 +9,7 @@ import pytest
 
 from checks.setup.profile import (
     DEFAULT_OTD_KEY,
+    Profile,
     ProfileError,
     list_profiles,
     load_profile,
@@ -87,3 +88,20 @@ def test_list_profiles_keeps_broken_files_with_their_error(tmp_path: Path) -> No
     assert list_profiles(tmp_path / "missing") == []
     with pytest.raises(ProfileError, match="No profile file"):
         load_profile(tmp_path / "missing.toml")
+
+
+def test_required_users_are_ids_and_the_old_users_key_still_loads() -> None:
+    data = example()
+    data["trees"][0]["required_users"] = [9001, "9002"]
+    data["trees"][0]["levels"][0]["users"] = "here"  # from profiles written for the old rule
+    tree = Profile.model_validate(data).trees[0]
+    assert tree.required_users == ["9001", "9002"]
+    assert Profile.model_validate(example()).trees[1].required_users == ["9001"]
+
+
+@pytest.mark.parametrize("users", [["9001", 9001], [0], [""]])
+def test_required_users_must_be_different_real_ids(users: list[Any]) -> None:
+    data = example()
+    data["trees"][0]["required_users"] = users
+    with pytest.raises(ValueError, match="required_users"):
+        Profile.model_validate(data)

@@ -68,7 +68,9 @@ def test_messages(setup: SetupData) -> None:
     firm = got[("OTD", "ABC30003GA", "Clearing Firm ID (Euronext)")]
     assert firm.expected_level == "Trading account, Team or Client group"
     assert "Set 77777 on ABC30003GA" in firm.message
-    assert got[("USERS", "FUND-BETA", "User bob.trader")].expected_level == "Client group (FUND)"
+    users = got[("USERS", "ABC10001AL", "Users")]
+    assert users.actual == "Missing: cat.trader (9003)"
+    assert "Assign cat.trader (9003) on ABC10001AL or on an account above it" in users.message
     legacy = got[("LEGACY", "FUND-OLDPOD", "Legacy group")]
     assert legacy.expected == "Under FUND or S-FUND"
 
@@ -82,12 +84,13 @@ def test_unread_accounts_are_amber_unknown(tmp_path: Path) -> None:
         ("LIMITS", "FUND-BETA", "Apply Limits"),
         ("RESTRICTIONS", "ABC20002BE", "Apply Restrictions"),
         ("COMPANION", "FUND-BETA", "Index account"),
-        ("USERS", "FUND", "Users"),
-        ("USERS", "FUND-ALPHA", "Users"),
+        ("USERS", "ABC10001AL", "Users"),  # FUND's users were not read
+        ("USERS", "ABC20002BE", "Users"),
     ]:
         assert outcome(got[key]) == ("amber", "UNKNOWN"), key
+    assert "Users on FUND were not read" in got[("USERS", "ABC10001AL", "Users")].message
     # the south tree's users were read, so they are still judged
-    assert outcome(got[("USERS", "S-FUND-ALPHA", "Users")]) == ("green", "")
+    assert outcome(got[("USERS", "S-ABC10001AL", "Users")]) == ("green", "")
 
 
 def test_partial_order_tag_defaults_give_unknown_not_missing(tmp_path: Path) -> None:
@@ -142,14 +145,55 @@ def test_unnecessary_companion_can_be_red(setup: SetupData) -> None:
     assert outcome(row) == ("red", "WRONG_LEVEL")
 
 
-def test_inherited_users_need_a_level_with_users_here(setup: SetupData) -> None:
+def _with_required_users(tree_name: str, users: list[str]) -> Profile:
     profile = synthetic.profile()
-    north = profile.tree("north")
-    root = north.levels[0].model_copy(update={"users": "any"})
-    trees = [north.model_copy(update={"levels": [root, *north.levels[1:]]}), profile.trees[1]]
-    got = run(setup, profile.model_copy(update={"trees": trees}))
-    assert outcome(got[("USERS", "FUND-ALPHA", "Users")]) == ("amber", "NO_RULE")
-    assert "Fix the profile" in got[("USERS", "FUND-ALPHA", "Users")].message
+    trees = [
+        t.model_copy(update={"required_users": users}) if t.name == tree_name else t
+        for t in profile.trees
+    ]
+    return profile.model_copy(update={"trees": trees})
+
+
+def test_users_are_checked_on_the_lowest_level_only_and_inherited_ones_count(
+    setup: SetupData,
+) -> None:
+    got = run(setup)
+    users = {key[1]: row for key, row in got.items() if key[0] == "USERS"}
+    # only trading accounts; no client group, team or unfitted account
+    assert set(users) == {
+        "ABC10001AL", "ABC10001IX", "ABC20002BE", "BETA-ACCT", "ABC20012IX", "ABC30003GA",
+        "S-ABC10001AL", "S-ABC20002BE", "ABC20022BE",
+    }  # fmt: skip
+    # Cat is assigned on FUND-BETA only: accounts under it pass, others miss Cat.
+    beta = users["ABC20002BE"]
+    assert outcome(beta) == ("green", "")
+    assert "cat.trader (9003) from FUND-BETA" in beta.actual
+    assert "ann.trader (9001) from FUND" in beta.actual
+    assert outcome(users["ABC30003GA"]) == ("red", "MISSING")
+    # Bob sits on both FUND and FUND-BETA; a repeated assignment is not a finding any more.
+    assert not [key for key in got if key[0] == "USERS" and key[2] != "Users"]
+
+
+def test_a_user_assigned_on_the_account_itself_counts(setup: SetupData) -> None:
+    setup.users["320"] = [dict(synthetic.USER_CAT)]
+    row = run(setup)[("USERS", "ABC30003GA", "Users")]
+    assert outcome(row) == ("green", "")
+    assert "cat.trader (9003) from ABC30003GA" in row.actual
+
+
+def test_a_required_user_never_seen_is_named_by_id(setup: SetupData) -> None:
+    row = run(setup, _with_required_users("south", ["9001", "4242"]))[
+        ("USERS", "S-ABC10001AL", "Users")
+    ]
+    assert outcome(row) == ("red", "MISSING")
+    assert row.actual == "Missing: user 4242"
+
+
+def test_no_required_users_means_no_users_rows(setup: SetupData) -> None:
+    got = run(setup, _with_required_users("north", []))
+    assert {key[1] for key in got if key[0] == "USERS"} == {
+        "S-ABC10001AL", "S-ABC20002BE", "ABC20022BE",
+    }  # fmt: skip
 
 
 def test_display_only_values_are_listed_not_judged(setup: SetupData) -> None:
@@ -195,8 +239,10 @@ def test_verify_snapshot(tmp_path: Path) -> None:
 
 def test_users_endpoint_not_read_is_unknown_even_when_the_detail_was(tmp_path: Path) -> None:
     got = run(load_setup(synthetic.build_snapshot(tmp_path, skip_users=(210,))))
-    beta = [r for key, r in got.items() if key[0] == "USERS" and key[1] == "FUND-BETA"]
-    assert [outcome(r) for r in beta] == [("amber", "UNKNOWN")]
+    # Cat may be on FUND-BETA, which was not read: unknown, not missing.
+    assert outcome(got[("USERS", "ABC20002BE", "Users")]) == ("amber", "UNKNOWN")
+    # FUND-GAMMA's accounts do not depend on FUND-BETA, so Cat is plainly missing there.
+    assert outcome(got[("USERS", "ABC30003GA", "Users")]) == ("red", "MISSING")
 
 
 def test_unexpected_or_missing_checkbox_values_are_amber_not_a_crash(setup: SetupData) -> None:

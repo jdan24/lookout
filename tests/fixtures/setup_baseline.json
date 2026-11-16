@@ -1,5 +1,5 @@
 {
- "_note": "Output of the original client-specific rules on tests/fixtures/synthetic.py (fictional data). The generic engine must give the same colour and reason for every row.",
+ "_note": "Output of the original client-specific rules on tests/fixtures/synthetic.py (fictional data), which the generic engine must reproduce. Rows with a new-style rule id (USERS, OTD) were regenerated after those rules were deliberately changed.",
  "rows": [
   ["A1", "FUND-ALPHA (200)", "Apply Limits", "green", "", "ON", "Team", "ON", "Team"],
   ["A1", "FUND-ALPHA (200)", "Limit rows", "green", "", "At least one limit row", "Team", "3 limit rows", "Team"],
@@ -108,24 +108,15 @@
   ["B6", "ABC20012IX (312)", "Exchange Account (Euronext)", "red", "MISMATCH", "ACCTIDX", "Trading account, team or client group", "ACCTSTD", "Client group (FUND)"],
   ["B6", "ABC10001IX (301)", "Clearing Firm ID (Euronext)", "green", "", "77777", "Trading account, team or client group", "77777", "Client group (FUND)"],
   ["B6", "ABC20012IX (312)", "Clearing Firm ID (Euronext)", "green", "", "77777", "Trading account, team or client group", "77777", "Client group (FUND)"],
-  ["B7", "FUND (100)", "Users", "green", "", "Users assigned on the client group", "Client group (FUND)", "ann.trader, bob.trader", "Client group (FUND)"],
-  ["B7", "S-FUND (500)", "Users", "green", "", "Users assigned on the client group", "Client group (S-FUND)", "ann.trader", "Client group (S-FUND)"],
-  ["B7", "FUND-ALPHA (200)", "Users", "green", "", "Inherited from FUND", "Client group (FUND)", "None assigned here", "Team"],
-  ["B7", "ABC10001AL (300)", "Users", "green", "", "Inherited from FUND", "Client group (FUND)", "None assigned here", "Trading account"],
-  ["B7", "ABC10001IX (301)", "Users", "green", "", "Inherited from FUND", "Client group (FUND)", "None assigned here", "Trading account"],
-  ["B7", "FUND-BETA (210)", "User bob.trader", "red", "WRONG_LEVEL", "Inherited from FUND", "Client group (FUND)", "Also assigned on FUND-BETA", "Team"],
-  ["B7", "FUND-BETA (210)", "User cat.trader", "amber", "NO_RULE", "Inherited from FUND", "Client group (FUND)", "Assigned on FUND-BETA only", "Team"],
-  ["B7", "ABC20002BE (310)", "Users", "green", "", "Inherited from FUND", "Client group (FUND)", "None assigned here", "Trading account"],
-  ["B7", "ABC20012IX (312)", "Users", "green", "", "Inherited from FUND", "Client group (FUND)", "None assigned here", "Trading account"],
-  ["B7", "BETA-ACCT (311)", "Users", "green", "", "Inherited from FUND", "Client group (FUND)", "None assigned here", "Trading account"],
-  ["B7", "FUND-EMPTY (230)", "Users", "green", "", "Inherited from FUND", "Client group (FUND)", "None assigned here", "Team"],
-  ["B7", "FUND-GAMMA (220)", "Users", "green", "", "Inherited from FUND", "Client group (FUND)", "None assigned here", "Team"],
-  ["B7", "ABC30003GA (320)", "Users", "green", "", "Inherited from FUND", "Client group (FUND)", "None assigned here", "Trading account"],
-  ["B7", "S-FUND-ALPHA (600)", "Users", "green", "", "Inherited from S-FUND", "Client group (S-FUND)", "None assigned here", "Team"],
-  ["B7", "S-ABC10001AL (700)", "Users", "green", "", "Inherited from S-FUND", "Client group (S-FUND)", "None assigned here", "Trading account"],
-  ["B7", "S-FUND-BETA (610)", "Users", "green", "", "Inherited from S-FUND", "Client group (S-FUND)", "None assigned here", "Team"],
-  ["B7", "ABC20022BE (711)", "Users", "green", "", "Inherited from S-FUND", "Client group (S-FUND)", "None assigned here", "Trading account"],
-  ["B7", "S-ABC20002BE (710)", "Users", "green", "", "Inherited from S-FUND", "Client group (S-FUND)", "None assigned here", "Trading account"],
-  ["B9", "FUND-OLDPOD (900)", "Legacy group", "amber", "TO_BE_MIGRATED", "Under FUND or S-FUND", "", "Under BROKER (11)", ""]
+  ["B9", "FUND-OLDPOD (900)", "Legacy group", "amber", "TO_BE_MIGRATED", "Under FUND or S-FUND", "", "Under BROKER (11)", ""],
+  ["USERS", "ABC10001AL (300)", "Users", "red", "MISSING", "ann.trader (9001), bob.trader (9002), cat.trader (9003)", "This account or any account above it", "Missing: cat.trader (9003)", "Trading account"],
+  ["USERS", "ABC10001IX (301)", "Users", "red", "MISSING", "ann.trader (9001), bob.trader (9002), cat.trader (9003)", "This account or any account above it", "Missing: cat.trader (9003)", "Trading account"],
+  ["USERS", "ABC20002BE (310)", "Users", "green", "", "ann.trader (9001), bob.trader (9002), cat.trader (9003)", "This account or any account above it", "ann.trader (9001) from FUND, bob.trader (9002) from FUND-BETA, cat.trader (9003) from FUND-BETA", "Trading account"],
+  ["USERS", "ABC20012IX (312)", "Users", "green", "", "ann.trader (9001), bob.trader (9002), cat.trader (9003)", "This account or any account above it", "ann.trader (9001) from FUND, bob.trader (9002) from FUND-BETA, cat.trader (9003) from FUND-BETA", "Trading account"],
+  ["USERS", "BETA-ACCT (311)", "Users", "green", "", "ann.trader (9001), bob.trader (9002), cat.trader (9003)", "This account or any account above it", "ann.trader (9001) from FUND, bob.trader (9002) from FUND-BETA, cat.trader (9003) from FUND-BETA", "Trading account"],
+  ["USERS", "ABC30003GA (320)", "Users", "red", "MISSING", "ann.trader (9001), bob.trader (9002), cat.trader (9003)", "This account or any account above it", "Missing: cat.trader (9003)", "Trading account"],
+  ["USERS", "S-ABC10001AL (700)", "Users", "green", "", "ann.trader (9001)", "This account or any account above it", "ann.trader (9001) from S-FUND", "Trading account"],
+  ["USERS", "ABC20022BE (711)", "Users", "green", "", "ann.trader (9001)", "This account or any account above it", "ann.trader (9001) from S-FUND", "Trading account"],
+  ["USERS", "S-ABC20002BE (710)", "Users", "green", "", "ann.trader (9001)", "This account or any account above it", "ann.trader (9001) from S-FUND", "Trading account"]
  ]
 }
