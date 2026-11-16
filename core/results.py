@@ -13,6 +13,7 @@ class Colour(StrEnum):
     GREEN = "green"  # as expected
     RED = "red"  # not as expected
     AMBER = "amber"  # needs a rule, couldn't be read, or legacy / to be migrated
+    GREY = "grey"  # not checked: the rule does not apply here; never a problem
 
 
 class Reason(StrEnum):
@@ -22,6 +23,7 @@ class Reason(StrEnum):
     UNKNOWN = "UNKNOWN"  # data incomplete, e.g. a list not read to the end
     NO_RULE = "NO_RULE"  # nothing defined to judge this by yet
     TO_BE_MIGRATED = "TO_BE_MIGRATED"  # legacy setup
+    NOT_APPLICABLE = "NOT_APPLICABLE"  # deliberately not checked (grey rows only)
 
 
 COLUMNS: tuple[str, ...] = (
@@ -63,6 +65,8 @@ class ResultRow:
             raise ValueError(f"A {self.colour} row needs a reason.")
         if self.colour is not Colour.GREEN and not self.message.strip():
             raise ValueError(f"A {self.colour} row needs a message saying what to do.")
+        if (self.colour is Colour.GREY) != (self.reason is Reason.NOT_APPLICABLE):
+            raise ValueError("Grey rows, and only grey rows, have the reason NOT_APPLICABLE.")
 
     def as_dict(self) -> dict[str, str]:
         data = asdict(self)
@@ -88,9 +92,9 @@ def summary(rows: Iterable[ResultRow]) -> dict[Colour, int]:
     return counts
 
 
-_SEVERITY = {Colour.RED: 0, Colour.AMBER: 1, Colour.GREEN: 2}
+_SEVERITY = {Colour.RED: 0, Colour.AMBER: 1, Colour.GREEN: 2, Colour.GREY: 3}
 
 
 def worst_first(rows: Iterable[ResultRow]) -> list[ResultRow]:
-    """Red, then amber, then green; original order kept within each colour."""
+    """Red, amber, green, then grey; original order kept within each colour."""
     return sorted(rows, key=lambda row: _SEVERITY[row.colour])

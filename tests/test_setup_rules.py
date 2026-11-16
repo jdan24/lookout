@@ -94,11 +94,64 @@ def test_unread_accounts_are_amber_unknown(tmp_path: Path) -> None:
 
 
 def test_partial_order_tag_defaults_give_unknown_not_missing(tmp_path: Path) -> None:
-    got = run(load_setup(synthetic.build_snapshot(tmp_path, otd_reached_end=False)))
+    setup = load_setup(synthetic.build_snapshot(tmp_path, otd_reached_end=False))
+    _add_limit(setup, "210", 2, "FGBL")  # FUND-BETA uses Eurex
+    _add_limit(setup, "200", 91, "SXF")  # FUND-ALPHA uses MX
+    got = run(setup)
     unknown = got[("OTD", "ABC20002BE", "Clearing Account (Eurex)")]
     assert outcome(unknown) == ("amber", "UNKNOWN") and "not read to the end" in unknown.message
     assert outcome(got[("OTD", "ABC10001AL", "Clearing Account (MX)")]) == ("red", "MISMATCH")
     assert outcome(got[("OTD", "ABC20002BE", "Clearing Account (CME)")]) == ("red", "WRONG_LEVEL")
+
+
+def _add_limit(setup: SetupData, account_id: str, market: int, symbol: str) -> None:
+    setup.details[account_id]["riskLimits"]["productLimits"].append(synthetic.limit(market, symbol))
+
+
+def test_account_defaults_are_not_checked_on_markets_without_limits(setup: SetupData) -> None:
+    got = run(setup)
+    # FUND-BETA (the level that holds limits) has CME limits but none on Eurex or HKEX.
+    assert outcome(got[("OTD", "ABC20002BE", "Clearing Account (CME)")]) == ("red", "WRONG_LEVEL")
+    skipped = got[("OTD", "ABC20002BE", "Clearing Account (Eurex)")]
+    assert outcome(skipped) == ("grey", "NOT_APPLICABLE")
+    assert skipped.actual == "No limits for Eurex on FUND-BETA" and skipped.actual_level == "Team"
+    assert skipped.message.startswith("Not checked: FUND-BETA has no limits for Eurex")
+    # every kind of account default is skipped the same way
+    assert outcome(got[("OTD", "ABC10001AL", "Exchange Account (HKEX)")])[0] == "grey"
+    assert outcome(got[("OTD", "ABC10001AL", "Clearing Firm ID (HKEX)")])[0] == "grey"
+
+    _add_limit(setup, "210", 2, "FGBL")  # once the team has a Eurex limit, it is checked again
+    assert outcome(run(setup)[("OTD", "ABC20002BE", "Clearing Account (Eurex)")]) == (
+        "red",
+        "MISSING",
+    )
+
+
+def test_a_limit_of_any_kind_on_the_market_counts(setup: SetupData) -> None:
+    setup.details["210"]["riskLimits"]["contractLimits"].append(synthetic.limit(2, "FGBL"))
+    assert outcome(run(setup)[("OTD", "ABC20002BE", "Clearing Account (Eurex)")])[0] == "red"
+
+
+def test_account_defaults_are_checked_as_before_when_limits_cannot_be_told(
+    tmp_path: Path, setup: SetupData
+) -> None:
+    key = ("OTD", "ABC20002BE", "Clearing Account (Eurex)")
+    # no level says where limits live: nothing is skipped
+    profile = synthetic.profile()
+    trees = [
+        t.model_copy(
+            update={
+                "levels": [lv.model_copy(update={"limit_rows_required": False}) for lv in t.levels]
+            }
+        )
+        for t in profile.trees
+    ]
+    got = run(setup, profile.model_copy(update={"trees": trees}))
+    assert outcome(got[key]) == ("red", "MISSING")
+    assert not [row for row in got.values() if row.colour.value == "grey"]
+    # the account that holds the limits was not read: checked, not skipped
+    unread = load_setup(synthetic.build_snapshot(tmp_path, skip_details=(210,)))
+    assert outcome(run(unread)[key]) == ("red", "MISSING")
 
 
 def test_enum_values_are_shown_by_name(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:

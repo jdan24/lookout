@@ -59,7 +59,7 @@ def test_columns_are_the_agreed_shape() -> None:
 
 
 def test_colours_and_reasons_are_the_agreed_ones() -> None:
-    assert {c.value for c in Colour} == {"green", "red", "amber"}
+    assert {c.value for c in Colour} == {"green", "red", "amber", "grey"}
     assert {r.value for r in Reason} == {
         "MISSING",
         "WRONG_LEVEL",
@@ -67,6 +67,7 @@ def test_colours_and_reasons_are_the_agreed_ones() -> None:
         "UNKNOWN",
         "NO_RULE",
         "TO_BE_MIGRATED",
+        "NOT_APPLICABLE",
     }
 
 
@@ -153,7 +154,24 @@ def test_csv_round_trip_keeps_long_ids_and_leading_zeros() -> None:
 
 
 def test_summary_and_ordering() -> None:
-    rows = [GREEN, AMBER, RED, GREEN]
-    assert summary(rows) == {Colour.GREEN: 2, Colour.RED: 1, Colour.AMBER: 1}
-    assert summary([]) == {Colour.GREEN: 0, Colour.RED: 0, Colour.AMBER: 0}
-    assert worst_first(rows) == [RED, AMBER, GREEN, GREEN]
+    grey = ResultRow(
+        node="N (1)",
+        node_label="Team",
+        rule_id="OTD",
+        setting="S",
+        colour=Colour.GREY,
+        reason=Reason.NOT_APPLICABLE,
+        message="Not checked: no limits here.",
+    )
+    rows = [grey, GREEN, AMBER, RED, GREEN]
+    assert summary(rows) == {Colour.GREEN: 2, Colour.RED: 1, Colour.AMBER: 1, Colour.GREY: 1}
+    assert summary([]) == dict.fromkeys(Colour, 0)
+    assert worst_first(rows) == [RED, AMBER, GREEN, GREEN, grey]  # grey is never a problem
+
+
+def test_grey_and_not_applicable_only_go_together() -> None:
+    base = {"node": "N (1)", "node_label": "Team", "rule_id": "X", "setting": "S", "message": "m"}
+    with pytest.raises(ValueError, match="NOT_APPLICABLE"):
+        ResultRow(**base, colour=Colour.GREY, reason=Reason.MISSING)
+    with pytest.raises(ValueError, match="NOT_APPLICABLE"):
+        ResultRow(**base, colour=Colour.RED, reason=Reason.NOT_APPLICABLE)

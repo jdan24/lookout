@@ -35,7 +35,7 @@ since fixed; no full pull has completed yet.
 - Done: read-only guard, TT client, pull -> snapshot -> rebuild, account tree, result
   model, landing page with report discovery, Setup Verification (profile-driven rules:
   levels, Apply Limits / Restrictions, markets, naming, required users on the lowest
-  level, Order Tag Defaults, and
+  level, Order Tag Defaults (only on markets that have limits), and
   optional companion-account and legacy-group rules, plus display-only views), Limit
   Verification (ported from limit_compare, with parity tests in
   `tests/fixtures/limit_compare/`), credential storage, Windows launcher.

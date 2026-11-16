@@ -77,6 +77,7 @@ def test_results_from_the_latest_snapshot(folders: tuple[Path, Path]) -> None:
 
     metrics = {m.label: int(m.value) for m in app.metric}
     assert metrics["Red"] > 0 and metrics["Amber"] > 0 and metrics["Green"] > 0
+    assert metrics["Not checked"] > 0  # account defaults on markets without limits
     table = app.dataframe[0].value
     assert set(table["colour"]) == {"red", "amber"}  # green is hidden by default
     assert "Tick Apply Limits on team FUND-BETA." in set(table["message"])

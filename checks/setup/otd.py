@@ -4,6 +4,10 @@ Only "default" entries are judged: those whose key fields are all at their defau
 (any profile, any user, any algo, any product). Other entries are information only.
 Values are looked up from the account itself up through its tree to the start
 account, then the company default (account 0).
+
+A market is only checked where it is in use: when the account that holds the limits
+(the nearest level with ``limit_rows_required``) has no limit on that market, the
+default is not needed there and the row is grey, "not checked".
 """
 
 from __future__ import annotations
@@ -117,9 +121,12 @@ def check_order_tag_defaults(
                 if p.tree.name == tree.name and rule.applies_to(p.account.name)
             ]
             for place in places:
+                holder = _limit_holder(setup, levels, place)
                 for market_id, field_id in rule.field_by_market().items():
                     exchange = setup.market_name(market_id, names)
-                    if rule.set_on == "self":
+                    if holder is not None and not _has_limit(setup, holder, market_id):
+                        rows.append(_not_checked(rule, place, holder, exchange))
+                    elif rule.set_on == "self":
                         rows.append(
                             _on_self(
                                 setup, levels, index, rule, place, market_id, field_id, exchange
@@ -132,6 +139,43 @@ def check_order_tag_defaults(
                             )
                         )
     return rows
+
+
+def _limit_holder(setup: SetupData, levels: LevelMap, place: Place) -> Place | None:
+    """The account whose limit rows cover ``place``: the nearest one, itself included, at
+    a level with ``limit_rows_required``. None if there is no such level or it was not
+    read; the default is then checked as usual."""
+    for above in levels.chain(place):
+        if above.level is not None and above.level.limit_rows_required:
+            return above if setup.detail(above.account.id) is not None else None
+    return None
+
+
+def _has_limit(setup: SetupData, holder: Place, market_id: str) -> bool:
+    wanted = norm_id(market_id)
+    return any(
+        norm_id(limit.get("marketId")) == wanted for limit in setup.limit_rows(holder.account.id)
+    )
+
+
+def _not_checked(
+    rule: OrderTagDefaultRule, place: Place, holder: Place, exchange: str
+) -> ResultRow:
+    return ResultRow(
+        node=place.account.display,
+        node_label=place.label,
+        rule_id="OTD",
+        setting=f"{rule.label} ({exchange})",
+        colour=Colour.GREY,
+        expected="Not checked",
+        actual=f"No limits for {exchange} on {holder.account.name}",
+        actual_level=holder.label,
+        reason=Reason.NOT_APPLICABLE,
+        message=(
+            f"Not checked: {holder.account.name} has no limits for {exchange}, so "
+            f"{rule.label} is not needed for {exchange} on {place.account.name}."
+        ),
+    )
 
 
 def _on_self(

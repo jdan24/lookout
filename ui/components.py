@@ -99,8 +99,14 @@ _ROW_STYLE = {
     Colour.RED.value: "background-color: #fde2e2; color: #5f1414",
     Colour.AMBER.value: "background-color: #fff3cd; color: #5c4400",
     Colour.GREEN.value: "background-color: #e3f5e6; color: #14401d",
+    Colour.GREY.value: "background-color: #ececec; color: #3a3a3a",
 }
-_COLOUR_NAMES = {Colour.RED: "Red", Colour.AMBER: "Amber", Colour.GREEN: "Green"}
+_COLOUR_NAMES = {
+    Colour.RED: "Red",
+    Colour.AMBER: "Amber",
+    Colour.GREEN: "Green",
+    Colour.GREY: "Not checked",
+}
 
 
 def _style_rows(frame: pd.DataFrame) -> Any:
@@ -113,15 +119,19 @@ def _style_rows(frame: pd.DataFrame) -> Any:
 def results_table(rows: Sequence[ResultRow], *, key: str, file_name: str) -> None:
     """Counts, filters, the colour-coded table and a CSV download of what is shown."""
     counts = summary(rows)
-    for column, colour in zip(st.columns(3), (Colour.RED, Colour.AMBER, Colour.GREEN), strict=True):
+    # Grey ("not checked") appears only when a rule skipped something on purpose.
+    offered = [Colour.RED, Colour.AMBER, Colour.GREEN]
+    if counts[Colour.GREY]:
+        offered.append(Colour.GREY)
+    for column, colour in zip(st.columns(len(offered)), offered, strict=True):
         column.metric(_COLOUR_NAMES[colour], counts[colour])
 
     left, right = st.columns(2)
     colours = left.multiselect(
         "Show",
-        [c.value for c in (Colour.RED, Colour.AMBER, Colour.GREEN)],
+        [c.value for c in offered],
         default=[Colour.RED.value, Colour.AMBER.value],
-        format_func=str.capitalize,
+        format_func=lambda value: _COLOUR_NAMES[Colour(value)],
         key=f"{key}_colours",
     )
     rules = right.multiselect(

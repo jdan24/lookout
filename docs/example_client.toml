@@ -59,7 +59,9 @@ required_users = ["9001", "9002", "9003"]
   apply_limits = "off"
   apply_restrictions = "off"
 
-  # Expected Order Tag Default ("Exchanges" tab) values.
+  # Expected Order Tag Default ("Exchanges" tab) values. A market is only checked for
+  # an account when the level that holds its limits (limit_rows_required = true, here
+  # the Team) has a limit on that market; otherwise the row is grey, "not checked".
   [[trees.order_tag_defaults]]
   label = "Clearing Account"
   level = "Trading account"
