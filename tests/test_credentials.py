@@ -159,8 +159,13 @@ def test_launcher_is_a_windows_batch_file() -> None:
     text = raw.decode("ascii")
     assert "%LOCALAPPDATA%\\Lookout\\app" in text
     assert "streamlit run app.py --server.address localhost --server.headless true" in text
-    assert "where uv" in text and "astral.sh/uv/install.ps1" in text
-    # Inside quotes cmd prints a caret literally, which would break the pasted command.
-    assert '-c "irm https://astral.sh/uv/install.ps1 | iex"' in text and "^|" not in text
+    # It uses the Python already on the PC and never installs or downloads anything.
+    lowered = text.lower()
+    for banned in ("uv ", "astral.sh", "pip install", "http://", "https://", "irm ", "curl"):
+        assert banned not in lowered.replace("http://localhost", "")
+    assert 'python -c "import sys"' in text
+    assert "python scripts\\check_environment.py" in text
+    assert "python -m streamlit run app.py" in text
+    assert text.index("check_environment.py") < text.index("python -m streamlit")
     assert "http://localhost:%PORT%" in text and 'set "PORT=8501"' in text
     assert "/XD .venv" in text  # updating must not wipe the local environment

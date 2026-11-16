@@ -1,6 +1,6 @@
 """Store the TT credentials on this PC. Run once per machine:
 
-    uv run python scripts/set_credentials.py
+    python scripts/set_credentials.py
 
 Paste the APP_SECRET value (it looks like <app key>:<secret>). It is saved in
 Windows Credential Manager and nowhere else. Nothing you type is shown or logged.

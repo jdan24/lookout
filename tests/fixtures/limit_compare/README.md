@@ -8,7 +8,7 @@ that file.
 `ric_real_world` in the JSON was produced with TT's full public ExchangeProducts CSV,
 which is not in this repo. Those tests run only when the file is available:
 
-    LOOKOUT_TT_PRODUCTS_CSV=<path to the full TT CSV> uv run pytest
+    LOOKOUT_TT_PRODUCTS_CSV=<path to the full TT CSV> python -m pytest
 
 ## Regenerating
 

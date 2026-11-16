@@ -3,27 +3,10 @@ name = "lookout"
 version = "0.1.0"
 description = "Read-only verification of Trading Technologies (TT) trading setups"
 readme = "README.md"
-requires-python = ">=3.12,<3.13"
-dependencies = [
-    "httpx>=0.27",
-    "keyring>=25",
-    "openpyxl>=3.1.5",
-    "pandas>=2.2",
-    "platformdirs>=4",
-    "pydantic>=2.7",
-    "streamlit>=1.40",
-    "truststore>=0.10",
-]
-
-[dependency-groups]
-dev = [
-    "pytest>=8",
-    "ruff>=0.6",
-]
-
+requires-python = ">=3.12"
 # Lookout ships as plain .py files run in place; it is not built or installed.
-[tool.uv]
-package = false
+# The packages it needs are listed in requirements.txt (requirements-dev.txt for
+# development). The launcher checks them; nothing is installed automatically.
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

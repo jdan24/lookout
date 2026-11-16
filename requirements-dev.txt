@@ -1,0 +1,4 @@
+# Development only: the run-time packages plus the test and lint tools.
+-r requirements.txt
+pytest>=8
+ruff>=0.6

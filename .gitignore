@@ -11,6 +11,8 @@ snapshots/
 *.HEIC
 *.heic
 *.txt
+!requirements.txt
+!requirements-dev.txt
 PROJECT_BRIEF.md
 *.bundle
 

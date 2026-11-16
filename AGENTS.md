@@ -64,8 +64,12 @@ user when you need them.
 
 ## Working practice
 
-- Python 3.12, managed with `uv`. Type hints everywhere. Keep files small.
-- Run `uv run pytest` and `uv run ruff check` before considering any change done.
+- Python 3.12 or newer, whichever `python` the PC already has. Type hints everywhere.
+  Keep files small.
+- Packages are listed in `requirements.txt` (`requirements-dev.txt` adds pytest and
+  ruff). The launcher and `scripts/check_environment.py` only **check** them: nothing
+  in this repo may install or download Python or packages by itself.
+- Run `python -m pytest` and `python -m ruff check` before considering any change done.
 - Small steps: each change ends with passing tests and one commit.
 - Do not push; the user decides when to push.
 - Target is Windows 11. Keep paths, keyring and certificate handling

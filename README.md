@@ -9,10 +9,19 @@ snapshot against expected rules. It never writes to TT.
 
 ## Development
 
+Lookout uses the Python already on the PC (3.12 or newer). Once, in this folder:
+
 ```
-uv sync
-uv run pytest
-uv run ruff check
+python -m venv .venv
+.venv\Scripts\activate          (Linux/macOS: source .venv/bin/activate)
+pip install -r requirements-dev.txt
+```
+
+Then, before every commit:
+
+```
+python -m pytest
+python -m ruff check
 ```
 
 Tests never call TT; real sockets are blocked in `tests/conftest.py`.
@@ -50,15 +59,20 @@ landed, to help tune a profile.
 
 Profiles hold real client data: they are **never** committed. Copy them to each PC
 (or point `[clients] directory` at a shared folder). With your profiles in place,
-`uv run pytest tests/test_no_real_data.py` checks that none of their names, ids or
+`python -m pytest tests/test_no_real_data.py` checks that none of their names, ids or
 values appear in the repo.
 
 ## Things to do when deploying to production
 
 - [ ] Set `RELEASE_SHARE` in `scripts/Start-Lookout.bat` to the network share that holds
       the released copy (currently `\\CHANGE-ME\Lookout\current`).
+- [ ] On each user's PC, make sure `python` starts Python 3.12 or newer and that it has
+      the packages in `requirements.txt`, installed through the company's own process.
+      `python scripts\check_environment.py` lists anything missing or too old. The
+      launcher runs the same check on every start, then starts anyway; it never installs
+      or downloads anything.
 - [ ] On each user's PC, store the TT credentials once:
-      `uv run python scripts/set_credentials.py`.
+      `python scripts\set_credentials.py`.
 - [ ] On each user's PC, copy the client profiles (`*.toml`) into
       `%LOCALAPPDATA%\Lookout\clients` (they are not in the release).
 - [ ] Run a first supervised pull (Setup Verification → "Pull a new snapshot from TT") and confirm the request conventions in
