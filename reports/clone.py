@@ -18,6 +18,7 @@ import streamlit as st
 
 import core.config as app_config
 from core import credentials
+from core.api_log import ApiLog
 from core.clone import CLONE_FLAGS, ClearingMode, ClonePlan, build_plan, clean_names
 from core.clone_run import read_source, run_plan, write_log
 from core.config import AppConfig
@@ -50,6 +51,7 @@ def make_tt_writer(settings: AppConfig) -> tuple[TTWriter, Callable[[], None]]:
         requests_per_second=settings.pacing.requests_per_second,
         max_calls=settings.pacing.max_calls_per_pull,
         request_id_prefix=settings.tt.request_id_prefix,
+        api_log=ApiLog(settings.api_log_dir),
     )
     return writer, http.close
 
@@ -160,7 +162,11 @@ def _create(settings: AppConfig, review: dict[str, Any]) -> None:
         close_reader()
         close_writer()
     log = write_log(settings.clone_log_dir, plan, result, [*reader.calls, *writer.calls])
-    st.session_state["cl_result"] = {"result": result, "log": str(log)}
+    st.session_state["cl_result"] = {
+        "result": result,
+        "log": str(log),
+        "api_log": str(settings.api_log_dir),
+    }
     st.session_state.pop("cl_review", None)
 
 
@@ -176,6 +182,7 @@ def _show_result() -> None:
         st.warning("Accounts already created stay in TT UAT; check them in TT Setup.")
     components.plain_table(result.rows, key="cl_result", file_name="clone_result.csv")
     st.caption(f"Saved a record of this run: {done['log']}")
+    st.caption(f"Every TT call, with TT's replies, is logged in {done['api_log']}")
 
 
 def render() -> None:

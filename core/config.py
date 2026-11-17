@@ -119,6 +119,11 @@ class AppConfig(_Section):
         """Where the Clone page records each run. Clone works in UAT only."""
         return _folder("", "clone_log", self.tt.environment)
 
+    @property
+    def api_log_dir(self) -> Path:
+        """Where every TT API call of this session is logged (Live and UAT apart)."""
+        return _folder("", "api_log", self.tt.environment)
+
 
 def _folder(configured: str, name: str, environment: str) -> Path:
     """The Live folder, or its UAT counterpart.

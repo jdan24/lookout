@@ -47,4 +47,5 @@ class TTWriter(TTClient):
                 path, json=body, params=query, headers=headers
             ),
             params,
+            body,
         )

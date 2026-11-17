@@ -11,7 +11,8 @@ first supervised UAT run confirms them.
 from __future__ import annotations
 
 import json
-from collections.abc import Mapping, Sequence
+import time
+from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
@@ -30,7 +31,7 @@ from core.clone import (
 from core.hierarchy import AccountTree
 from core.normalize import norm_id
 from core.readonly_http import ReadOnlyViolation
-from core.tt_client import TTApiError, TTClient
+from core.tt_client import TTApiError, TTClient, TTResponse
 from core.tt_writer import TTWriter
 
 # Fields of an Order Tag Default that TT takes when creating one (ttsetup reference).
@@ -131,14 +132,81 @@ class CloneResult:
         return not self.stopped
 
 
-def _new_account_id(body: Mapping[str, Any], name: str) -> str:
-    accounts = [a for a in body.get("account") or [] if isinstance(a, Mapping)]
-    named = [a for a in accounts if str(a.get("name") or "").casefold() == name.casefold()]
-    chosen = named or (accounts if len(accounts) == 1 else [])
-    new_id = norm_id(chosen[0].get("id")) if chosen else ""
-    if not new_id:
-        raise TTApiError(f"TT's reply to the clone did not give the new id of {name}.")
-    return new_id
+ID_KEYS: tuple[str, ...] = ("id", "accountId", "newAccountId")
+LOOKUP_TRIES = 3  # reads of the accounts list when the clone reply holds no id
+LOOKUP_WAIT_SECONDS = 2.0
+
+
+def id_in_reply(body: Any, name: str) -> str:
+    """The new account's id from TT's clone reply, wherever in the reply it is.
+
+    TT's reference says ``account: [{id, name, ...}]``, but the first UAT run did not
+    match it, so any object carrying the new name and an id is accepted. Failing that,
+    a lone id at the top of the reply. ``""`` when there is none.
+    """
+    named: list[str] = []
+    loose: list[str] = []
+
+    def walk(value: Any, depth: int) -> None:
+        if isinstance(value, Mapping):
+            ids = [norm_id(value.get(k)) for k in ID_KEYS if _is_id(value.get(k))]
+            text = str(value.get("name") or value.get("accountName") or "")
+            if ids and text.strip().casefold() == name.strip().casefold():
+                named.append(ids[0])
+            elif ids and depth == 0:
+                loose.append(ids[0])
+            for child in value.values():
+                walk(child, depth + 1)
+        elif isinstance(value, list):
+            for child in value:
+                walk(child, depth + 1)
+
+    walk(body, 0)
+    if named:
+        return named[0]
+    return loose[0] if len(loose) == 1 else ""
+
+
+def _is_id(value: Any) -> bool:
+    try:
+        return bool(norm_id(value)) and norm_id(value).isdigit()
+    except ValueError:
+        return False
+
+
+def find_new_account(
+    reader: TTClient, name: str, parent_id: str, *, wait: Callable[[float], None]
+) -> str:
+    """Look the new account up by name in TT's accounts list (under ``parent_id``)."""
+    for attempt in range(LOOKUP_TRIES):
+        if attempt:
+            wait(LOOKUP_WAIT_SECONDS)  # TT may take a moment to list a new account
+        for page in reader.pages("ttaccount", "accounts"):
+            for item in page.response.body.get("accounts") or []:
+                same_name = str(item.get("name") or "").casefold() == name.casefold()
+                parent = norm_id(item.get("parentAccountId")) or norm_id(item.get("parentId"))
+                if same_name and (not parent_id or parent == parent_id):
+                    return norm_id(item.get("id"))
+    return ""
+
+
+def _new_account_id(
+    reply: TTResponse, name: str, parent_id: str, reader: TTClient,
+    wait: Callable[[float], None],
+) -> tuple[str, str]:  # fmt: skip
+    """(new id, how it was found). Raises when TT's reply and accounts list both lack it."""
+    new_id = id_in_reply(reply.body, name)
+    if new_id:
+        return new_id, ""
+    new_id = find_new_account(reader, name, parent_id, wait=wait)
+    if new_id:
+        return new_id, "id read from TT's accounts list (the clone reply had none)"
+    shown = reply.text if len(reply.text) <= 500 else reply.text[:500] + "..."
+    raise TTApiError(
+        f"TT accepted the clone of {name} but its reply gave no new id, and {name} was not "
+        f"found in TT's accounts list. The account may still have been created: check TT "
+        f"Setup before trying again. TT's reply: {shown}"
+    )
 
 
 def run_plan(
@@ -148,6 +216,7 @@ def run_plan(
     *,
     clearing_field_ids: frozenset[str],
     max_pages: int,
+    wait: Callable[[float], None] = time.sleep,
 ) -> CloneResult:
     """Create every account in the plan, in order, then set its Clearing Account values."""
     result = CloneResult()
@@ -166,11 +235,10 @@ def run_plan(
             if parent_id:
                 body["parentId"] = int(parent_id)
             reply = writer.post("ttaccount", "account/clone", body, params)
-            new_id = _new_account_id(reply.body, step.new_name)
+            new_id, how = _new_account_id(reply, step.new_name, parent_id, reader, wait)
             result.created[step.number] = new_id
-            result.rows.append(
-                _row(step, new_id, "Account", "Created", f"from {step.source.display}")
-            )
+            detail = f"from {step.source.display}" + (f"; {how}" if how else "")
+            result.rows.append(_row(step, new_id, "Account", "Created", detail))
             changes = [c for c in plan.clearing if c.step == step.number]
             if changes:
                 _set_clearing(plan, step, new_id, changes, writer, reader, result,

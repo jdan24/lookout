@@ -44,6 +44,8 @@ class FakeTT:
         self.clones: list[tuple[dict[str, str], dict[str, Any]]] = []  # (query, body)
         self.otd_writes: list[tuple[str, Any]] = []  # (path, body)
         self.new_otds: list[dict[str, Any]] = []
+        self.new_accounts: list[dict[str, Any]] = []  # listed by GET accounts once cloned
+        self.clone_reply_has_id = True  # False: answer like the first real UAT clone did
         self._next_account_id = 5000
         self._next_otd_id = 9000
         self.transport = httpx.MockTransport(self._handle)
@@ -127,7 +129,10 @@ class FakeTT:
         pages = synthetic.accounts_list_pages()
         key = params.get("nextPageKey")
         index = 0 if not key else int(key.removeprefix("key")) - 1
-        return httpx.Response(200, json=pages[index])
+        page = pages[index]
+        if index == len(pages) - 1 and self.new_accounts:
+            page = {**page, "accounts": [*page["accounts"], *self.new_accounts]}
+        return httpx.Response(200, json=page)
 
     def _account(self, account_id: int) -> httpx.Response:
         if account_id not in synthetic.SETTINGS:
@@ -178,6 +183,9 @@ class FakeTT:
             "accountType": 1,
             "revision": 1,
         }
+        self.new_accounts.append(account)
+        if not self.clone_reply_has_id:
+            return httpx.Response(200, json={"status": "Ok", "statusCode": 200})
         return httpx.Response(200, json={"account": [account], "status": "Ok"})
 
     def _order_tag_defaults(self, params: dict[str, str]) -> httpx.Response:

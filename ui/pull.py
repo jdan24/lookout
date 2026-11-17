@@ -15,6 +15,7 @@ import core.config as app_config
 from checks.setup.profile import Profile
 from checks.setup.pull import pull_client
 from core import credentials
+from core.api_log import ApiLog
 from core.config import AppConfig
 from core.readonly_http import ReadOnlyClient
 from core.snapshots import Snapshot
@@ -40,6 +41,7 @@ def make_tt_client(settings: AppConfig) -> tuple[TTClient, Callable[[], None]]:
         requests_per_second=settings.pacing.requests_per_second,
         max_calls=settings.pacing.max_calls_per_pull,
         request_id_prefix=settings.tt.request_id_prefix,
+        api_log=ApiLog(settings.api_log_dir),
     )
     return client, http.close
 
@@ -72,7 +74,7 @@ def _run_pull(profile: Profile, settings: AppConfig) -> Snapshot | None:
     return None
 
 
-def _report(snapshot: Snapshot) -> None:
+def _report(snapshot: Snapshot, log_dir: object) -> None:
     calls = snapshot.manifest.get("calls", 0)
     log = snapshot.pull_log
     problems = [*log.get("errors", []), *log.get("notes", [])]
@@ -85,6 +87,7 @@ def _report(snapshot: Snapshot) -> None:
         )
     else:
         st.error(f"The pull failed ({calls} TT calls); no usable snapshot was saved.")
+    st.caption(f"Every TT call, with TT's replies, is logged in {log_dir}")
     if problems:
         with st.expander("Pull log"):
             for problem in problems:
@@ -127,6 +130,6 @@ def pull_panel(profile: Profile, *, key: str, select_key: str, expanded: bool = 
         snapshot = _run_pull(profile, settings)
         if snapshot is None:
             return
-        _report(snapshot)
+        _report(snapshot, settings.api_log_dir)
         if snapshot.status != "failed":
             st.session_state[select_key] = snapshot.id

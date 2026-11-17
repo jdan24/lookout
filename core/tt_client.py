@@ -21,6 +21,7 @@ from collections.abc import Callable, Iterator, Mapping
 from dataclasses import dataclass
 from typing import Any
 
+from core.api_log import ApiLog
 from core.credentials import TTCredentials
 from core.normalize import is_on
 from core.readonly_http import ReadOnlyClient, Response, TransportError
@@ -67,8 +68,10 @@ class TTClient:
         request_id_prefix: str = "Lookout-CHANGEME",
         clock: Callable[[], float] = time.monotonic,
         sleep: Callable[[float], None] = time.sleep,
+        api_log: ApiLog | None = None,
     ) -> None:
         self._http = http
+        self.api_log = api_log  # every call is written here when given
         self.environment = http.environment  # Live or UAT, fixed by the guarded client
         self._credentials = credentials
         self._interval = 1.0 / requests_per_second
@@ -100,8 +103,19 @@ class TTClient:
     def _request_id(self) -> str:
         return f"{self._prefix}--{uuid.uuid4()}"
 
-    def _send(self, method: str, path: str, send: Callable[[], Response]) -> Response:
-        """One paced, counted, logged HTTP call."""
+    def _send(
+        self,
+        method: str,
+        path: str,
+        send: Callable[[], Response],
+        *,
+        query: Mapping[str, Any] | None = None,
+        body: Any = None,
+        log_bodies: bool = True,
+    ) -> Response:
+        """One paced, counted, logged HTTP call.
+
+        ``log_bodies`` is False for the sign-in call: its form and reply hold secrets."""
         if len(self.calls) >= self._max_calls:
             raise CallCapReached(
                 f"Call cap of {self._max_calls} reached; stopped before {method} {path}.",
@@ -128,26 +142,54 @@ class TTClient:
         except TransportError as exc:
             record["status"] = "network error"
             record["ms"] = round((self._clock() - now) * 1000)
+            self._log(record, query, body if log_bodies else None, None)
             raise TTApiError(
                 f"Could not reach TT for {method} {path} ({type(exc).__name__}).", path=path
             ) from None
         record["status"] = response.status_code
         record["ms"] = round((self._clock() - now) * 1000)
+        if log_bodies:
+            self._log(record, query, body, response.text)
+        else:
+            self._log(record, query, None, None)
         return response
+
+    def _log(
+        self,
+        record: Mapping[str, Any],
+        query: Mapping[str, Any] | None,
+        body: Any,
+        response_text: str | None,
+    ) -> None:
+        if self.api_log is None:
+            return
+        self.api_log.record(
+            environment=self.environment,
+            method=record["method"],
+            path=record["path"],
+            query=query,
+            status=record["status"],
+            ms=record["ms"],
+            request_body=body,
+            response_text=response_text,
+        )
 
     # --- token ------------------------------------------------------------------
 
     def _fetch_token(self) -> None:
         creds = self._creds()
         path = f"/ttid/{self.environment}/token"
+        query = {"requestId": self._request_id()}
         response = self._send(
             "POST",
             path,
             lambda: self._http.post_token(
                 data={"grant_type": "user_app", "app_key": creds.app_secret},
                 headers={"x-api-key": creds.app_key, "Accept": "application/json"},
-                params={"requestId": self._request_id()},
+                params=query,
             ),
+            query=query,
+            log_bodies=False,
         )
         # Nothing from the token response is ever put in a message: it may echo secrets.
         if response.status_code != 200:
@@ -183,6 +225,7 @@ class TTClient:
         path: str,
         send: Callable[[dict[str, str], dict[str, Any]], Response],
         params: Mapping[str, Any] | None = None,
+        body: Any = None,
     ) -> TTResponse:
         """One logical call: a fresh token once on 401, a short wait on 429."""
         refreshed = False
@@ -191,7 +234,11 @@ class TTClient:
             headers = self._headers()
             query = {**(params or {}), "requestId": self._request_id()}
             response = self._send(
-                method, path, lambda headers=headers, query=query: send(headers, query)
+                method,
+                path,
+                lambda headers=headers, query=query: send(headers, query),
+                query=query,
+                body=body,
             )
             if response.status_code == 401 and not refreshed:
                 refreshed = True

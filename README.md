@@ -103,9 +103,24 @@ below the source whose name does not contain the source's name stops the plan. A
 stops at the first failure and never undoes what it created. Every run is recorded in
 `%LOCALAPPDATA%\Lookout\uat\clone_log`.
 
-To confirm on the first UAT clone: the reply shape of the clone call, the form of its
+TT's reference says the clone reply lists the new account with its id. The first real
+UAT clone's reply did not give the id in that form, so Lookout now accepts the id
+wherever it is in the reply. If the reply has no id, Lookout finds the new account by
+name in TT's accounts list. Only if both fail does it stop, and it then shows TT's reply.
+
+To confirm on the next UAT clone: the reply shape of the clone call, the form of its
 on/off switches (`"true"`/`"false"`; `cloneChildren` is sent as `"False"`), and the Order
 Tag Default bodies. These follow TT's public ttaccount and ttsetup references for UAT.
+
+## API log
+
+Every TT call is written to a local log for troubleshooting: one JSON line per call,
+one file per day (`api_YYYYMMDD.jsonl`), in `%LOCALAPPDATA%\Lookout\api_log` (Live)
+or `%LOCALAPPDATA%\Lookout\uat\api_log` (UAT). Each line holds the time, method, path,
+query (with the `requestId` TT support asks for), status, duration, the body of a POST
+and TT's reply, cut at 200,000 characters. Headers are never logged, so the API key
+and the token never appear. The sign-in call logs no bodies. The log holds account
+data, like a snapshot: keep it on the PC.
 
 ## Client profiles
 

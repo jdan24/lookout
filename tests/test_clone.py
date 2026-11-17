@@ -10,7 +10,7 @@ from typing import Any
 import pytest
 
 from core.clone import ClearingMode, build_plan, clean_names, clone_params
-from core.clone_run import read_source, run_plan, write_log
+from core.clone_run import LOOKUP_TRIES, id_in_reply, read_source, run_plan, write_log
 from core.credentials import parse_secret
 from core.hierarchy import AccountTree
 from core.readonly_http import ReadOnlyClient
@@ -181,8 +181,12 @@ def _plan(tt: FakeTT, mode: ClearingMode, **flags: bool):  # noqa: ANN202
     return plan, data.clearing_field_ids
 
 
-def _run(tt: FakeTT, plan, field_ids):  # noqa: ANN001, ANN202
-    return run_plan(plan, writer(tt), reader(tt), clearing_field_ids=field_ids, max_pages=20)
+def _run(tt: FakeTT, plan, field_ids, waits: list[float] | None = None):  # noqa: ANN001, ANN202
+    waits = [] if waits is None else waits
+    return run_plan(
+        plan, writer(tt), reader(tt), clearing_field_ids=field_ids, max_pages=20,
+        wait=waits.append,
+    )  # fmt: skip
 
 
 def test_clone_and_create_clearing_entries_with_the_new_name(tt: FakeTT) -> None:
@@ -279,3 +283,61 @@ def test_write_log_records_the_run_without_secrets(tt: FakeTT, tmp_path: Path) -
     assert record["result"][0]["New id"] == "5001"
     text = path.read_text(encoding="utf-8")
     assert SECRET.split(":")[1] not in text and "fake-access-token" not in text
+
+
+# --- the new account's id ----------------------------------------------------------
+
+
+@pytest.mark.parametrize(
+    "reply",
+    [
+        {"account": [{"id": 77, "name": "NEW"}], "status": "Ok"},  # TT's reference
+        {"accounts": [{"id": 77, "name": "NEW"}], "status": "Ok"},
+        {"account": {"accountId": "77", "accountName": "new"}, "status": "Ok"},
+        {"data": {"result": [{"id": 1, "name": "OTHER"}, {"id": 77, "name": " NEW "}]}},
+        {"accountId": 77, "status": "Ok"},
+        {"newAccountId": 77},
+    ],
+)
+def test_the_new_id_is_found_in_any_reasonable_reply(reply: dict[str, Any]) -> None:
+    assert id_in_reply(reply, "NEW") == "77"
+
+
+@pytest.mark.parametrize(
+    "reply",
+    [
+        {"status": "Ok"},
+        {"account": [{"id": 1, "name": "OTHER"}, {"id": 2, "name": "THIRD"}]},
+        {"statusCode": 200, "status": "Ok"},
+        {"account": [{"id": 0, "name": "NEW"}]},
+    ],
+)
+def test_no_id_is_guessed(reply: dict[str, Any]) -> None:
+    assert id_in_reply(reply, "NEW") == ""
+
+
+def test_a_reply_without_an_id_is_looked_up_by_name_and_the_run_goes_on(tt: FakeTT) -> None:
+    tt.clone_reply_has_id = False
+    plan = build_plan(GROUP, "POD2", ["POD7", "POD8"])
+    result = _run(tt, plan, frozenset())
+    assert result.ok, result.stopped
+    assert result.created == {1: "5001", 2: "5002"}
+    assert "read from TT's accounts list" in result.rows[0]["Detail"]
+
+
+def test_a_reply_without_an_id_and_no_such_account_stops_and_shows_the_reply(tt: FakeTT) -> None:
+    import httpx
+
+    def bare_reply(request):  # noqa: ANN001, ANN202
+        if request.url.path.endswith("/account/clone"):
+            return httpx.Response(200, json={"status": "Ok", "note": "queued"})
+        return None
+
+    tt.hook = bare_reply
+    waits: list[float] = []
+    result = _run(tt, build_plan(GROUP, "POD2", ["POD7", "POD8"]), frozenset(), waits)
+    assert not result.ok
+    assert "may still have been created" in result.stopped
+    assert '"note": "queued"' in result.stopped or "queued" in result.stopped
+    assert len(waits) == LOOKUP_TRIES - 1
+    assert [r["Status"] for r in result.rows] == ["Failed", "Not run"]
