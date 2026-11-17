@@ -211,6 +211,7 @@ class Profile(_Model):
     client: str = Field(pattern=_SAFE_NAME)
     label: str = ""
     trees: list[Tree] = Field(min_length=1)
+    # No longer used (it fed a removed tab); still accepted so older profiles load.
     display_only_fields: list[str] = Field(default_factory=list)
     otd_default_key: dict[str, str] = Field(default_factory=lambda: dict(DEFAULT_OTD_KEY))
     rules: OptionalRules = OptionalRules()

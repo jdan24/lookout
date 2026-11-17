@@ -5,7 +5,7 @@ from typing import Any
 
 import pytest
 
-from checks.setup.levels import LevelError, assign_levels, levels_table
+from checks.setup.levels import LevelError, assign_levels
 from checks.setup.profile import Profile
 from core.hierarchy import AccountTree
 from core.setup_model import SetupData, load_setup
@@ -40,9 +40,8 @@ def test_levels_on_the_synthetic_setup(setup: SetupData) -> None:
         "FUND-ALPHA",
         "FUND",
     ]
-    table = {r["Account"]: r for r in levels_table(levels)}
-    assert table["LON40004AA (240)"]["Level"] == "Does not fit any level"
-    assert table["FUND-EMPTY (230)"]["Below it"] == "nothing"
+    assert levels.places["240"].level is None  # fits no level
+    assert levels.places["230"].leaf
 
 
 def test_deeper_accounts_use_the_deepest_level() -> None:

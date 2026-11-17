@@ -3,12 +3,10 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any
 
 import pytest
 
-from checks.setup import otd, rules, views
-from checks.setup.levels import assign_levels
+from checks.setup import otd
 from checks.setup.profile import CompanionAccountRule, OptionalRules, Profile
 from checks.setup.verify import run_checks, verify_snapshot
 from core.results import ResultRow
@@ -247,41 +245,6 @@ def test_no_required_users_means_no_users_rows(setup: SetupData) -> None:
     assert {key[1] for key in got if key[0] == "USERS"} == {
         "S-ABC10001AL", "S-ABC20002BE", "ABC20022BE",
     }  # fmt: skip
-
-
-def test_display_only_values_are_listed_not_judged(setup: SetupData) -> None:
-    profile = synthetic.profile()
-    shown = rules.manual_check_values(setup, assign_levels(setup.tree, profile), profile)
-    items = {(r["node"], r["item"]) for r in shown}
-    assert ("FUND-ALPHA (200)", "Description") in items
-    assert ("Company default (any account)", "Operator ID (user 9001)") in items
-    assert not any(r["node"].startswith("OTHER") for r in shown)
-
-
-def test_views(tmp_path: Path) -> None:
-    profile = synthetic.profile()
-    setup = load_setup(synthetic.build_snapshot(tmp_path, skip_details=(300,)))
-    levels = assign_levels(setup.tree, profile)
-    limits = views.limits_by_level(setup, levels, profile)
-    assert {r["Account"] for r in limits} == {
-        "FUND-ALPHA (200)",
-        "FUND-BETA (210)",
-        "FUND-GAMMA (220)",
-        "S-FUND-ALPHA (600)",
-        "S-FUND-BETA (610)",
-    }
-    first: dict[str, Any] = limits[0]
-    assert (first["Level"], first["Start account"], first["Exchange"]) == ("Team", "FUND", "CME")
-    assert first["Product family id"] == synthetic.BIG_FAMILY_ID
-    assert next(r for r in limits if r["Product"] == "QQ")["Exchange"] == "market 216"
-    assert all(isinstance(v, str) for row in limits for v in row.values())
-
-    settings = views.settings_by_node(setup, levels)
-    team = {r["json_path"]: r for r in settings if r["node"] == "FUND-ALPHA (200)"}
-    assert team["riskLimitSettings.noLimits"]["value"] == "0"
-    nodes = {r["node"] for r in settings}
-    assert "ABC10001AL (300)" not in nodes
-    assert not any("OTHER" in n or "NORTHCO" in n for n in nodes)
 
 
 def test_verify_snapshot(tmp_path: Path) -> None:

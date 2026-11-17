@@ -96,16 +96,6 @@ def test_results_from_the_latest_snapshot(folders: tuple[Path, Path]) -> None:
     }
 
 
-def test_display_tabs(folders: tuple[Path, Path]) -> None:
-    synthetic.build_snapshot(folders[0], client="example")
-    app = run()
-    results, levels, limits, settings, by_hand = (frame.value for frame in app.dataframe)
-    assert "Does not fit any level" in set(levels["Level"])
-    assert synthetic.BIG_FAMILY_ID in set(limits["Product family id"])
-    assert {"node", "json_path", "value", "category"} <= set(settings.columns)
-    assert "Description" in set(by_hand["item"])
-
-
 def test_snapshot_that_does_not_match_the_profile_shows_an_error(
     folders: tuple[Path, Path],
 ) -> None:

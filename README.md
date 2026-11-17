@@ -36,7 +36,7 @@ since fixed; no full pull has completed yet.
   model, landing page with report discovery, Setup Verification (profile-driven rules:
   levels, Apply Limits / Restrictions, markets, naming, required users on the lowest
   level, Order Tag Defaults (only on markets that have limits), and
-  optional companion-account and legacy-group rules, plus display-only views), Limit
+  optional companion-account and legacy-group rules), Limit
   Verification (ported from limit_compare, with parity tests in
   `tests/fixtures/limit_compare/`), credential storage, Windows launcher.
 - Pulling: the Setup Verification page has a "Pull a new snapshot from TT" panel. It
@@ -80,8 +80,7 @@ Setup Verification reads one TOML profile per client from the profiles folder
 (`[clients] directory` in `config.toml`; default `%LOCALAPPDATA%\Lookout\clients`).
 A profile names the accounts each client tree starts from (a path from a top-level
 account), the levels below it by depth, and the expected values at each level. See
-`docs/example_client.toml`; the Levels tab of the report shows where each account
-landed, to help tune a profile.
+`docs/example_client.toml`.
 
 Profiles hold real client data: they are **never** committed. Copy them to each PC
 (or point `[clients] directory` at a shared folder). With your profiles in place,

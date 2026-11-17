@@ -135,21 +135,3 @@ def assign_levels(tree: AccountTree, profile: Profile) -> LevelMap:
                 leaf=tree.is_leaf(account.id),
             )
     return LevelMap(places=places, path_ids=frozenset(path_ids), notes=tuple(notes))
-
-
-def levels_table(levels: LevelMap) -> list[dict[str, str]]:
-    """One row per in-scope account: where it sits and which level it got. For tuning."""
-    rows: list[dict[str, str]] = []
-    for place in levels.in_scope():
-        account = place.account
-        rows.append(
-            {
-                "Tree": place.tree.label or place.tree.name,
-                "Account": account.display,
-                "Depth": str(place.depth),
-                "Account type": "" if account.account_type is None else str(account.account_type),
-                "Level": place.label if place.level else "Does not fit any level",
-                "Below it": "nothing" if place.leaf else "accounts",
-            }
-        )
-    return rows

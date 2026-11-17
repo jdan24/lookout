@@ -21,8 +21,6 @@
 
 client = "example"            # snapshot folder name: letters, digits, - _ .
 label = "Example client"
-# Order Tag Default fields shown on the "Checked by hand" tab (name contains the text).
-display_only_fields = ["Operator", "Authorized Trader"]
 
 # ---------------------------------------------------------------------------------
 [[trees]]
