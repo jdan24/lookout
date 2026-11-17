@@ -15,8 +15,8 @@ PACKAGES = ["core", "reports", "checks", "checks.setup", "ui"]
 SOURCE_DIRS = ["core", "reports", "checks", "ui", "scripts"]
 STREAMLIT_FREE_DIRS = ["core", "checks"]
 
-# The only file allowed to import an HTTP library.
-HTTP_GUARD = Path("core/readonly_http.py")
+# The only files allowed to import an HTTP library: the read guard and the UAT write guard.
+HTTP_GUARDS = {Path("core/readonly_http.py"), Path("core/write_http.py")}
 HTTP_LIBRARIES = {"httpx", "httpcore", "requests", "urllib3", "aiohttp", "http.client"}
 HTTP_MODULE_PREFIXES = ("urllib.request",)
 
@@ -64,10 +64,10 @@ def test_only_the_guard_imports_an_http_library() -> None:
     offenders = [
         str(path.relative_to(ROOT))
         for path in source_files(SOURCE_DIRS)
-        if path.relative_to(ROOT) != HTTP_GUARD
+        if path.relative_to(ROOT) not in HTTP_GUARDS
         and any(is_http_import(m) for m in imported_modules(path))
     ]
-    assert offenders == [], f"HTTP library imported outside {HTTP_GUARD}: {offenders}"
+    assert offenders == [], f"HTTP library imported outside {HTTP_GUARDS}: {offenders}"
 
 
 def test_http_import_detection() -> None:

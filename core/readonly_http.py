@@ -1,8 +1,8 @@
 """Read-only HTTP guard for Trading Technologies (TT).
 
-Lookout never writes to TT. This module is the single place where an HTTP library
-is imported, and every request that leaves the process passes through
-``check_request`` at the transport layer.
+Every read from TT passes through ``check_request`` at the transport layer. The only
+other module that may import an HTTP library is ``core/write_http.py``, the UAT-only
+guard of the Clone page; nothing here depends on it.
 
 Allowed, and nothing else:
 
@@ -68,6 +68,31 @@ def check_request(
     other environment is refused, even though that environment is on the list.
     """
     _check_environment(environment)
+    verb, path, shown = checked_url(method, url)
+    segments = [s for s in path.split("/") if s]
+
+    if verb == "POST":
+        if path != token_path(environment):
+            raise ReadOnlyViolation(f"Refused: the only POST allowed is the token call ({shown}).")
+        return
+
+    if verb != "GET":
+        raise ReadOnlyViolation(f"Refused: method is not allowed, Lookout is read-only ({shown}).")
+
+    if len(segments) < 3:
+        raise ReadOnlyViolation(f"Refused: expected /<service>/<environment>/<resource> ({shown}).")
+    service = segments[0]
+    if service not in READ_SERVICES:
+        raise ReadOnlyViolation(f"Refused: service is not allow-listed for reading ({shown}).")
+    if segments[1] != environment:
+        raise ReadOnlyViolation(f"Refused: environment is not {environment} ({shown}).")
+
+
+def checked_url(method: str, url: str | httpx.URL) -> tuple[str, str, str]:
+    """(upper-case method, plain path, text for messages) once the URL itself is safe:
+    https, an allow-listed host on the default port, no credentials, a plain path.
+
+    It says nothing about whether the method and path are allowed; the callers do."""
     # httpx tidies "." and ".." away while parsing, so look at the text first.
     if isinstance(url, str) and _DOT_SEGMENT.search(url.split("?", 1)[0].split("#", 1)[0]):
         raise ReadOnlyViolation("Refused: dot segments are not allowed in the URL path.")
@@ -94,25 +119,9 @@ def check_request(
         raise ReadOnlyViolation(f"Refused: non-ASCII path ({shown}).") from exc
     if not _PLAIN_PATH.fullmatch(path):
         raise ReadOnlyViolation(f"Refused: path is not in plain form ({shown}).")
-    segments = [s for s in path.split("/") if s]
-    if any(s in {".", ".."} for s in segments):
+    if any(s in {".", ".."} for s in path.split("/")):
         raise ReadOnlyViolation(f"Refused: dot segments are not allowed ({shown}).")
-
-    if verb == "POST":
-        if path != token_path(environment):
-            raise ReadOnlyViolation(f"Refused: the only POST allowed is the token call ({shown}).")
-        return
-
-    if verb != "GET":
-        raise ReadOnlyViolation(f"Refused: method is not allowed, Lookout is read-only ({shown}).")
-
-    if len(segments) < 3:
-        raise ReadOnlyViolation(f"Refused: expected /<service>/<environment>/<resource> ({shown}).")
-    service = segments[0]
-    if service not in READ_SERVICES:
-        raise ReadOnlyViolation(f"Refused: service is not allow-listed for reading ({shown}).")
-    if segments[1] != environment:
-        raise ReadOnlyViolation(f"Refused: environment is not {environment} ({shown}).")
+    return verb, path, shown
 
 
 class GuardedTransport(httpx.BaseTransport):

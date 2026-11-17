@@ -114,6 +114,11 @@ class AppConfig(_Section):
         """This session's client profiles folder: Live and UAT never share one."""
         return self.clients.path_for(self.tt.environment)
 
+    @property
+    def clone_log_dir(self) -> Path:
+        """Where the Clone page records each run. Clone works in UAT only."""
+        return _folder("", "clone_log", self.tt.environment)
+
 
 def _folder(configured: str, name: str, environment: str) -> Path:
     """The Live folder, or its UAT counterpart.

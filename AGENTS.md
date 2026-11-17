@@ -9,16 +9,21 @@ user when you need them.
 
 ## Ground rules (non-negotiable)
 
-1. **Read-only.** Only HTTP `GET` to TT data services, plus the single token
-   `POST` to `/ttid/<environment>/token`. This is enforced in
+1. **Read-only, with one UAT exception.** Only HTTP `GET` to TT data services, plus
+   the single token `POST` to `/ttid/<environment>/token`. This is enforced in
    `core/readonly_http.py`. **Never loosen the guard, never widen its allow-list,
    never add a write call.** If a task seems to need one, stop and ask the user.
+   The exception, added at the user's request: the Clone page may send the three
+   `POST`s listed in `core/write_http.py`, in `ext_uat_cert` only, through that
+   module's own guard. **Never add Live, another path or another method to it
+   without the user's explicit say-so.**
    Two environments are allowed, `ext_prod_live` (Live) and `ext_uat_cert` (UAT, added
    at the user's request). A client is tied to one when created and cannot reach the
    other. Live and UAT also keep separate credentials, profiles and snapshots; never
    mix them.
-2. **All TT access goes through** `core/tt_client.py` → `core/readonly_http.py`.
-   No other module may import an HTTP library. A test enforces this.
+2. **All TT access goes through** `core/tt_client.py` → `core/readonly_http.py`
+   (reads) or `core/tt_writer.py` → `core/write_http.py` (Clone, UAT only). No other
+   module may import an HTTP library. A test enforces this.
 3. **No live TT calls during development or in tests.** Tests run on fixtures;
    `tests/conftest.py` blocks real sockets.
 4. **Never touch** the team's live TT job scripts on the shared drive.

@@ -2,7 +2,8 @@
 
 Read-only verification of Trading Technologies (TT) trading setups. Lookout pulls
 setup data through the TT REST API, saves every pull as a snapshot, and checks the
-snapshot against expected rules. It never writes to TT.
+snapshot against expected rules. It never writes to TT Live. The one exception is
+the Clone page, which works in TT UAT only (see "Clone" below).
 
 - Conventions and ground rules: `AGENTS.md`
 - Client profile format: `docs/example_client.toml`
@@ -38,7 +39,8 @@ since fixed; no full pull has completed yet.
   level, Order Tag Defaults (only on markets that have limits), and
   optional companion-account and legacy-group rules), Limit
   Verification (ported from limit_compare, with parity tests in
-  `tests/fixtures/limit_compare/`), credential storage, Windows launcher.
+  `tests/fixtures/limit_compare/`), credential storage, Windows launcher, and the
+  Clone page (UAT only; not yet run against TT UAT).
 - Pulling: the Setup Verification page has a "Pull a new snapshot from TT" panel. It
   needs stored credentials and a ticked confirmation, shows progress, and selects the
   new snapshot when done.
@@ -73,6 +75,37 @@ UAT needs its own profiles.
 
 Without a launcher (development), set the mode yourself before starting:
 `LOOKOUT_ENVIRONMENT=ext_uat_cert python -m streamlit run app.py`.
+
+## Clone (UAT only)
+
+The Clone page copies an account, or a group with the accounts below it, into new
+accounts. It is the only part of Lookout that changes TT, and only in UAT: in Live the
+page shows a notice and nothing else. Its calls go through `core/write_http.py`, a
+separate guard that allows only these, and only in `ext_uat_cert`:
+
+- `POST /ttaccount/ext_uat_cert/account/clone`: clone one account
+- `POST /ttsetup/ext_uat_cert/ordertagdefaults`: create Order Tag Defaults
+- `POST /ttsetup/ext_uat_cert/ordertagdefaults/<id>`: update one
+
+How it works:
+
+1. Enter the source account (name or id), then paste the new names, one per line.
+2. Tick what TT should copy. Limits and user assignments are never copied.
+3. Optionally tick the clearing account override (the "Clearing Account" Order Tag
+   Default). Its value is either the source account's value or the new account's name.
+4. Press **Next**. Lookout reads the source from TT UAT and lists every account it
+   would create, with any problem (e.g. a name that already exists).
+5. Tick "I have checked this list" and press **Create**.
+
+For a group, Lookout clones each account itself, top down. Each copy's name swaps the
+source's name for the new one: cloning POD1 as POD7 turns POD1-A into POD7-A. An account
+below the source whose name does not contain the source's name stops the plan. A run
+stops at the first failure and never undoes what it created. Every run is recorded in
+`%LOCALAPPDATA%\Lookout\uat\clone_log`.
+
+To confirm on the first UAT clone: the reply shape of the clone call, the form of its
+on/off switches (`"true"`/`"false"`; `cloneChildren` is sent as `"False"`), and the Order
+Tag Default bodies. These follow TT's public ttaccount and ttsetup references for UAT.
 
 ## Client profiles
 

@@ -177,24 +177,21 @@ class TTClient:
             "Accept": "application/json",
         }
 
-    # --- GET --------------------------------------------------------------------
-
-    def get(
-        self, service: str, resource: str, params: Mapping[str, Any] | None = None
+    def _call(
+        self,
+        method: str,
+        path: str,
+        send: Callable[[dict[str, str], dict[str, Any]], Response],
+        params: Mapping[str, Any] | None = None,
     ) -> TTResponse:
-        """GET ``/<service>/<environment>/<resource>`` and return the checked JSON body."""
-        path = f"/{service}/{self.environment}/{resource.strip('/')}"
+        """One logical call: a fresh token once on 401, a short wait on 429."""
         refreshed = False
         rate_limited = 0
         while True:
             headers = self._headers()
             query = {**(params or {}), "requestId": self._request_id()}
             response = self._send(
-                "GET",
-                path,
-                lambda headers=headers, query=query: self._http.get(
-                    path, params=query, headers=headers
-                ),
+                method, path, lambda headers=headers, query=query: send(headers, query)
             )
             if response.status_code == 401 and not refreshed:
                 refreshed = True
@@ -206,6 +203,23 @@ class TTClient:
                 continue
             break
         return _checked(response, path)
+
+    def path_for(self, service: str, resource: str) -> str:
+        return f"/{service}/{self.environment}/{resource.strip('/')}"
+
+    # --- GET --------------------------------------------------------------------
+
+    def get(
+        self, service: str, resource: str, params: Mapping[str, Any] | None = None
+    ) -> TTResponse:
+        """GET ``/<service>/<environment>/<resource>`` and return the checked JSON body."""
+        path = self.path_for(service, resource)
+        return self._call(
+            "GET",
+            path,
+            lambda headers, query: self._http.get(path, params=query, headers=headers),
+            params,
+        )
 
     def pages(
         self,

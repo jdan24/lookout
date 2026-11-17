@@ -40,6 +40,12 @@ class FakeTT:
         # path -> (status code, body): a canned reply, used to simulate failures
         self.fail: dict[str, tuple[int, Any]] = {}
         self.hook: Callable[[httpx.Request], httpx.Response | None] | None = None
+        # What the Clone page's writes changed (UAT only, like the real write guard).
+        self.clones: list[tuple[dict[str, str], dict[str, Any]]] = []  # (query, body)
+        self.otd_writes: list[tuple[str, Any]] = []  # (path, body)
+        self.new_otds: list[dict[str, Any]] = []
+        self._next_account_id = 5000
+        self._next_otd_id = 9000
         self.transport = httpx.MockTransport(self._handle)
 
     # --- helpers for assertions -------------------------------------------------
@@ -65,7 +71,7 @@ class FakeTT:
 
         if request.method == "POST" and path == f"/ttid/{self.environment}/token":
             return self._token(request)
-        if request.method != "GET":
+        if request.method not in ("GET", "POST"):
             return httpx.Response(405, json={"status": "Error"})
         if request.headers.get("Authorization") != f"Bearer {TOKEN}":
             return httpx.Response(401, json={"status": "Unauthorized"})
@@ -84,6 +90,8 @@ class FakeTT:
         if len(parts) < 3 or parts[1] != self.environment:
             return httpx.Response(404, json={"status": "Not Found"})
         service, resource = parts[0], parts[2:]
+        if request.method == "POST":
+            return self._write(service, resource, params, json.loads(request.content or b"null"))
 
         if service == "ttaccount" and resource == ["accounts"]:
             return self._accounts(params)
@@ -130,8 +138,52 @@ class FakeTT:
             200, content=json.dumps(body), headers={"Content-Type": "application/json"}
         )
 
+    def _write(
+        self, service: str, resource: list[str], params: dict[str, str], body: Any
+    ) -> httpx.Response:
+        if service == "ttaccount" and resource == ["account", "clone"]:
+            return self._clone(params, body)
+        if service == "ttsetup" and resource == ["ordertagdefaults"]:
+            self.otd_writes.append(("create", body))
+            made = []
+            for entry in body:
+                self._next_otd_id += 1
+                made.append({**entry, "orderTagDefaultId": self._next_otd_id, "revision": 1})
+            self.new_otds.extend(made)
+            return httpx.Response(200, json={"orderTagDefaults": made, "status": "Ok"})
+        if service == "ttsetup" and len(resource) == 2 and resource[0] == "ordertagdefaults":
+            self.otd_writes.append((resource[1], body))
+            for entry in self.new_otds:
+                if str(entry["orderTagDefaultId"]) == resource[1]:
+                    entry.update(body)
+                    return httpx.Response(200, json={"orderTagDefaults": [entry], "status": "Ok"})
+            return httpx.Response(400, json={"status": "Failed", "status_message": "no such id"})
+        return httpx.Response(404, json={"status": "Not Found"})
+
+    def _clone(self, params: dict[str, str], body: dict[str, Any]) -> httpx.Response:
+        self.clones.append((params, body))
+        self._next_account_id += 1
+        new_id = self._next_account_id
+        if params.get("orderTagDefaults") == "true":
+            source = body["sourceAccountId"]
+            for entry in [*synthetic.OTD_ENTRIES, *self.new_otds]:
+                if entry["accountId"] == source:
+                    self._next_otd_id += 1
+                    copied = {**entry, "accountId": new_id, "orderTagDefaultId": self._next_otd_id}
+                    self.new_otds.append(copied)
+        account = {
+            "id": new_id,
+            "name": body["accountName"],
+            "parentAccountId": body.get("parentId", 0),
+            "accountType": 1,
+            "revision": 1,
+        }
+        return httpx.Response(200, json={"account": [account], "status": "Ok"})
+
     def _order_tag_defaults(self, params: dict[str, str]) -> httpx.Response:
-        entries = sorted(synthetic.OTD_ENTRIES, key=lambda e: e["orderTagDefaultId"])
+        entries = sorted(
+            [*synthetic.OTD_ENTRIES, *self.new_otds], key=lambda e: e["orderTagDefaultId"]
+        )
         if self.honour_otd_filter and "accountId" in params:
             entries = [e for e in entries if str(e["accountId"]) == params["accountId"]]
         start = int(params.get("nextPageKey", "0"))
