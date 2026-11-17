@@ -4,7 +4,8 @@ UAT only. This is the only page that changes anything in TT, and only through th
 UAT-only write guard in ``core/write_http.py``. The logic is in ``core/clone.py`` and
 ``core/clone_run.py``.
 
-Flow: enter the source and the new names, tick what to copy, press Next. Lookout reads
+Flow: enter the source, paste a table or choose a CSV file of new accounts (new account,
+then optional description and clearing account override), press Next. Lookout reads
 the source from TT UAT and shows every account it would create. Nothing is written
 until the list is confirmed and Create is pressed.
 """
@@ -19,7 +20,7 @@ import streamlit as st
 import core.config as app_config
 from core import credentials
 from core.api_log import ApiLog
-from core.clone import CLONE_FLAGS, ClearingMode, ClonePlan, build_plan, clean_names
+from core.clone import COLUMNS, ClearingMode, ClonePlan, NewAccounts, build_plan, parse_new_accounts
 from core.clone_run import read_source, run_plan, write_log
 from core.config import AppConfig
 from core.tt_writer import TTWriter
@@ -56,37 +57,58 @@ def make_tt_writer(settings: AppConfig) -> tuple[TTWriter, Callable[[], None]]:
     return writer, http.close
 
 
-def _inputs() -> tuple[str, list[str], dict[str, bool], ClearingMode]:
-    source = st.text_input("Account or group to clone (name or id)", key="cl_source")
+def _decode(data: bytes) -> str:
+    """A CSV file's text: UTF-8 (with or without Excel's mark), else Windows' own encoding."""
+    try:
+        return data.decode("utf-8-sig")
+    except UnicodeDecodeError:
+        return data.decode("cp1252", errors="replace")
+
+
+def _new_accounts() -> NewAccounts:
     pasted = st.text_area(
-        "New account names, one per line (spaces around each name are removed)",
+        "New accounts: paste from Excel or type one per line. Columns: "
+        + ", ".join(COLUMNS)
+        + " (the last two are optional)",
         height=160,
         key="cl_names",
+        placeholder="NEW10001AL,Desk 1,CLR123\nNEW20001AL",
     )
-    names = clean_names(pasted)
-    if names:
-        st.caption(f"{len(names)} new name(s): " + ", ".join(names))
-    st.markdown("**Copy with each account**")
-    columns = st.columns(2)
-    flags = {
-        flag: columns[i % 2].checkbox(label, key=f"cl_flag_{flag}")
-        for i, (flag, label) in enumerate(CLONE_FLAGS.items())
-    }
-    st.caption("Limits and user assignments are not copied.")
+    upload = st.file_uploader("...or choose a CSV file", type=["csv"], key="cl_file")
+    if upload is not None:
+        st.caption(f"Using {upload.name}; the box above is ignored while a file is chosen.")
+        parsed = parse_new_accounts(_decode(upload.getvalue()))
+    else:
+        parsed = parse_new_accounts(pasted)
+    if parsed.accounts:
+        st.caption(
+            f"{len(parsed.accounts)} new account(s): "
+            + ", ".join(a.name for a in parsed.accounts)
+            + (" (header row skipped)" if parsed.header_skipped else "")
+        )
+    for error in parsed.errors:
+        st.error(error)
+    return parsed
+
+
+def _inputs() -> tuple[str, NewAccounts, ClearingMode]:
+    source = st.text_input("Account or group to clone (name or id)", key="cl_source")
+    parsed = _new_accounts()
+    st.caption("TT copies none of the source's other settings: every clone switch is off.")
     mode = ClearingMode.OFF
     if st.checkbox("Clone the clearing account override (Clearing Account)", key="cl_clearing"):
         chosen = st.radio(
-            "Clearing Account on the new accounts",
+            "Clearing Account where a row gives none (and on accounts below a group)",
             list(CLEARING_CHOICES),
             format_func=CLEARING_CHOICES.__getitem__,
             key="cl_clearing_mode",
         )
         mode = ClearingMode(chosen)
-    return source.strip(), names, flags, mode
+    return source.strip(), parsed, mode
 
 
 def _review(settings: AppConfig, inputs: tuple[Any, ...]) -> None:
-    source, names, flags, mode = inputs
+    source, parsed, mode = inputs
     try:
         tt, close = make_tt_client(settings)
     except Exception as exc:  # noqa: BLE001 - shown to the user; nothing has been read yet
@@ -108,17 +130,12 @@ def _review(settings: AppConfig, inputs: tuple[Any, ...]) -> None:
     plan = build_plan(
         data.tree,
         source,
-        names,
-        flags=flags,
+        parsed.accounts,
         clearing_mode=mode,
         clearing_entries=data.clearing_entries,
         market_names=data.market_names,
     )
-    st.session_state["cl_review"] = {
-        "inputs": inputs,
-        "plan": plan,
-        "field_ids": data.clearing_field_ids,
-    }
+    st.session_state["cl_review"] = {"inputs": inputs, "plan": plan}
 
 
 def _show_plan(plan: ClonePlan) -> None:
@@ -129,8 +146,11 @@ def _show_plan(plan: ClonePlan) -> None:
         st.error(error)
     if plan.steps:
         components.plain_table(plan.rows(), key="cl_plan", file_name="clone_plan.csv")
-    ticked = [CLONE_FLAGS[f] for f, on in plan.flags.items() if on]
-    st.caption("Also copied: " + (", ".join(ticked) if ticked else "nothing else"))
+    if any(s.description for s in plan.steps):
+        st.caption(
+            "TT's clone call does not list a description; Lookout sends it anyway and "
+            "reads each new account back to check that TT kept it."
+        )
     if plan.clearing_mode is not ClearingMode.OFF:
         st.markdown("**Clearing Account**")
         if plan.clearing:
@@ -151,13 +171,7 @@ def _create(settings: AppConfig, review: dict[str, Any]) -> None:
         return
     try:
         with st.spinner(f"Creating {len(plan.steps)} account(s) in TT UAT..."):
-            result = run_plan(
-                plan,
-                writer,
-                reader,
-                clearing_field_ids=review["field_ids"],
-                max_pages=settings.pacing.max_order_tag_default_pages,
-            )
+            result = run_plan(plan, writer, reader)
     finally:
         close_reader()
         close_writer()
@@ -213,7 +227,8 @@ def render() -> None:
     if review is not None and review["inputs"] != inputs:
         st.session_state.pop("cl_review")
         review = None
-    if st.button("Next", type="primary", disabled=not (inputs[0] and inputs[1]), key="cl_next"):
+    ready = bool(inputs[0] and inputs[1].accounts and not inputs[1].errors)
+    if st.button("Next", type="primary", disabled=not ready, key="cl_next"):
         st.session_state.pop("cl_result", None)
         _review(settings, inputs)
         review = st.session_state.get("cl_review")

@@ -92,7 +92,7 @@ def test_uat_credentials_are_needed(tt: FakeTT, monkeypatch: pytest.MonkeyPatch)
 
 def test_next_shows_the_review_and_create_needs_a_tick(tt: FakeTT) -> None:
     app = fill(run(), "ABC10001AL", "  NEW10001AL  \n\n NEW20001AL\t\n")
-    assert "2 new name(s): NEW10001AL, NEW20001AL" in app.caption[1].value
+    assert any("2 new account(s): NEW10001AL, NEW20001AL" in c.value for c in app.caption)
     button(app, "cl_next").click().run()
     table = app.dataframe[0].value
     assert list(table["New account"]) == ["NEW10001AL", "NEW20001AL"]
@@ -117,6 +117,31 @@ def test_create_clones_and_shows_the_result(tt: FakeTT, tmp_path: Path) -> None:
     assert len(tt.clones) == 1 and len(tt.otd_writes) == 1
     [log] = (tmp_path / "log").iterdir()
     assert json.loads(log.read_text(encoding="utf-8"))["result"][0]["New id"] == "5001"
+
+
+def test_a_pasted_table_carries_descriptions_and_clearing_values(tt: FakeTT) -> None:
+    app = fill(run(), "ABC10001AL", "Account\tDescription\tClearing\nNEW1\tDesk 1\tCLR1\nNEW2\n")
+    assert any("(header row skipped)" in c.value for c in app.caption)
+    app.checkbox(key="cl_clearing").check().run()
+    button(app, "cl_next").click().run()
+    table = app.dataframe[0].value
+    assert list(table["Description"]) == ["Desk 1", ""]
+    clearing = app.dataframe[1].value
+    assert set(clearing[clearing["New account"] == "NEW1"]["New value"]) == {"CLR1"}
+    assert set(clearing[clearing["New account"] == "NEW2"]["New value"]) == {"ABC10001", "ABC99999"}
+
+
+def test_a_bad_row_keeps_next_disabled(tt: FakeTT) -> None:
+    app = fill(run(), "ABC10001AL", "NEW1\n\tno name\n")
+    assert "Row 2 has no new account" in app.error[0].value
+    assert button(app, "cl_next").disabled
+
+
+def test_csv_files_are_read_as_utf8_or_windows_text() -> None:
+    from reports.clone import _decode
+
+    assert _decode("\ufeffNEW1,Café".encode()) == "NEW1,Café"
+    assert _decode("NEW1,Café".encode("cp1252")) == "NEW1,Café"
 
 
 def test_errors_keep_create_disabled(tt: FakeTT) -> None:

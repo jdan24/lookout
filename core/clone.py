@@ -7,32 +7,38 @@ A source account is cloned once per new name. When the source has accounts below
 each of them is cloned too, top down, under its new parent. A copy's name is the
 source account's name with the source's own name swapped for the new one
 (cloning POD1 as POD7 turns POD1-A into POD7-A).
+
+A row's description and clearing value go on the new top account only; the accounts
+below it get the clearing value the page's choice gives them, and no description.
 """
 
 from __future__ import annotations
 
+import csv
+import io
 from collections import Counter
 from collections.abc import Mapping, Sequence
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from enum import StrEnum
 from typing import Any
 
 from core.hierarchy import Account, AccountTree
 from core.normalize import norm_id
 
-# TT's on/off switches on the clone call that the page offers, with their labels.
-CLONE_FLAGS: dict[str, str] = {
-    "orderTagDefaults": "All Order Tag Defaults",
-    "algoSettings": "Algo settings",
-    "exchangeSettings": "Exchange settings",
-    "creditLimitsAndSod": "Credit limits and SOD",
-    "counterparties": "Counterparties",
-    "assignNewAccountsToSameConnections": "Same connections",
-    "fixSessions": "FIX sessions",
-}
-# Switches the page does not offer: always sent as off.
-ALWAYS_OFF: tuple[str, ...] = ("limits", "assignNewAccountsToSameUsers")
+# TT's on/off switches on the clone call. All are sent as off: TT copies none of the
+# source's other settings, and Lookout sets only the Clearing Account itself.
+CLONE_SWITCHES: tuple[str, ...] = (
+    "orderTagDefaults", "algoSettings", "exchangeSettings", "creditLimitsAndSod",
+    "counterparties", "assignNewAccountsToSameConnections", "fixSessions", "limits",
+    "assignNewAccountsToSameUsers",
+)  # fmt: skip
 CLEARING_FIELD_NAME = "Clearing Account"
+# A first row whose first cell is one of these is a header and is skipped.
+HEADER_WORDS = frozenset(
+    {"account", "accountname", "accountnumber", "accountno", "name", "newaccount",
+     "newaccountname", "newaccountnumber", "newname"}
+)  # fmt: skip
+COLUMNS = ("New account", "Description", "Clearing account override")
 
 
 class ClearingMode(StrEnum):
@@ -41,16 +47,66 @@ class ClearingMode(StrEnum):
     NEW_NAME = "new_name"  # the new account gets its own name
 
 
-def clean_names(text: str) -> list[str]:
-    """One name per line, with spaces and tabs around it removed and blank lines dropped."""
-    return [line.strip() for line in text.splitlines() if line.strip()]
+@dataclass(frozen=True)
+class NewAccount:
+    """One row of the pasted table or CSV file."""
+
+    name: str
+    description: str = ""
+    clearing: str = ""  # this row's clearing account override; "" uses the page's choice
 
 
-def clone_params(flags: Mapping[str, bool]) -> dict[str, str]:
-    """The clone call's query switches: every offered one, plus the ones always off."""
-    params = {name: "true" if flags.get(name) else "false" for name in CLONE_FLAGS}
-    params.update({name: "false" for name in ALWAYS_OFF})
-    return params
+@dataclass(frozen=True)
+class NewAccounts:
+    accounts: tuple[NewAccount, ...] = ()
+    errors: tuple[str, ...] = ()
+    header_skipped: bool = False
+
+
+def parse_new_accounts(text: str) -> NewAccounts:
+    """The new accounts from pasted table data or a CSV file's text.
+
+    Columns: new account (needed), description, clearing account override (both
+    optional). Cells are split on tabs when the text has any (a paste from Excel),
+    otherwise on commas, with CSV quoting. Spaces around each cell are removed, blank
+    rows dropped, and a header row (``Account``, ``Name``...) skipped.
+    """
+    text = text.lstrip("\ufeff")
+    delimiter = "\t" if "\t" in text else ","
+    rows = [
+        [cell.strip() for cell in row] for row in csv.reader(io.StringIO(text), delimiter=delimiter)
+    ]
+    numbered = [(n, row) for n, row in enumerate(rows, start=1) if any(row)]
+    header = bool(numbered) and _is_header(numbered[0][1])
+    if header:
+        numbered = numbered[1:]
+    accounts: list[NewAccount] = []
+    errors: list[str] = []
+    for number, row in numbered:
+        cells = row + [""] * (len(COLUMNS) - len(row))
+        if any(cells[len(COLUMNS) :]):
+            errors.append(
+                f"Row {number} has more than {len(COLUMNS)} columns; expected: "
+                + ", ".join(COLUMNS)
+                + "."
+            )
+            continue
+        name, description, clearing = cells[: len(COLUMNS)]
+        if not name:
+            errors.append(f"Row {number} has no new account in its first column.")
+            continue
+        accounts.append(NewAccount(name, description, clearing))
+    return NewAccounts(tuple(accounts), tuple(errors), header)
+
+
+def _is_header(row: Sequence[str]) -> bool:
+    first = "".join(ch for ch in row[0].casefold() if ch.isalnum()) if row else ""
+    return first in HEADER_WORDS
+
+
+def clone_params() -> dict[str, str]:
+    """The clone call's query switches, every one off."""
+    return {name: "false" for name in CLONE_SWITCHES}
 
 
 def is_default_entry(entry: Mapping[str, Any]) -> bool:
@@ -66,6 +122,7 @@ class CloneStep:
     parent_step: int | None  # the step whose new account is the parent, if any
     parent_id: str  # the existing parent when parent_step is None ("" for none)
     parent_name: str  # for display
+    description: str = ""  # sent with the clone; only the row's own (top) account has one
 
 
 @dataclass(frozen=True)
@@ -83,7 +140,6 @@ class ClonePlan:
     source: Account | None
     steps: tuple[CloneStep, ...] = ()
     clearing: tuple[ClearingChange, ...] = ()
-    flags: Mapping[str, bool] = field(default_factory=dict)
     clearing_mode: ClearingMode = ClearingMode.OFF
     errors: tuple[str, ...] = ()
 
@@ -101,6 +157,7 @@ class ClonePlan:
                 "Step": str(s.number),
                 "New account": s.new_name,
                 "Under": s.parent_name + (f" (new, step {s.parent_step})" if s.parent_step else ""),
+                "Description": s.description,
                 "Copied from": s.source.display,
             }
             for s in self.steps
@@ -138,27 +195,35 @@ def find_source(tree: AccountTree, text: str) -> tuple[Account | None, str]:
 def build_plan(
     tree: AccountTree,
     source_text: str,
-    new_names: Sequence[str],
+    new_accounts: Sequence[NewAccount],
     *,
-    flags: Mapping[str, bool] | None = None,
     clearing_mode: ClearingMode = ClearingMode.OFF,
     clearing_entries: Mapping[str, Sequence[Mapping[str, Any]]] | None = None,
     market_names: Mapping[str, str] | None = None,
 ) -> ClonePlan:
     """Work out every account to create and every Clearing Account value to set."""
-    flags = dict(flags or {})
     source, problem = find_source(tree, source_text)
     if source is None:
-        return ClonePlan(None, flags=flags, clearing_mode=clearing_mode, errors=(problem,))
+        return ClonePlan(None, clearing_mode=clearing_mode, errors=(problem,))
 
     errors: list[str] = []
-    if not new_names:
-        errors.append("Paste at least one new account name.")
+    if not new_accounts:
+        errors.append("Paste or upload at least one new account.")
     seen: set[str] = set()
-    for name in new_names:
-        if name.casefold() in seen:
-            errors.append(f"{name} is listed more than once.")
-        seen.add(name.casefold())
+    rows: list[NewAccount] = []
+    for row in new_accounts:
+        if row.name.casefold() in seen:
+            errors.append(f"{row.name} is listed more than once.")
+            continue
+        seen.add(row.name.casefold())
+        rows.append(row)
+    given = [row.name for row in rows if row.clearing]
+    if given and clearing_mode is ClearingMode.OFF:
+        errors.append(
+            "Clearing account overrides are given for " + ", ".join(given) + ", but "
+            "'Clone the clearing account override' is not ticked. Tick it, or remove "
+            "the third column."
+        )
 
     below = tree.descendants(source.id)
     for account in below:
@@ -170,9 +235,10 @@ def build_plan(
 
     parent = tree.parent(source.id)
     steps: list[CloneStep] = []
-    for new_name in dict.fromkeys(new_names):
-        if new_name == source.name:
-            errors.append(f"{new_name} is the account being cloned.")
+    row_clearing: dict[int, str] = {}  # step number -> the row's own clearing value
+    for row in rows:
+        if row.name == source.name:
+            errors.append(f"{row.name} is the account being cloned.")
             continue
         made: dict[str, int] = {}  # source id -> step number in this copy
         number = len(steps) + 1
@@ -180,12 +246,15 @@ def build_plan(
             CloneStep(
                 number=number,
                 source=source,
-                new_name=new_name,
+                new_name=row.name,
                 parent_step=None,
                 parent_id=parent.id if parent else "",
                 parent_name=parent.display if parent else "(top level)",
+                description=row.description,
             )
         )
+        if row.clearing:
+            row_clearing[number] = row.clearing
         made[source.id] = number
         for account in below:
             if source.name not in account.name:
@@ -196,7 +265,7 @@ def build_plan(
                 CloneStep(
                     number=number,
                     source=account,
-                    new_name=account.name.replace(source.name, new_name),
+                    new_name=account.name.replace(source.name, row.name),
                     parent_step=parent_step,
                     parent_id="",
                     parent_name=steps[parent_step - 1].new_name,
@@ -217,18 +286,29 @@ def build_plan(
         names = market_names or {}
         entries = clearing_entries or {}
         for step in steps:
-            for entry in entries.get(step.source.id, ()):
+            found = entries.get(step.source.id, ())
+            if step.number in row_clearing and not found:
+                errors.append(
+                    f"{step.source.name} has no Clearing Account set, so Lookout does not "
+                    f"know which exchanges to set {row_clearing[step.number]} on for "
+                    f"{step.new_name}."
+                )
+            for entry in found:
                 source_value = str(entry.get("value") or "")
                 market_id = norm_id(entry.get("marketId"))
+                if step.number in row_clearing:
+                    value = row_clearing[step.number]
+                elif clearing_mode is ClearingMode.SOURCE:
+                    value = source_value
+                else:
+                    value = step.new_name
                 clearing.append(
                     ClearingChange(
                         step=step.number,
                         market_id=market_id,
                         market=names.get(market_id, f"market {market_id}"),
                         source_value=source_value,
-                        value=source_value
-                        if clearing_mode is ClearingMode.SOURCE
-                        else step.new_name,
+                        value=value,
                         entry=entry,
                     )
                 )
@@ -237,7 +317,6 @@ def build_plan(
         source=source,
         steps=tuple(steps),
         clearing=tuple(clearing),
-        flags=flags,
         clearing_mode=clearing_mode,
         errors=tuple(dict.fromkeys(errors)),
     )

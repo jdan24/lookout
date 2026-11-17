@@ -35,7 +35,6 @@ def test_write_list_is_exactly_the_agreed_one() -> None:
     assert [p.pattern for p in WRITE_PATHS] == [
         "/ttaccount/ext_uat_cert/account/clone",
         "/ttsetup/ext_uat_cert/ordertagdefaults",
-        "/ttsetup/ext_uat_cert/ordertagdefaults/[0-9]+",
     ]
 
 
@@ -44,7 +43,6 @@ def test_write_list_is_exactly_the_agreed_one() -> None:
     [
         "/ttaccount/ext_uat_cert/account/clone",
         "/ttsetup/ext_uat_cert/ordertagdefaults",
-        "/ttsetup/ext_uat_cert/ordertagdefaults/123",
         "/ttid/ext_uat_cert/token",
     ],
 )
@@ -63,6 +61,7 @@ def test_allowed_writes_pass(path: str) -> None:
         ("POST", "/ttaccount/ext_uat_cert/account"),  # create, not clone
         ("POST", "/ttaccount/ext_uat_cert/account/clone/1"),
         ("POST", "/ttaccount/ext_uat_cert/account/riskSettings"),
+        ("POST", "/ttsetup/ext_uat_cert/ordertagdefaults/123"),  # updates: not needed
         ("POST", "/ttsetup/ext_uat_cert/ordertagdefaults/abc"),
         ("POST", "/ttsetup/ext_uat_cert/ordertagdefaults/profiles"),
         ("POST", "/ttuser/ext_uat_cert/user"),

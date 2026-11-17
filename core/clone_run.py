@@ -21,7 +21,6 @@ from typing import Any
 from core.clone import (
     CLEARING_FIELD_NAME,
     ClearingChange,
-    ClearingMode,
     ClonePlan,
     CloneStep,
     clone_params,
@@ -39,12 +38,6 @@ OTD_CREATE_FIELDS: tuple[str, ...] = (
     "accountId", "algoId", "algoTypeId", "applyToAllSubAccounts", "assetClassId",
     "clientCanOverride", "companyId", "exchangeProductGroupId", "fieldId", "marketId",
     "productId", "productTypeId", "profileId", "userId", "value", "valueEnumId",
-)  # fmt: skip
-OTD_UPDATE_FIELDS: tuple[str, ...] = (*OTD_CREATE_FIELDS, "orderTagDefaultId", "revision")
-# What makes two Order Tag Defaults "the same slot" on an account.
-OTD_SLOT: tuple[str, ...] = (
-    "fieldId", "marketId", "productTypeId", "productId", "exchangeProductGroupId",
-    "algoTypeId", "profileId",
 )  # fmt: skip
 
 
@@ -114,11 +107,6 @@ def _body(entry: Mapping[str, Any], names: Sequence[str], **changes: Any) -> dic
     body = {name: entry[name] for name in names if name in entry}
     body.update(changes)
     return body
-
-
-def _slot(entry: Mapping[str, Any]) -> tuple[str, ...]:
-    return tuple(norm_id(entry.get(name)) if name != "productId" else str(entry.get(name) or "0")
-                 for name in OTD_SLOT)  # fmt: skip
 
 
 @dataclass
@@ -209,13 +197,43 @@ def _new_account_id(
     )
 
 
+def account_description(reader: TTClient, account_id: str) -> str | None:
+    """The account's description as TT holds it, or None when TT's reply has no such field."""
+    body = reader.get("ttaccount", f"account/{account_id}").body
+    found = body.get("account") if isinstance(body, Mapping) else None
+    items = found if isinstance(found, list) else [found]
+    for item in items:
+        if isinstance(item, Mapping) and "description" in item:
+            return str(item.get("description") or "")
+    return None
+
+
+def _check_description(step: CloneStep, new_id: str, reader: TTClient, result: CloneResult) -> None:
+    """Read the new account back and say whether TT kept the description sent with the clone.
+
+    TT's clone reference has no description field, so TT may ignore it. A failed read
+    does not stop the run: the account itself was created.
+    """
+    try:
+        held = account_description(reader, new_id)
+    except (TTApiError, ReadOnlyViolation) as exc:
+        result.rows.append(_row(step, new_id, "Description", "Not checked",
+                                f"{step.description} (could not read it back: {exc})"))  # fmt: skip
+        return
+    if held is not None and held.strip() == step.description:
+        result.rows.append(_row(step, new_id, "Description", "Set", step.description))
+    else:
+        result.rows.append(
+            _row(step, new_id, "Description", "Not kept by TT",
+                 f"{step.description} (set it by hand in TT Setup)")
+        )  # fmt: skip
+
+
 def run_plan(
     plan: ClonePlan,
     writer: TTWriter,
     reader: TTClient,
     *,
-    clearing_field_ids: frozenset[str],
-    max_pages: int,
     wait: Callable[[float], None] = time.sleep,
 ) -> CloneResult:
     """Create every account in the plan, in order, then set its Clearing Account values."""
@@ -223,7 +241,7 @@ def run_plan(
     if not plan.ok:
         result.stopped = "The plan has errors; nothing was sent to TT."
         return result
-    params = clone_params(plan.flags)
+    params = clone_params()
     for step in plan.steps:
         try:
             parent_id = result.created[step.parent_step] if step.parent_step else step.parent_id
@@ -234,15 +252,19 @@ def run_plan(
             }
             if parent_id:
                 body["parentId"] = int(parent_id)
+            if step.description:
+                # Not in TT's clone reference; sent anyway and checked afterwards.
+                body["description"] = step.description
             reply = writer.post("ttaccount", "account/clone", body, params)
             new_id, how = _new_account_id(reply, step.new_name, parent_id, reader, wait)
             result.created[step.number] = new_id
             detail = f"from {step.source.display}" + (f"; {how}" if how else "")
             result.rows.append(_row(step, new_id, "Account", "Created", detail))
+            if step.description:
+                _check_description(step, new_id, reader, result)
             changes = [c for c in plan.clearing if c.step == step.number]
             if changes:
-                _set_clearing(plan, step, new_id, changes, writer, reader, result,
-                              clearing_field_ids, max_pages)  # fmt: skip
+                _set_clearing(step, new_id, changes, writer, result)
         except (TTApiError, ReadOnlyViolation) as exc:
             result.stopped = f"Stopped at step {step.number} ({step.new_name}): {exc}"
             result.rows.append(
@@ -268,54 +290,25 @@ def _row(step: CloneStep, new_id: str, what: str, status: str, detail: str) -> d
 
 
 def _set_clearing(
-    plan: ClonePlan,
     step: CloneStep,
     new_id: str,
     changes: list[ClearingChange],
     writer: TTWriter,
-    reader: TTClient,
     result: CloneResult,
-    field_ids: frozenset[str],
-    max_pages: int,
 ) -> None:
-    copied_by_tt = bool(plan.flags.get("orderTagDefaults"))
-    to_create: list[ClearingChange] = []
-    if copied_by_tt and plan.clearing_mode is ClearingMode.SOURCE:
-        for change in changes:
-            result.rows.append(_row(step, new_id, f"Clearing Account, {change.market}",
-                                    "Copied by TT", change.value))  # fmt: skip
-        return
-    if copied_by_tt:
-        current = {_slot(e): e for e in account_entries(reader, new_id, field_ids, max_pages)}
-        for change in changes:
-            entry = current.get(_slot(change.entry))
-            what = f"Clearing Account, {change.market}"
-            if entry is None:
-                to_create.append(change)
-            elif str(entry.get("value") or "") == change.value:
-                result.rows.append(_row(step, new_id, what, "Already set", change.value))
-            else:
-                entry_id = norm_id(entry.get("orderTagDefaultId"))
-                writer.post(
-                    "ttsetup",
-                    f"ordertagdefaults/{entry_id}",
-                    _body(entry, OTD_UPDATE_FIELDS, value=change.value),
-                )
-                result.rows.append(_row(step, new_id, what, "Updated", change.value))
-    else:
-        to_create = changes
-    if to_create:
-        writer.post(
-            "ttsetup",
-            "ordertagdefaults",
-            [
-                _body(c.entry, OTD_CREATE_FIELDS, accountId=int(new_id), value=c.value)
-                for c in to_create
-            ],
-        )
-        for change in to_create:
-            result.rows.append(_row(step, new_id, f"Clearing Account, {change.market}",
-                                    "Created", change.value))  # fmt: skip
+    """Create the new account's Clearing Account entries, one per exchange, in one call.
+
+    TT copies no Order Tag Defaults with the clone (every switch is off), so the new
+    account has none to update.
+    """
+    writer.post(
+        "ttsetup",
+        "ordertagdefaults",
+        [_body(c.entry, OTD_CREATE_FIELDS, accountId=int(new_id), value=c.value) for c in changes],
+    )
+    for change in changes:
+        result.rows.append(_row(step, new_id, f"Clearing Account, {change.market}",
+                                "Created", change.value))  # fmt: skip
 
 
 def write_log(
@@ -333,7 +326,7 @@ def write_log(
     record = {
         "when": when.isoformat(timespec="seconds"),
         "source": plan.source.display if plan.source else "",
-        "flags": dict(plan.flags),
+        "clone_switches": clone_params(),
         "clearing_mode": plan.clearing_mode.value,
         "plan": plan.rows(),
         "clearing": plan.clearing_rows(),

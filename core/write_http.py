@@ -5,7 +5,6 @@ other environment, and its transport allows these requests and nothing else:
 
 * ``POST /ttaccount/ext_uat_cert/account/clone``                  clone one account
 * ``POST /ttsetup/ext_uat_cert/ordertagdefaults``                 create Order Tag Defaults
-* ``POST /ttsetup/ext_uat_cert/ordertagdefaults/<id>``            update one Order Tag Default
 * ``POST /ttid/ext_uat_cert/token``                               the token call
 
 No GET, PUT, DELETE or other path, and never Live. Reads go through the read-only
@@ -37,7 +36,6 @@ WRITE_ENVIRONMENT = UAT_ENVIRONMENT
 WRITE_PATHS: tuple[re.Pattern[str], ...] = (
     re.compile(rf"/ttaccount/{WRITE_ENVIRONMENT}/account/clone"),
     re.compile(rf"/ttsetup/{WRITE_ENVIRONMENT}/ordertagdefaults"),
-    re.compile(rf"/ttsetup/{WRITE_ENVIRONMENT}/ordertagdefaults/[0-9]+"),
 )
 
 

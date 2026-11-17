@@ -85,21 +85,33 @@ separate guard that allows only these, and only in `ext_uat_cert`:
 
 - `POST /ttaccount/ext_uat_cert/account/clone`: clone one account
 - `POST /ttsetup/ext_uat_cert/ordertagdefaults`: create Order Tag Defaults
-- `POST /ttsetup/ext_uat_cert/ordertagdefaults/<id>`: update one
 
 How it works:
 
-1. Enter the source account (name or id), then paste the new names, one per line.
-2. Tick what TT should copy. Limits and user assignments are never copied.
+1. Enter the source account (name or id).
+2. Paste the new accounts (straight from Excel, or one per line), or choose a CSV file.
+   Columns, in order: new account (needed), description, clearing account override
+   (both optional). Spaces around each cell are removed, blank rows are dropped and a
+   header row (`Account`, `Name`...) is skipped.
 3. Optionally tick the clearing account override (the "Clearing Account" Order Tag
-   Default). Its value is either the source account's value or the new account's name.
+   Default). A row's own value in the third column wins; where a row has none, the
+   value is either the source account's value or the new account's name. Clearing
+   values in the file without the box ticked stop the plan.
 4. Press **Next**. Lookout reads the source from TT UAT and lists every account it
    would create, with any problem (e.g. a name that already exists).
 5. Tick "I have checked this list" and press **Create**.
 
 For a group, Lookout clones each account itself, top down. Each copy's name swaps the
 source's name for the new one: cloning POD1 as POD7 turns POD1-A into POD7-A. An account
-below the source whose name does not contain the source's name stops the plan. A run
+below the source whose name does not contain the source's name stops the plan. A row's
+description and clearing value go on the new top account only; the accounts below it
+get the clearing value from the page's choice, and no description.
+
+TT copies none of the source's other settings: every switch on the clone call (Order
+Tag Defaults, algo, exchange, credit/SOD, counterparties, connections, FIX sessions,
+limits, users) is sent as off. TT's clone call does not list a description field, so
+Lookout sends the description anyway and reads each new account back: the result says
+"Set" or "Not kept by TT" (then set it by hand in TT Setup). A run
 stops at the first failure and never undoes what it created. Every run is recorded in
 `%LOCALAPPDATA%\Lookout\uat\clone_log`.
 

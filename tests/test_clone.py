@@ -9,7 +9,7 @@ from typing import Any
 
 import pytest
 
-from core.clone import ClearingMode, build_plan, clean_names, clone_params
+from core.clone import ClearingMode, NewAccount, build_plan, clone_params, parse_new_accounts
 from core.clone_run import LOOKUP_TRIES, id_in_reply, read_source, run_plan, write_log
 from core.credentials import parse_secret
 from core.hierarchy import AccountTree
@@ -57,38 +57,77 @@ def writer(tt: FakeTT) -> TTWriter:
     return TTWriter(http, parse_secret(SECRET), **NO_WAIT)
 
 
-# --- names -----------------------------------------------------------------------
+def rows(names: list[str]) -> list[NewAccount]:
+    return [NewAccount(name) for name in names]
 
 
-def test_clean_names_strips_spaces_tabs_and_blank_lines() -> None:
-    text = "  POD7 \r\n\tPOD8\t\n\n   \nPOD9   \n"
-    assert clean_names(text) == ["POD7", "POD8", "POD9"]
-    assert clean_names("") == []
+# --- the pasted table or CSV -----------------------------------------------------
 
 
-def test_clone_params_send_every_switch_and_keep_limits_and_users_off() -> None:
-    params = clone_params({"orderTagDefaults": True})
-    assert params["orderTagDefaults"] == "true" and params["fixSessions"] == "false"
-    assert params["limits"] == "false" and params["assignNewAccountsToSameUsers"] == "false"
+def test_one_name_per_line_strips_spaces_and_blank_lines() -> None:
+    text = "  POD7 \r\nPOD8   \n\n   \nPOD9\n"
+    assert parse_new_accounts(text).accounts == tuple(rows(["POD7", "POD8", "POD9"]))
+    assert parse_new_accounts("") == parse_new_accounts("  \n\n")
+
+
+def test_a_paste_from_excel_splits_on_tabs() -> None:
+    text = "NEW1\t Desk one, London \tCLR1\nNEW2\t\t\nNEW3\tDesk three\n"
+    parsed = parse_new_accounts(text)
+    assert parsed.errors == ()
+    assert parsed.accounts == (
+        NewAccount("NEW1", "Desk one, London", "CLR1"),
+        NewAccount("NEW2"),
+        NewAccount("NEW3", "Desk three"),
+    )
+
+
+def test_a_csv_file_uses_commas_quotes_and_skips_its_header() -> None:
+    text = '\ufeffAccount,Description,Clearing\r\nNEW1,"Desk 1, NY",CLR1\r\nNEW2,,\r\n,,\r\n'
+    parsed = parse_new_accounts(text)
+    assert parsed.header_skipped and parsed.errors == ()
+    assert parsed.accounts == (NewAccount("NEW1", "Desk 1, NY", "CLR1"), NewAccount("NEW2"))
+
+
+@pytest.mark.parametrize(
+    ("text", "message"),
+    [
+        ("NEW1\n\tDesk only\n", "Row 2 has no new account"),
+        ("NEW1,a,b,c\n", "Row 1 has more than 3 columns"),
+    ],
+)
+def test_bad_rows_are_reported(text: str, message: str) -> None:
+    parsed = parse_new_accounts(text)
+    assert any(message in error for error in parsed.errors), parsed.errors
+
+
+def test_an_account_named_like_a_word_is_not_a_header() -> None:
+    assert not parse_new_accounts("ACCOUNT1\nACCOUNT2\n").header_skipped
+
+
+def test_clone_params_send_every_switch_off() -> None:
+    params = clone_params()
+    assert set(params.values()) == {"false"} and len(params) == 9
+    assert {"orderTagDefaults", "limits", "assignNewAccountsToSameUsers"} <= set(params)
 
 
 # --- plans -----------------------------------------------------------------------
 
 
 def test_single_account_goes_under_the_same_parent() -> None:
-    plan = build_plan(GROUP, " POD2 ", ["POD7", "POD8"])
+    plan = build_plan(GROUP, " POD2 ", rows(["POD7", "POD8"]))
     assert plan.ok
     assert [(s.new_name, s.parent_id, s.parent_step) for s in plan.steps] == [
         ("POD7", "1", None),
         ("POD8", "1", None),
     ]
     assert plan.rows()[0] == {
-        "Step": "1", "New account": "POD7", "Under": "TOP (1)", "Copied from": "POD2 (20)",
+        "Step": "1", "New account": "POD7", "Under": "TOP (1)", "Description": "",
+        "Copied from": "POD2 (20)",
     }  # fmt: skip
 
 
 def test_group_is_cloned_top_down_with_names_swapped() -> None:
-    plan = build_plan(GROUP, "POD1", ["POD7"])
+    plan = build_plan(GROUP, "POD1", rows(["POD7"]))
     assert plan.ok, plan.errors
     assert [(s.number, s.new_name, s.parent_step) for s in plan.steps] == [
         (1, "POD7", None),
@@ -99,7 +138,7 @@ def test_group_is_cloned_top_down_with_names_swapped() -> None:
 
 
 def test_source_can_be_given_by_id_and_top_level_has_no_parent() -> None:
-    plan = build_plan(GROUP, "30", ["SOLO"])
+    plan = build_plan(GROUP, "30", rows(["SOLO"]))
     assert plan.ok and plan.steps[0].parent_id == "" and plan.steps[0].parent_name == "(top level)"
 
 
@@ -108,7 +147,7 @@ def test_source_can_be_given_by_id_and_top_level_has_no_parent() -> None:
     [
         ("NOPE", ["X"], "No account named NOPE"),
         ("", ["X"], "Enter the account"),
-        ("POD2", [], "Paste at least one"),
+        ("POD2", [], "Paste or upload at least one"),
         ("POD2", ["POD1"], "POD1 already exists in TT."),
         ("POD2", ["NEW", "new"], "listed more than once"),
         ("POD2", ["POD2"], "is the account being cloned"),
@@ -116,14 +155,14 @@ def test_source_can_be_given_by_id_and_top_level_has_no_parent() -> None:
     ],
 )
 def test_plan_errors(source: str, names: list[str], message: str) -> None:
-    plan = build_plan(GROUP, source, names)
+    plan = build_plan(GROUP, source, rows(names))
     assert not plan.ok
     assert any(message in error for error in plan.errors), plan.errors
 
 
 def test_a_child_without_the_group_name_cannot_be_named() -> None:
     tree = AccountTree([item(1, "TEAM", 0), item(2, "TEAM-1", 1), item(3, "ODD", 1)])
-    plan = build_plan(tree, "TEAM", ["CREW"])
+    plan = build_plan(tree, "TEAM", rows(["CREW"]))
     assert plan.errors == (
         "ODD is below TEAM, but its name does not contain TEAM, so Lookout cannot name its copy.",
     )
@@ -131,22 +170,53 @@ def test_a_child_without_the_group_name_cannot_be_named() -> None:
 
 def test_two_names_by_the_same_name_are_ambiguous() -> None:
     tree = AccountTree([item(1, "SAME", 0), item(2, "SAME", 0)])
-    plan = build_plan(tree, "SAME", ["NEW"])
+    plan = build_plan(tree, "SAME", rows(["NEW"]))
     assert "enter the id instead" in plan.errors[0]
 
 
 def test_clearing_values_from_source_or_new_name() -> None:
     entry = {"accountId": 11, "marketId": 7, "fieldId": 1859, "value": "OLD"}
     common: dict[str, Any] = {"clearing_entries": {"11": [entry]}, "market_names": {"7": "CME"}}
-    by_name = build_plan(GROUP, "POD1", ["POD7"], clearing_mode=ClearingMode.NEW_NAME, **common)
+    by_name = build_plan(
+        GROUP, "POD1", rows(["POD7"]), clearing_mode=ClearingMode.NEW_NAME, **common
+    )
     assert by_name.clearing_rows() == [
         {"Step": "2", "New account": "POD7-A", "Exchange": "CME",
          "Source value": "OLD", "New value": "POD7-A"},
     ]  # fmt: skip
-    same = build_plan(GROUP, "POD1", ["POD7"], clearing_mode=ClearingMode.SOURCE, **common)
+    same = build_plan(GROUP, "POD1", rows(["POD7"]), clearing_mode=ClearingMode.SOURCE, **common)
     assert same.clearing[0].value == "OLD"
-    off = build_plan(GROUP, "POD1", ["POD7"], **common)
+    off = build_plan(GROUP, "POD1", rows(["POD7"]), **common)
     assert off.clearing == ()
+
+
+def test_a_rows_own_clearing_value_wins_on_its_top_account_only() -> None:
+    entries = {
+        "10": [{"accountId": 10, "marketId": 7, "fieldId": 1859, "value": "OLD"}],
+        "11": [{"accountId": 11, "marketId": 7, "fieldId": 1859, "value": "OLD-A"}],
+    }
+    plan = build_plan(
+        GROUP, "POD1",
+        [NewAccount("POD7", "Desk 7", "CLR7"), NewAccount("POD8")],
+        clearing_mode=ClearingMode.SOURCE, clearing_entries=entries,
+    )  # fmt: skip
+    assert plan.ok, plan.errors
+    assert [(plan.step(c.step).new_name, c.value) for c in plan.clearing] == [
+        ("POD7", "CLR7"), ("POD7-A", "OLD-A"), ("POD8", "OLD"), ("POD8-A", "OLD-A"),
+    ]  # fmt: skip
+    assert [s.description for s in plan.steps if s.description] == ["Desk 7"]
+
+
+def test_clearing_values_without_the_box_ticked_stop_the_plan() -> None:
+    plan = build_plan(GROUP, "POD2", [NewAccount("POD7", clearing="CLR7")])
+    assert not plan.ok and "is not ticked" in plan.errors[0]
+
+
+def test_a_clearing_value_needs_a_source_clearing_account_to_copy() -> None:
+    plan = build_plan(
+        GROUP, "POD2", [NewAccount("POD7", clearing="CLR7")], clearing_mode=ClearingMode.SOURCE
+    )
+    assert not plan.ok and "POD2 has no Clearing Account set" in plan.errors[0]
 
 
 # --- reading the source ----------------------------------------------------------
@@ -171,34 +241,31 @@ def test_read_source_without_clearing_reads_only_the_accounts(tt: FakeTT) -> Non
 # --- running ---------------------------------------------------------------------
 
 
-def _plan(tt: FakeTT, mode: ClearingMode, **flags: bool):  # noqa: ANN202
+def _plan(tt: FakeTT, mode: ClearingMode, new: NewAccount | None = None):  # noqa: ANN202
     data = read_source(reader(tt), "ABC10001AL", need_clearing=True, max_pages=20)
     plan = build_plan(
-        data.tree, "ABC10001AL", ["NEW10001AL"], flags=flags, clearing_mode=mode,
+        data.tree, "ABC10001AL", [new or NewAccount("NEW10001AL")], clearing_mode=mode,
         clearing_entries=data.clearing_entries, market_names=data.market_names,
     )  # fmt: skip
     tt.requests.clear()
-    return plan, data.clearing_field_ids
+    return plan
 
 
-def _run(tt: FakeTT, plan, field_ids, waits: list[float] | None = None):  # noqa: ANN001, ANN202
+def _run(tt: FakeTT, plan, waits: list[float] | None = None):  # noqa: ANN001, ANN202
     waits = [] if waits is None else waits
-    return run_plan(
-        plan, writer(tt), reader(tt), clearing_field_ids=field_ids, max_pages=20,
-        wait=waits.append,
-    )  # fmt: skip
+    return run_plan(plan, writer(tt), reader(tt), wait=waits.append)
 
 
 def test_clone_and_create_clearing_entries_with_the_new_name(tt: FakeTT) -> None:
-    plan, field_ids = _plan(tt, ClearingMode.NEW_NAME)
-    result = _run(tt, plan, field_ids)
+    plan = _plan(tt, ClearingMode.NEW_NAME)
+    result = _run(tt, plan)
     assert result.ok and result.created == {1: "5001"}
     query, body = tt.clones[0]
     assert body == {
         "sourceAccountId": 300, "accountName": "NEW10001AL",
         "cloneChildren": "False", "parentId": 200,
     }  # fmt: skip
-    assert query["orderTagDefaults"] == "false" and query["limits"] == "false"
+    assert {k: v for k, v in query.items() if k != "requestId"} == clone_params()
     assert query["requestId"].startswith("Lookout-CHANGEME--")
     [(kind, created)] = tt.otd_writes
     assert kind == "create" and len(created) == 5
@@ -207,34 +274,44 @@ def test_clone_and_create_clearing_entries_with_the_new_name(tt: FakeTT) -> None
     assert [r["Status"] for r in result.rows] == ["Created"] * 6
 
 
-def test_when_tt_copies_the_defaults_the_new_name_is_set_by_update(tt: FakeTT) -> None:
-    plan, field_ids = _plan(tt, ClearingMode.NEW_NAME, orderTagDefaults=True)
-    result = _run(tt, plan, field_ids)
-    assert result.ok, result.stopped
-    updates = [(path, body) for path, body in tt.otd_writes if path != "create"]
-    assert len(updates) == 5
-    assert all(body["value"] == "NEW10001AL" and body["accountId"] == 5001 for _, body in updates)
-    assert all(str(body["orderTagDefaultId"]) == path for path, body in updates)
-    assert [r["Status"] for r in result.rows] == ["Created"] + ["Updated"] * 5
-
-
-def test_when_tt_copies_the_defaults_the_source_value_needs_no_write(tt: FakeTT) -> None:
-    plan, field_ids = _plan(tt, ClearingMode.SOURCE, orderTagDefaults=True)
-    result = _run(tt, plan, field_ids)
-    assert result.ok and tt.otd_writes == []
-    assert [r["Status"] for r in result.rows] == ["Created"] + ["Copied by TT"] * 5
-
-
 def test_source_value_without_tt_copy_creates_the_entries(tt: FakeTT) -> None:
-    plan, field_ids = _plan(tt, ClearingMode.SOURCE)
-    _run(tt, plan, field_ids)
+    plan = _plan(tt, ClearingMode.SOURCE)
+    _run(tt, plan)
     [(_, created)] = tt.otd_writes
     assert sorted(e["value"] for e in created) == ["ABC10001"] * 4 + ["ABC99999"]
 
 
+def test_a_description_is_sent_with_the_clone_and_checked(tt: FakeTT) -> None:
+    plan = _plan(tt, ClearingMode.OFF, NewAccount("NEW10001AL", "Desk 1"))
+    result = _run(tt, plan)
+    assert result.ok and tt.clones[0][1]["description"] == "Desk 1"
+    assert [(r["What"], r["Status"]) for r in result.rows] == [
+        ("Account", "Created"), ("Description", "Set"),
+    ]  # fmt: skip
+    assert tt.paths("GET")[-1].endswith("/account/5001")
+
+
+def test_a_description_tt_drops_is_flagged_and_the_run_goes_on(tt: FakeTT) -> None:
+    tt.clone_keeps_description = False
+    data = read_source(reader(tt), "ABC10001AL", need_clearing=False, max_pages=20)
+    plan = build_plan(data.tree, "ABC10001AL", [NewAccount("N1", "D1"), NewAccount("N2")])
+    result = _run(tt, plan)
+    assert result.ok and result.created == {1: "5001", 2: "5002"}
+    assert result.rows[1]["Status"] == "Not kept by TT"
+    assert "set it by hand" in result.rows[1]["Detail"]
+    assert "description" not in tt.clones[1][1]
+
+
+def test_a_rows_clearing_value_is_created_on_the_new_account(tt: FakeTT) -> None:
+    plan = _plan(tt, ClearingMode.NEW_NAME, NewAccount("NEW10001AL", clearing="CLR9"))
+    _run(tt, plan)
+    [(_, created)] = tt.otd_writes
+    assert {(e["accountId"], e["value"]) for e in created} == {(5001, "CLR9")}
+
+
 def test_group_run_wires_each_new_parent(tt: FakeTT) -> None:
-    plan = build_plan(GROUP, "POD1", ["POD7", "POD8"])
-    result = _run(tt, plan, frozenset())
+    plan = build_plan(GROUP, "POD1", rows(["POD7", "POD8"]))
+    result = _run(tt, plan)
     assert result.ok
     bodies = [(b["accountName"], b.get("parentId")) for _, b in tt.clones]
     assert bodies == [
@@ -245,7 +322,7 @@ def test_group_run_wires_each_new_parent(tt: FakeTT) -> None:
 
 
 def test_a_failure_stops_the_run_and_says_what_was_not_done(tt: FakeTT) -> None:
-    plan = build_plan(GROUP, "POD1", ["POD7"])
+    plan = build_plan(GROUP, "POD1", rows(["POD7"]))
     calls = 0
 
     def fail_second_clone(request):  # noqa: ANN001, ANN202
@@ -259,7 +336,7 @@ def test_a_failure_stops_the_run_and_says_what_was_not_done(tt: FakeTT) -> None:
         return None
 
     tt.hook = fail_second_clone
-    result = _run(tt, plan, frozenset())
+    result = _run(tt, plan)
     assert not result.ok and "step 2 (POD7-A)" in result.stopped and "dup" in result.stopped
     assert [(r["New account"], r["Status"]) for r in result.rows] == [
         ("POD7", "Created"), ("POD7-A", "Failed"), ("X-POD7-A1", "Not run"), ("POD7-B", "Not run"),
@@ -268,14 +345,14 @@ def test_a_failure_stops_the_run_and_says_what_was_not_done(tt: FakeTT) -> None:
 
 
 def test_a_plan_with_errors_sends_nothing(tt: FakeTT) -> None:
-    result = _run(tt, build_plan(GROUP, "POD1", ["POD2"]), frozenset())
+    result = _run(tt, build_plan(GROUP, "POD1", rows(["POD2"])))
     assert not result.ok and tt.requests == []
 
 
 def test_write_log_records_the_run_without_secrets(tt: FakeTT, tmp_path: Path) -> None:
-    plan, field_ids = _plan(tt, ClearingMode.NEW_NAME)
+    plan = _plan(tt, ClearingMode.NEW_NAME)
     w, r = writer(tt), reader(tt)
-    result = run_plan(plan, w, r, clearing_field_ids=field_ids, max_pages=20)
+    result = run_plan(plan, w, r)
     path = write_log(tmp_path / "log", plan, result, [*r.calls, *w.calls],
                      now=datetime(2026, 11, 17, 9, 0))  # fmt: skip
     record = json.loads(path.read_text(encoding="utf-8"))
@@ -318,8 +395,8 @@ def test_no_id_is_guessed(reply: dict[str, Any]) -> None:
 
 def test_a_reply_without_an_id_is_looked_up_by_name_and_the_run_goes_on(tt: FakeTT) -> None:
     tt.clone_reply_has_id = False
-    plan = build_plan(GROUP, "POD2", ["POD7", "POD8"])
-    result = _run(tt, plan, frozenset())
+    plan = build_plan(GROUP, "POD2", rows(["POD7", "POD8"]))
+    result = _run(tt, plan)
     assert result.ok, result.stopped
     assert result.created == {1: "5001", 2: "5002"}
     assert "read from TT's accounts list" in result.rows[0]["Detail"]
@@ -335,7 +412,7 @@ def test_a_reply_without_an_id_and_no_such_account_stops_and_shows_the_reply(tt:
 
     tt.hook = bare_reply
     waits: list[float] = []
-    result = _run(tt, build_plan(GROUP, "POD2", ["POD7", "POD8"]), frozenset(), waits)
+    result = _run(tt, build_plan(GROUP, "POD2", rows(["POD7", "POD8"])), waits)
     assert not result.ok
     assert "may still have been created" in result.stopped
     assert '"note": "queued"' in result.stopped or "queued" in result.stopped

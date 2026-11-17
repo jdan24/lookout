@@ -13,7 +13,7 @@ user when you need them.
    the single token `POST` to `/ttid/<environment>/token`. This is enforced in
    `core/readonly_http.py`. **Never loosen the guard, never widen its allow-list,
    never add a write call.** If a task seems to need one, stop and ask the user.
-   The exception, added at the user's request: the Clone page may send the three
+   The exception, added at the user's request: the Clone page may send the two
    `POST`s listed in `core/write_http.py`, in `ext_uat_cert` only, through that
    module's own guard. **Never add Live, another path or another method to it
    without the user's explicit say-so.**
