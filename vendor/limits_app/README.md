@@ -4,8 +4,8 @@
 the `jdan24/limit_compare` repo, copied byte for byte from its `spa/dist/index.html`.
 Lookout's **Limits** page shows it, one tool per tab (`reports/limits.py`).
 
-- Source commit: `6089909` (Account limit upload: check a request against the
-  account's risk export and build the risk-tool upload).
+- Source commit: `20a8760` (Account limit upload: several Risk System Export files,
+  exchange aliases, renamed steps).
 - **Never edit `index.html` here.** Change the Limits repo instead.
 - Lookout's real-data check scans this file: the Limits app must keep client-derived
   names out of its labels, routes, storage keys and export file names.

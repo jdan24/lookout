@@ -81,16 +81,20 @@ tab:
 - **Risk and periodic audit**: a client's whole product universe against the limits
   in place (the risk system's exports), with the risk team's Excel review, approvals
   and the upload CSV back into the risk tool.
-- **Account limit upload**: paste a client's futures limits request and match each
-  row to a TT exchange and product symbol (copy it, or export CSV). Then load the
-  account's risk export (the CSV taken from the risk tool) and pick the account:
+- **Account limit upload**: paste the Client Limit Table and match each row to a TT
+  exchange and product symbol (copy it, or export CSV). Then drop the Risk System
+  Export (every file of the dataset, e.g. the CB and the non-CB markets file) and
+  pick the account:
   - the check flags limits that differ, products missing from the export (or Not
     Set there), products in the export that were not requested, and rows with no
     confirmed TT product (left out);
-  - **Export risk-tool upload** writes a CSV in the export's own layout for that
-    account, with only the changed and new products. Max Order goes to "Max order
-    quantity" and "Spreads: Max order quantity", Max Net to "Max position product
-    (net)".
+  - **Export risk-tool upload** writes one CSV per export file, each in that file's
+    own layout, with only the changed and new products for that account. A new
+    product goes to the file that already holds its exchange. Max Order goes to "Max
+    order quantity" and "Spreads: Max order quantity", Max Net to "Max position
+    product (net)".
+  - Exchanges are matched case-free, with CBOT / NYMEX / COMEX counted as CME and JPX
+    as OSE (TT's names).
 
 It is the app's compiled file, copied into `vendor/limits_app/index.html` and never
 edited here; `vendor/limits_app/README.md` says how to refresh it. It runs in the
