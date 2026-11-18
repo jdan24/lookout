@@ -37,9 +37,8 @@ since fixed; no full pull has completed yet.
   model, landing page with report discovery, Setup Verification (profile-driven rules:
   levels, Apply Limits / Restrictions, markets, naming, required users on the lowest
   level, Order Tag Defaults (only on markets that have limits), and
-  optional companion-account and legacy-group rules), Limit
-  Verification (ported from limit_compare, with parity tests in
-  `tests/fixtures/limit_compare/`), credential storage, Windows launcher, and the
+  optional companion-account and legacy-group rules), the Limits page (the Limits
+  app's Limit update and TT symbols tools), credential storage, Windows launcher, and the
   Clone page (UAT only; not yet run against TT UAT).
 - Pulling: the Setup Verification page has a "Pull a new snapshot from TT" panel. It
   needs stored credentials and a ticked confirmation, shows progress, and selects the
@@ -49,9 +48,7 @@ since fixed; no full pull has completed yet.
   `core/tt_client.py` (headers, token form fields; the `requestId` form
   `<app>-<company>--<guid>` came from TT's own reply on the first pull), the path
   `/ttaccount/ext_prod_live/account/{id}/users`, any `start_id` marked
-  `id_verified = false` in a profile; that TT's market names from `ttpds` match the
-  exchange names in TT's product list (e.g. `ICE_L`), which Limit Verification relies
-  on; and which `productTypeId` values besides 34 (Future) occur.
+  `id_verified = false` in a profile; and which `productTypeId` values besides 34 (Future) occur.
 
 ## Live and UAT
 
@@ -75,6 +72,22 @@ UAT needs its own profiles.
 
 Without a launcher (development), set the mode yourself before starting:
 `LOOKOUT_ENVIRONMENT=ext_uat_cert python -m streamlit run app.py`.
+
+## Limits
+
+The Limits page holds the two tools of the Limits app (`jdan24/limit_compare`), one per
+tab, working exactly as the stand-alone app does:
+
+- **Limit update**: a client's requested futures limits against the limits in
+  place (the risk system's exports), with the Excel reports, approvals and the
+  system-upload CSV.
+- **TT symbols**: paste a futures limits table, add TT exchange and product symbol, then copy
+  it or export CSV.
+
+It is the app's compiled file, copied into `vendor/limits_app/index.html` and never
+edited here; `vendor/limits_app/README.md` says how to refresh it. It runs in the
+browser only: no TT calls. Saved mappings and approvals live in the browser's storage
+for Lookout's address, so ones saved in the stand-alone file do not carry over.
 
 ## Clone (UAT only)
 

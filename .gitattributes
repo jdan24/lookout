@@ -1,1 +1,2 @@
 *.bat text eol=crlf
+vendor/limits_app/index.html -diff linguist-vendored

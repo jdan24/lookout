@@ -48,6 +48,7 @@ user when you need them.
 | `core/` | Generic logic: HTTP guard, TT client, snapshots, hierarchy, results. | **no** |
 | `checks/` | Generic check logic as pure functions (`checks/setup/`: profile-driven setup rules). | **no** |
 | `scripts/` | Launcher and one-time setup scripts. | no |
+| `vendor/` | Compiled files copied from sister projects (the Limits app). Never edit here; see each folder's README. | — |
 | `tests/` | pytest; `tests/fixtures/` for data. | — |
 
 - New reports go in `reports/` and follow the report contract (`TITLE`,
