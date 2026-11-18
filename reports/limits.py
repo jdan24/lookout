@@ -1,4 +1,4 @@
-"""Limits: the Limits app's two tools (Limit update and TT symbols), one per tab.
+"""Limits: the Limits app's two tools (Risk and periodic audit, Account limit upload), one per tab.
 
 The page shows the Limits app (``jdan24/limit_compare``) exactly as it is built there:
 a compiled, self-contained copy lives in ``vendor/limits_app/index.html`` and is never
@@ -16,14 +16,19 @@ import streamlit.components.v1 as components
 
 TITLE = "Limits"
 DESCRIPTION = (
-    "Limit update (requested vs current limits, with the Excel exports) and TT symbols "
-    "(add TT exchange and symbol to a limits table)."
+    "Risk and periodic audit: a client's product universe against the risk system's "
+    "limits, with the risk review and upload. Account limit upload: a client request "
+    "matched to TT products, checked against one account's risk export, with the "
+    "risk-tool upload CSV."
 )
 ICON = "📏"
 CATEGORY = "Limits"
 
 APP_FILE = Path(__file__).resolve().parent.parent / "vendor" / "limits_app" / "index.html"
-TOOLS: dict[str, str] = {"Limit update": "/limit-update", "TT symbols": "/tt-symbols"}
+TOOLS: dict[str, str] = {
+    "Risk and periodic audit": "/risk-audit",
+    "Account limit upload": "/account-upload",
+}
 FRAME_HEIGHT = 1600
 # Hides the app's "← Risk Tools" home link: each tab holds one tool.
 HIDE_HOME_LINK = '<style>header a[href="#/"] { display: none; }</style>'

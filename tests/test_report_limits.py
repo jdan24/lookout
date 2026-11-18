@@ -25,7 +25,7 @@ def test_the_vendored_app_is_the_self_contained_build() -> None:
     assert 'src="http' not in html and 'href="http' not in html  # nothing loaded from outside
 
 
-@pytest.mark.parametrize("route", ["/limit-update", "/tt-symbols"])
+@pytest.mark.parametrize("route", ["/risk-audit", "/account-upload"])
 def test_each_tab_opens_on_its_tool_without_the_home_link(route: str) -> None:
     html = limits.load_app()
     page = limits.app_for(html, route)
@@ -39,7 +39,7 @@ def test_the_page_shows_two_tabs() -> None:
     app = AppTest.from_string(SCRIPT, default_timeout=30)
     app.run()
     assert not app.exception, app.exception
-    assert [t.label for t in app.tabs] == ["Limit update", "TT symbols"]
+    assert [t.label for t in app.tabs] == ["Risk and periodic audit", "Account limit upload"]
 
 
 def test_a_missing_app_file_is_explained() -> None:

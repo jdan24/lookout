@@ -38,7 +38,7 @@ since fixed; no full pull has completed yet.
   levels, Apply Limits / Restrictions, markets, naming, required users on the lowest
   level, Order Tag Defaults (only on markets that have limits), and
   optional companion-account and legacy-group rules), the Limits page (the Limits
-  app's Limit update and TT symbols tools), credential storage, Windows launcher, and the
+  app's Risk and periodic audit and Account limit upload tools), credential storage, Windows launcher, and the
   Clone page (UAT only; not yet run against TT UAT).
 - Pulling: the Setup Verification page has a "Pull a new snapshot from TT" panel. It
   needs stored credentials and a ticked confirmation, shows progress, and selects the
@@ -76,18 +76,26 @@ Without a launcher (development), set the mode yourself before starting:
 ## Limits
 
 The Limits page holds the two tools of the Limits app (`jdan24/limit_compare`), one per
-tab, working exactly as the stand-alone app does:
+tab:
 
-- **Limit update**: a client's requested futures limits against the limits in
-  place (the risk system's exports), with the Excel reports, approvals and the
-  system-upload CSV.
-- **TT symbols**: paste a futures limits table, add TT exchange and product symbol, then copy
-  it or export CSV.
+- **Risk and periodic audit**: a client's whole product universe against the limits
+  in place (the risk system's exports), with the risk team's Excel review, approvals
+  and the upload CSV back into the risk tool.
+- **Account limit upload**: paste a client's futures limits request and match each
+  row to a TT exchange and product symbol (copy it, or export CSV). Then load the
+  account's risk export (the CSV taken from the risk tool) and pick the account:
+  - the check flags limits that differ, products missing from the export (or Not
+    Set there), products in the export that were not requested, and rows with no
+    confirmed TT product (left out);
+  - **Export risk-tool upload** writes a CSV in the export's own layout for that
+    account, with only the changed and new products. Max Order goes to "Max order
+    quantity" and "Spreads: Max order quantity", Max Net to "Max position product
+    (net)".
 
 It is the app's compiled file, copied into `vendor/limits_app/index.html` and never
 edited here; `vendor/limits_app/README.md` says how to refresh it. It runs in the
 browser only: no TT calls. Saved mappings and approvals live in the browser's storage
-for Lookout's address, so ones saved in the stand-alone file do not carry over.
+for Lookout's address; a loaded risk export is kept for the session only.
 
 ## Clone (UAT only)
 
