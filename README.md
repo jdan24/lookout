@@ -99,6 +99,10 @@ tab:
     and "Spreads: Max order quantity", Max Net to "Max position product (net)".
     Exchanges are matched case-free, with CBOT / NYMEX / COMEX counted as CME and JPX
     as OSE (TT's names).
+- **Sorting and filtering:** in both tables, click a header to sort (again to
+  reverse, a third time to clear) and use its ▾ to filter by value, as in Excel.
+  Copy table and Export Excel take the client table as shown; the risk-tool upload
+  is never filtered.
 - **Team lists:** mappings and unavailable products marked in the tab are kept in
   that user's browser. To share them with everyone, set `[limits] shared_folder` in
   each user's `config.toml` to a folder all users can read (single quotes for a

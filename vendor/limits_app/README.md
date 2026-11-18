@@ -4,8 +4,7 @@
 the `jdan24/limit_compare` repo, copied byte for byte from its `spa/dist/index.html`.
 Lookout's **Limits** page shows it, one tool per tab (`reports/limits.py`).
 
-- Source commit: `46840bc` (Account limit upload: team-wide mappings and
-  unavailable products).
+- Source commit: `7295463` (Account limit upload: sort and filter both tables).
 - **Never edit `index.html` here.** Change the Limits repo instead.
 - Lookout's real-data check scans this file: the Limits app must keep client-derived
   names out of its labels, routes, storage keys and export file names.
