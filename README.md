@@ -99,6 +99,16 @@ tab:
     and "Spreads: Max order quantity", Max Net to "Max position product (net)".
     Exchanges are matched case-free, with CBOT / NYMEX / COMEX counted as CME and JPX
     as OSE (TT's names).
+- **Team lists:** mappings and unavailable products marked in the tab are kept in
+  that user's browser. To share them with everyone, set `[limits] shared_folder` in
+  each user's `config.toml` to a folder all users can read (single quotes for a
+  network path: `shared_folder = '\\server\share\Lookout'`). On that PC, click
+  **Export mapping CSV** and **Export unavailable CSV** in the tab and put the two
+  files in the folder, named `tt_symbol_mappings.csv` and `unavailable_products.csv`.
+  - Lookout reads them (read only) once per session; **Reload team lists** reads them
+    again. Each user's own additions stay on top, and team items show as "shared".
+  - Both exports include the team items plus your own, so exporting and replacing
+    the files publishes your additions to everyone.
 - **Risk and periodic audit**: a client's whole product universe against the limits
   in place (the risk system's exports), with the risk team's Excel review, approvals
   and the upload CSV back into the risk tool.

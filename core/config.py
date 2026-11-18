@@ -71,7 +71,7 @@ class TTSettings(_Section):
 
     @property
     def mode(self) -> str:
-        """"LIVE" or "UAT", as shown to the user."""
+        """ "LIVE" or "UAT", as shown to the user."""
         return MODE_NAMES[self.environment]
 
 
@@ -98,11 +98,25 @@ class ClientSettings(_Section):
         return _folder(self.directory, "clients", environment)
 
 
+class LimitsSettings(_Section):
+    # Folder holding the team's shared lists for the Limits page:
+    # tt_symbol_mappings.csv and unavailable_products.csv. Empty = no team lists.
+    # Lookout only reads it.
+    shared_folder: str = ""
+
+    @property
+    def shared_path(self) -> Path | None:
+        """The shared folder (environment variables and ~ expanded), or None when unset."""
+        text = self.shared_folder.strip()
+        return Path(os.path.expandvars(text)).expanduser() if text else None
+
+
 class AppConfig(_Section):
     tt: TTSettings = TTSettings()
     pacing: PacingSettings = PacingSettings()
     snapshots: SnapshotSettings = SnapshotSettings()
     clients: ClientSettings = ClientSettings()
+    limits: LimitsSettings = LimitsSettings()
 
     @property
     def snapshot_dir(self) -> Path:
