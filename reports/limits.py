@@ -12,14 +12,13 @@ import json
 from pathlib import Path
 
 import streamlit as st
-import streamlit.components.v1 as components
 
 TITLE = "Limits"
 DESCRIPTION = (
     "Risk and periodic audit: a client's product universe against the risk system's "
     "limits, with the risk review and upload. Account limit upload: a client request "
-    "matched to TT products, checked against one account's risk export, with the "
-    "risk-tool upload CSV."
+    "matched to TT products, checked against the Risk System Export (one or more "
+    "files), with the risk-tool upload CSVs."
 )
 ICON = "📏"
 CATEGORY = "Limits"
@@ -62,4 +61,4 @@ def render() -> None:
         return
     for tab, route in zip(st.tabs(list(TOOLS)), TOOLS.values(), strict=True):
         with tab:
-            components.html(app_for(html, route), height=FRAME_HEIGHT, scrolling=True)
+            st.iframe(app_for(html, route), height=FRAME_HEIGHT)
