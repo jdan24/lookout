@@ -39,7 +39,7 @@ def test_the_page_shows_two_tabs() -> None:
     app = AppTest.from_string(SCRIPT, default_timeout=30)
     app.run()
     assert not app.exception, app.exception
-    assert [t.label for t in app.tabs] == ["Risk and periodic audit", "Account limit upload"]
+    assert [t.label for t in app.tabs] == ["Account limit upload", "Risk and periodic audit"]
 
 
 def test_a_missing_app_file_is_explained() -> None:

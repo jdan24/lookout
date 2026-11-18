@@ -1,4 +1,4 @@
-"""Limits: the Limits app's two tools (Risk and periodic audit, Account limit upload), one per tab.
+"""Limits: the Limits app's two tools (Account limit upload, Risk and periodic audit), one per tab.
 
 The page shows the Limits app (``jdan24/limit_compare``) exactly as it is built there:
 a compiled, self-contained copy lives in ``vendor/limits_app/index.html`` and is never
@@ -15,18 +15,18 @@ import streamlit as st
 
 TITLE = "Limits"
 DESCRIPTION = (
-    "Risk and periodic audit: a client's product universe against the risk system's "
-    "limits, with the risk review and upload. Account limit upload: a client request "
-    "matched to TT products, checked against the Risk System Export (one or more "
-    "files), with the risk-tool upload CSVs."
+    "Account limit upload: a client limit table matched to TT products (unavailable "
+    "products greyed out), checked against the Risk System Export, with the risk-tool "
+    "upload CSVs. Risk and periodic audit: a client's product universe against the "
+    "risk system's limits, with the risk review and upload."
 )
 ICON = "📏"
 CATEGORY = "Limits"
 
 APP_FILE = Path(__file__).resolve().parent.parent / "vendor" / "limits_app" / "index.html"
 TOOLS: dict[str, str] = {
-    "Risk and periodic audit": "/risk-audit",
     "Account limit upload": "/account-upload",
+    "Risk and periodic audit": "/risk-audit",
 }
 FRAME_HEIGHT = 1600
 # Hides the app's "← Risk Tools" home link: each tab holds one tool.

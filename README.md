@@ -38,7 +38,7 @@ since fixed; no full pull has completed yet.
   levels, Apply Limits / Restrictions, markets, naming, required users on the lowest
   level, Order Tag Defaults (only on markets that have limits), and
   optional companion-account and legacy-group rules), the Limits page (the Limits
-  app's Risk and periodic audit and Account limit upload tools), credential storage, Windows launcher, and the
+  app's Account limit upload and Risk and periodic audit tools), credential storage, Windows launcher, and the
   Clone page (UAT only; not yet run against TT UAT).
 - Pulling: the Setup Verification page has a "Pull a new snapshot from TT" panel. It
   needs stored credentials and a ticked confirmation, shows progress, and selects the
@@ -78,25 +78,30 @@ Without a launcher (development), set the mode yourself before starting:
 The Limits page holds the two tools of the Limits app (`jdan24/limit_compare`), one per
 tab:
 
+- **Account limit upload**: paste the Client Limit Table and match each row to a TT
+  exchange and product symbol. The result, "Client Limit Table with TT Symbols", can
+  be copied (for Excel / Outlook) or exported as an Excel file.
+  - **Unavailable products:** TT products clients ask for that we don't offer. Mark
+    them from the table ("mark unavailable") or import a CSV (`TT Exchange,TT Product
+    Symbol`); the list is kept in the browser and can be exported. They are greyed
+    and struck through on screen, in Copy table and in the Excel export, and are never
+    uploaded.
+  - Then drop the Risk System Export: every file for the account (e.g. the CB and the
+    non-CB markets file). The risk system splits one account across several
+    IsvTeNames, so every loaded row is checked as that one account. The check flags
+    limits that differ, products missing from the export (or Not Set there),
+    products under more than one IsvTeName (conflict, never uploaded), unavailable
+    products, products in the export that were not requested, and rows with no
+    confirmed TT product (left out).
+  - **Export risk-tool upload** writes one CSV per IsvTeName, in the layout of its
+    file, with only the changed and new products. A new product goes to the
+    IsvTeName that already has its exchange. Max Order goes to "Max order quantity"
+    and "Spreads: Max order quantity", Max Net to "Max position product (net)".
+    Exchanges are matched case-free, with CBOT / NYMEX / COMEX counted as CME and JPX
+    as OSE (TT's names).
 - **Risk and periodic audit**: a client's whole product universe against the limits
   in place (the risk system's exports), with the risk team's Excel review, approvals
   and the upload CSV back into the risk tool.
-- **Account limit upload**: paste the Client Limit Table and match each row to a TT
-  exchange and product symbol (copy it, or export CSV). Then drop the Risk System
-  Export: every file for the account (e.g. the CB and the non-CB markets file). The
-  risk system splits one account across several IsvTeNames, so every loaded row is
-  checked as that one account:
-  - the check flags limits that differ, products missing from the export (or Not
-    Set there), products under more than one IsvTeName (conflict, never uploaded),
-    products in the export that were not requested, and rows with no confirmed TT
-    product (left out);
-  - **Export risk-tool upload** writes one CSV per IsvTeName, in the layout of its
-    file, with only the changed and new products. A new product goes to the
-    IsvTeName that already has its exchange. Max Order goes to "Max
-    order quantity" and "Spreads: Max order quantity", Max Net to "Max position
-    product (net)".
-  - Exchanges are matched case-free, with CBOT / NYMEX / COMEX counted as CME and JPX
-    as OSE (TT's names).
 
 It is the app's compiled file, copied into `vendor/limits_app/index.html` and never
 edited here; `vendor/limits_app/README.md` says how to refresh it. It runs in the
