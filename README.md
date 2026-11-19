@@ -88,7 +88,8 @@ tab:
     with `CB-` in front. The files use the risk export's layout (Header = Data,
     IsvInstance = TTRest01, IsvTeType = Account, margin 100%, trading allowed).
     Unavailable products, products without a confirmed TT match and repeats are left
-    out.
+    out. The IsvTeName column is the table's first column, and Copy table and Export
+    Excel include it.
   - **Unavailable products:** TT products clients ask for that we don't offer. Mark
     them from the table ("mark unavailable") or import a CSV (`TT Exchange,TT Product
     Symbol`); the list is kept in the browser and can be exported. They are greyed
@@ -107,6 +108,12 @@ tab:
     and "Spreads: Max order quantity", Max Net to "Max position product (net)".
     Exchanges are matched case-free, with CBOT / NYMEX / COMEX counted as CME and JPX
     as OSE (TT's names).
+  - **Both risk-system uploads** (new setup and account upload) use the column names
+    "Max long position (gross)" / "Max short position (gross)" (renamed from "... per
+    contract" when a loaded export still has the old names), and set four columns on
+    every row, added at the end when missing: Wholesale Spreads: Max order quantity
+    and Wholesale: Max order quantity = Not Set; Wholesale Spreads: Trading allowed
+    and Wholesale: Trading allowed = FALSE.
 - **Sorting and filtering:** in both tables, click a header to sort (again to
   reverse, a third time to clear) and use its ▾ to filter by value, as in Excel.
   Copy table and Export Excel take the client table as shown; the risk-tool upload
