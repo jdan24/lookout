@@ -86,7 +86,7 @@ tab:
     CME, Eurex, ICE, ICE_L, FMX and MIAX_FUT_CH go in `Risk_Upload_<IsvTeName>_<date>.csv`
     with that IsvTeName; every other exchange goes in `Risk_Upload_CB-<IsvTeName>_<date>.csv`
     with `CB-` in front. The files use the risk export's layout (Header = Data,
-    IsvInstance = TTRest01, IsvTeType = Account, margin 100%, trading allowed).
+    IsvInstance = TTRest01, IsvTeType = Account, margin 100%, trading allowed True).
     Unavailable products, products without a confirmed TT match and repeats are left
     out. The IsvTeName column is the table's first column, and Copy table and Export
     Excel include it.
@@ -111,9 +111,10 @@ tab:
   - **Both risk-system uploads** (new setup and account upload) use the column names
     "Max long position (gross)" / "Max short position (gross)" (renamed from "... per
     contract" when a loaded export still has the old names), and set four columns on
-    every row, added at the end when missing: Wholesale Spreads: Max order quantity
-    and Wholesale: Max order quantity = Not Set; Wholesale Spreads: Trading allowed
-    and Wholesale: Trading allowed = FALSE.
+    every row as the last four columns, in this order: Wholesale Spreads: Max order
+    quantity (Not Set), Wholesale Spreads: Trading allowed (False), Wholesale: Max
+    order quantity (Not Set), Wholesale: Trading allowed (False). Every true/false
+    value in these files is written True / False.
 - **Sorting and filtering:** in both tables, click a header to sort (again to
   reverse, a third time to clear) and use its ▾ to filter by value, as in Excel.
   Copy table and Export Excel take the client table as shown; the risk-tool upload
