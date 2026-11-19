@@ -29,8 +29,9 @@ directory = ""
 # exported from that tab) and tt_exchange_products.csv (TT's product list, as
 # downloaded from TT). Use single quotes so the backslashes stay as typed, e.g.
 #   shared_folder = '\\server\share\Lookout'
-# Empty = no team lists. Lookout only reads this folder; to update the lists, export
-# them from the tab and replace the files there.
+# Empty = no team lists. Lookout reads this folder; the only thing it ever writes
+# there is tt_symbol_mappings.csv (keeping the previous version in history/), when a
+# user clicks "commit to team" in Saved mappings. That needs write access to the folder.
 shared_folder = ""
 
 [clients]

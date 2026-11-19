@@ -10,6 +10,7 @@ import streamlit as st_module
 from streamlit.testing.v1 import AppTest
 
 import core.config as app_config
+from core import team_lists
 from core.config import AppConfig
 from reports import limits
 from ui.discovery import REPORTS_DIR, discover_reports
@@ -78,7 +79,7 @@ def test_read_shared_tolerates_missing_files_and_folders(tmp_path: Path) -> None
 
 
 def test_read_shared_skips_a_huge_file(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setattr(limits, "MAX_SHARED_BYTES", 10)
+    monkeypatch.setattr(team_lists, "MAX_SHARED_BYTES", 10)
     (tmp_path / limits.MAPPINGS_FILE).write_text(MAPPINGS, encoding="utf-8")
     shared = limits.read_shared(tmp_path)
     assert shared.mappings_csv is None and "too large" in shared.problems[0]
@@ -95,6 +96,7 @@ def test_team_lists_go_in_before_the_app_and_cannot_close_the_script() -> None:
         script.removeprefix("<script>window.__LIMITS_SHARED__ = ").removesuffix(";</script>")
     )
     assert payload == {
+        "commitToken": None,
         "mappingsCsv": shared.mappings_csv,
         "unavailableCsv": None,
         "ttCsv": None,
@@ -141,7 +143,7 @@ TT_CSV = (
 
 
 def test_futures_only_keeps_futures_and_the_needed_columns() -> None:
-    text, count = limits.futures_only(TT_CSV)
+    text, count = team_lists.futures_only(TT_CSV)
     assert count == 2
     assert text.splitlines() == [
         "Exchange,Product Name,Product Symbol,Alternate Symbol,Product Type",
@@ -149,7 +151,7 @@ def test_futures_only_keeps_futures_and_the_needed_columns() -> None:
         'ICE_L,"Long Gilt, Future",R,,Future',
     ]
     with pytest.raises(ValueError, match="not TT's product list"):
-        limits.futures_only("a,b\r\n1,2\r\n")
+        team_lists.futures_only("a,b\r\n1,2\r\n")
 
 
 def test_read_shared_reads_the_tt_file(tmp_path: Path) -> None:

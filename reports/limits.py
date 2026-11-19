@@ -15,16 +15,22 @@ them again.
 
 from __future__ import annotations
 
-import csv
-import io
 import json
-from dataclasses import dataclass, field
-from datetime import datetime
+import secrets
 from pathlib import Path
 
 import streamlit as st
 
 import core.config as app_config
+from core.team_lists import (
+    MAPPINGS_FILE,
+    TT_FILE,
+    UNAVAILABLE_FILE,
+    CommitError,
+    SharedLists,
+    commit_mappings,
+    read_shared,
+)
 
 TITLE = "Limits"
 DESCRIPTION = (
@@ -47,107 +53,58 @@ FRAME_HEIGHT = 1600
 HIDE_HOME_LINK = '<style>header a[href="#/"] { display: none; }</style>'
 
 
-MAPPINGS_FILE = "tt_symbol_mappings.csv"
-UNAVAILABLE_FILE = "unavailable_products.csv"
-TT_FILE = "tt_exchange_products.csv"
-MAX_SHARED_BYTES = 5_000_000  # a team list is a few KB; refuse anything absurd
-MAX_TT_BYTES = 300_000_000  # TT's full product list is tens of MB
-# Columns of TT's ExchangeProducts CSV that the app uses; only these are passed on.
-TT_COLUMNS = ("Exchange", "Product Name", "Product Symbol", "Alternate Symbol", "Product Type")
 SHARED_KEY = "lim_shared"
 
 
-@dataclass(frozen=True)
-class SharedLists:
-    """The team's lists as CSV text (None when a file is absent), and any problems."""
-
-    folder: str = ""
-    mappings_csv: str | None = None
-    unavailable_csv: str | None = None
-    problems: tuple[str, ...] = field(default_factory=tuple)
-    # TT's product list, cut down to futures, with its file's last-modified time (ISO).
-    tt_csv: str | None = None
-    tt_modified: str | None = None
-    tt_futures: int = 0
-
-
-def futures_only(text: str) -> tuple[str, int]:
-    """TT's ExchangeProducts CSV cut down to its futures and the columns the app uses.
-
-    Raises ValueError when the file is not TT's product list.
-    """
-    reader = csv.DictReader(io.StringIO(text.lstrip("\ufeff")))
-    fields = [f.strip() for f in reader.fieldnames or []]
-    missing = [c for c in ("Exchange", "Product Symbol", "Product Type") if c not in fields]
-    if missing:
-        raise ValueError(f"not TT's product list (no {', '.join(missing)} column)")
-    out = io.StringIO()
-    writer = csv.writer(out, lineterminator="\r\n")
-    writer.writerow(TT_COLUMNS)
-    count = 0
-    for row in reader:
-        clean = {(k or "").strip(): (v or "").strip() for k, v in row.items() if isinstance(v, str)}
-        if clean.get("Product Type") != "Future" or clean.get("Exchange", "").endswith("_Delayed"):
-            continue
-        writer.writerow([clean.get(c, "") for c in TT_COLUMNS])
-        count += 1
-    return out.getvalue(), count
-
-
-def read_shared(folder: Path | None) -> SharedLists:
-    """Read the two team files from ``folder``. A missing file is fine; never raises."""
-    if folder is None:
-        return SharedLists()
-    if not folder.is_dir():
-        return SharedLists(
-            str(folder), problems=(f"The team lists folder {folder} can't be reached.",)
-        )
-    texts: dict[str, str | None] = {}
-    problems: list[str] = []
-    for name in (MAPPINGS_FILE, UNAVAILABLE_FILE):
-        path = folder / name
-        texts[name] = None
-        try:
-            if not path.is_file():
-                continue
-            if path.stat().st_size > MAX_SHARED_BYTES:
-                problems.append(f"{path} is too large to be a team list; it was skipped.")
-                continue
-            texts[name] = path.read_bytes().decode("utf-8-sig", errors="replace")
-        except OSError as exc:
-            problems.append(f"Could not read {path}: {exc}")
-    tt_csv, tt_modified, tt_futures = None, None, 0
-    tt_path = folder / TT_FILE
-    try:
-        if tt_path.is_file():
-            stat = tt_path.stat()
-            if stat.st_size > MAX_TT_BYTES:
-                problems.append(f"{tt_path} is too large to be TT's product list; it was skipped.")
-            else:
-                text = tt_path.read_bytes().decode("utf-8-sig", errors="replace")
-                tt_csv, tt_futures = futures_only(text)
-                tt_modified = datetime.fromtimestamp(stat.st_mtime).astimezone().isoformat()
-    except (OSError, ValueError, csv.Error) as exc:
-        tt_csv = None
-        problems.append(f"Could not use {tt_path}: {exc}")
-    return SharedLists(
-        str(folder),
-        texts[MAPPINGS_FILE],
-        texts[UNAVAILABLE_FILE],
-        tuple(problems),
-        tt_csv,
-        tt_modified,
-        tt_futures,
-    )
+# Commit from the app to the team mapping file. The app (inside its frame) posts a
+# message to this page; a small bridge component passes it to Python, which writes
+# the file and hands an answer back to the frame. The token is this session's own, so
+# only the frames this page made can ask for a commit.
+COMMIT_MESSAGE = "lookout-limits/commit-mappings"
+ACK_MESSAGE = "lookout-limits/ack"
+TOKEN_KEY = "lim_commit_token"
+ACK_KEY = "lim_commit_ack"
+BRIDGE_JS = """
+export default function (component) {
+  const { data, setTriggerValue } = component;
+  const w = window;
+  w.__lookoutLimits = w.__lookoutLimits || {};
+  const b = w.__lookoutLimits;
+  b.token = data.token;
+  b.send = setTriggerValue;
+  if (!b.listening) {
+    b.listening = true;
+    w.addEventListener("message", (e) => {
+      const m = e.data;
+      if (e.origin !== w.location.origin || !m) return;
+      if (m.type !== "lookout-limits/commit-mappings") return;
+      if (!b.token || m.token !== b.token) return;
+      b.send("commit", JSON.stringify({ id: m.id, token: m.token, mappings: m.mappings }));
+    });
+  }
+  const ack = data.ack;
+  if (ack && ack.id !== b.ackId) {
+    b.ackId = ack.id;
+    for (const f of document.querySelectorAll("iframe")) {
+      const msg = { type: "lookout-limits/ack", ...ack };
+      if (f.contentWindow) f.contentWindow.postMessage(msg, w.location.origin);
+    }
+  }
+}
+"""
+assert COMMIT_MESSAGE in BRIDGE_JS and ACK_MESSAGE in BRIDGE_JS
+_bridge = st.components.v2.component("lookout.limits_bridge", js=BRIDGE_JS)
 
 
-def shared_script(shared: SharedLists) -> str:
-    """The script that hands the team lists to the app (``window.__LIMITS_SHARED__``).
+def shared_script(shared: SharedLists, token: str | None = None) -> str:
+    """The script that hands the team lists to the app (``window.__LIMITS_SHARED__``),
+    and the commit token when committing to the team mapping file is possible.
 
     JSON is written so that no text in the files can close the script element.
     """
     payload = json.dumps(
         {
+            "commitToken": token,
             "mappingsCsv": shared.mappings_csv,
             "unavailableCsv": shared.unavailable_csv,
             "ttCsv": shared.tt_csv,
@@ -164,12 +121,14 @@ def load_app(path: Path = APP_FILE) -> str:
     return path.read_text(encoding="utf-8")
 
 
-def app_for(html: str, route: str, shared: SharedLists | None = None) -> str:
+def app_for(
+    html: str, route: str, shared: SharedLists | None = None, token: str | None = None
+) -> str:
     """The app opening on ``route`` (and given the team lists, if any): both are set
     before the app's own script runs."""
     snippet = f"<script>window.location.hash = {json.dumps(route)};</script>{HIDE_HOME_LINK}"
     if shared is not None and shared.folder:
-        snippet = shared_script(shared) + snippet
+        snippet = shared_script(shared, token) + snippet
     head = html.find("<head>")
     if head < 0:
         raise ValueError("The Limits app file has no <head>; restore it from the Limits repo.")
@@ -189,11 +148,54 @@ def render() -> None:
         )
         return
     shared = _team_lists()
+    token = _commit_bridge(shared) if shared.folder else None
     for tab, route in zip(st.tabs(list(TOOLS)), TOOLS.values(), strict=True):
         with tab:
             # Only Account limit upload uses the team lists (and the TT list is large).
             team = shared if route == ACCOUNT_UPLOAD_ROUTE else None
-            st.iframe(app_for(html, route, team), height=FRAME_HEIGHT)
+            st.iframe(app_for(html, route, team, token if team else None), height=FRAME_HEIGHT)
+
+
+def _commit_bridge(shared: SharedLists) -> str:
+    """Mount the bridge, carry out a commit the app asked for, and return the token.
+
+    The frames are not rebuilt after a commit (the team lists stay as read), so
+    nothing loaded in the app is lost; the app updates itself from the answer.
+    """
+    token = st.session_state.setdefault(TOKEN_KEY, secrets.token_urlsafe(24))
+    result = _bridge(
+        key="lim_bridge",
+        data={"token": token, "ack": st.session_state.get(ACK_KEY)},
+        on_commit_change=lambda: None,
+    )
+    asked = getattr(result, "commit", None)
+    if asked:
+        st.session_state[ACK_KEY] = handle_commit(asked, token, Path(shared.folder))
+        st.rerun()
+    return token
+
+
+def handle_commit(message: str, token: str, folder: Path) -> dict[str, object]:
+    """Carry out one commit request from the app; the answer it gets back."""
+    try:
+        request = json.loads(message)
+    except ValueError:
+        return {"id": None, "ok": False, "message": "The commit request could not be read."}
+    request_id = request.get("id") if isinstance(request, dict) else None
+    if not isinstance(request, dict) or request.get("token") != token:
+        return {"id": request_id, "ok": False, "message": "The commit request was refused."}
+    try:
+        done = commit_mappings(folder, request.get("mappings"))
+    except CommitError as exc:
+        return {"id": request_id, "ok": False, "message": str(exc)}
+    if not done.added and not done.changed:
+        text = "The team file already had these mappings; nothing changed."
+    else:
+        text = (
+            f"Saved to the team file: {done.added} added, {done.changed} changed "
+            f"({done.total} mappings in it now)."
+        )
+    return {"id": request_id, "ok": True, "message": text, "committed": request.get("mappings")}
 
 
 def _team_lists() -> SharedLists:
@@ -202,7 +204,7 @@ def _team_lists() -> SharedLists:
     if folder is None:
         return SharedLists()
     cached: SharedLists | None = st.session_state.get(SHARED_KEY)
-    left, right = st.columns([5, 1])
+    left, right = st.columns([3, 1])
     if (
         right.button("Reload team lists", key="lim_reload")
         or cached is None

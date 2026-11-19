@@ -122,10 +122,18 @@ tab:
   network path: `shared_folder = '\\server\share\Lookout'`). On that PC, click
   **Export mapping CSV** and **Export unavailable CSV** in the tab and put the two
   files in the folder, named `tt_symbol_mappings.csv` and `unavailable_products.csv`.
-  - Lookout reads them (read only) once per session; **Reload team lists** reads them
-    again. Each user's own additions stay on top, and team items show as "shared".
-  - Both exports include the team items plus your own, so exporting and replacing
-    the files publishes your additions to everyone.
+  - Lookout reads them once per session; **Reload team lists** reads them again. Each
+    user's own additions stay on top, and team items show as "shared".
+  - **Saved mappings** shows two lists: *Team mappings* (from the shared file) and
+    *Your mappings* (saved in this browser only, with a note when one overrides a team
+    mapping). **commit to team** (one mapping) or **Commit all to the team file** saves
+    them into `tt_symbol_mappings.csv` on the share, so every user gets them. This
+    needs write access to the folder. Lookout merges them into the current file
+    (yours replace a team mapping for the same RIC root and exchange) under a lock
+    file, so two users can't overwrite each other, and keeps the previous version in
+    `history/` (last 30). This is the only file Lookout ever writes in that folder.
+  - Unavailable products are still shared by exporting them and replacing
+    `unavailable_products.csv`.
 - **Risk and periodic audit**: a client's whole product universe against the limits
   in place (the risk system's exports), with the risk team's Excel review, approvals
   and the upload CSV back into the risk tool.
