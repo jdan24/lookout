@@ -81,6 +81,14 @@ tab:
 - **Account limit upload**: paste the Client Limit Table and match each row to a TT
   exchange and product symbol. The result, "Client Limit Table with TT Symbols", can
   be copied (for Excel / Outlook) or exported as an Excel file.
+  - **New setup (no risk system export yet):** type the IsvTeName once in the table's
+    IsvTeName column and click **Export to risk system (new setup)**. Products on CFE,
+    CME, Eurex, ICE, ICE_L, FMX and MIAX_FUT_CH go in `Risk_Upload_<IsvTeName>_<date>.csv`
+    with that IsvTeName; every other exchange goes in `Risk_Upload_CB-<IsvTeName>_<date>.csv`
+    with `CB-` in front. The files use the risk export's layout (Header = Data,
+    IsvInstance = TTRest01, IsvTeType = Account, margin 100%, trading allowed).
+    Unavailable products, products without a confirmed TT match and repeats are left
+    out.
   - **Unavailable products:** TT products clients ask for that we don't offer. Mark
     them from the table ("mark unavailable") or import a CSV (`TT Exchange,TT Product
     Symbol`); the list is kept in the browser and can be exported. They are greyed
@@ -103,8 +111,13 @@ tab:
   reverse, a third time to clear) and use its ▾ to filter by value, as in Excel.
   Copy table and Export Excel take the client table as shown; the risk-tool upload
   is never filtered.
-- **Team lists:** mappings and unavailable products marked in the tab are kept in
-  that user's browser. To share them with everyone, set `[limits] shared_folder` in
+- **Team lists:** the TT product list, symbol mappings and unavailable products can
+  come from a shared folder, so every user starts with the same ones. A banner at
+  the top of the tab says which team lists are in use. Put TT's product list there as
+  `tt_exchange_products.csv` (as downloaded from TT; Lookout keeps only the futures).
+  A user can still drop their own TT file, which wins in their browser until they
+  click "Use the team list". Mappings and unavailable products marked in the tab are
+  kept in that user's browser. To share them with everyone, set `[limits] shared_folder` in
   each user's `config.toml` to a folder all users can read (single quotes for a
   network path: `shared_folder = '\\server\share\Lookout'`). On that PC, click
   **Export mapping CSV** and **Export unavailable CSV** in the tab and put the two

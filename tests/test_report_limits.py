@@ -6,6 +6,7 @@ import json
 from pathlib import Path
 
 import pytest
+import streamlit as st_module
 from streamlit.testing.v1 import AppTest
 
 import core.config as app_config
@@ -96,6 +97,9 @@ def test_team_lists_go_in_before_the_app_and_cannot_close_the_script() -> None:
     assert payload == {
         "mappingsCsv": shared.mappings_csv,
         "unavailableCsv": None,
+        "ttCsv": None,
+        "ttFile": None,
+        "ttModified": None,
         "source": "X:/team",
     }
     assert limits.app_for(html, "/account-upload", limits.SharedLists()) == limits.app_for(
@@ -125,3 +129,56 @@ def test_no_team_folder_means_no_team_line(monkeypatch: pytest.MonkeyPatch) -> N
     app = AppTest.from_string(SCRIPT, default_timeout=30)
     app.run()
     assert not any("Team lists from" in c.value for c in app.caption) and not app.button
+
+
+TT_CSV = (
+    "﻿Exchange,Product Name,Product Symbol,Alternate Symbol,Product Type,Asset Class\r\n"
+    "CME,10-Year T-Note Futures,ZN,,Future,Interest Rate\r\n"
+    "CME,Options on ZN,OZN,,Option,Interest Rate\r\n"
+    "CME_Delayed,10-Year T-Note Futures,ZN,,Future,Interest Rate\r\n"
+    'ICE_L,"Long Gilt, Future",R,,Future,Interest Rate\r\n'
+)
+
+
+def test_futures_only_keeps_futures_and_the_needed_columns() -> None:
+    text, count = limits.futures_only(TT_CSV)
+    assert count == 2
+    assert text.splitlines() == [
+        "Exchange,Product Name,Product Symbol,Alternate Symbol,Product Type",
+        "CME,10-Year T-Note Futures,ZN,,Future",
+        'ICE_L,"Long Gilt, Future",R,,Future',
+    ]
+    with pytest.raises(ValueError, match="not TT's product list"):
+        limits.futures_only("a,b\r\n1,2\r\n")
+
+
+def test_read_shared_reads_the_tt_file(tmp_path: Path) -> None:
+    (tmp_path / limits.TT_FILE).write_text(TT_CSV, encoding="utf-8")
+    shared = limits.read_shared(tmp_path)
+    assert shared.tt_futures == 2 and shared.tt_csv and "OZN" not in shared.tt_csv
+    assert shared.tt_modified and shared.problems == ()
+    payload = limits.shared_script(shared)
+    assert '"ttFile": "tt_exchange_products.csv"' in payload
+
+
+def test_a_wrong_tt_file_is_reported(tmp_path: Path) -> None:
+    (tmp_path / limits.TT_FILE).write_text("a,b\r\n1,2\r\n", encoding="utf-8")
+    shared = limits.read_shared(tmp_path)
+    assert shared.tt_csv is None and "not TT's product list" in shared.problems[0]
+
+
+def test_only_the_upload_tab_gets_the_team_lists(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    (tmp_path / limits.TT_FILE).write_text(TT_CSV, encoding="utf-8")
+    with_config(monkeypatch, shared_folder=str(tmp_path))
+    sent: list[str] = []
+    monkeypatch.setattr(st_module, "iframe", lambda src, **_: sent.append(src))
+    app = AppTest.from_string(SCRIPT, default_timeout=30)
+    app.run()
+    assert not app.exception, app.exception
+    assert len(sent) == 2
+    injected = "window.__LIMITS_SHARED__ = "
+    assert injected in sent[0] and injected not in sent[1]
+    caption = next(c.value for c in app.caption if "Team lists from" in c.value)
+    assert "tt_exchange_products.csv (2 futures)" in caption

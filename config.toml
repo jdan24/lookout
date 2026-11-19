@@ -25,8 +25,9 @@ directory = ""
 
 [limits]
 # Team-wide lists for the Limits page's Account limit upload tab: a folder every user
-# can reach holding tt_symbol_mappings.csv and unavailable_products.csv, exactly as
-# exported from that tab. Use single quotes so the backslashes stay as typed, e.g.
+# can reach holding tt_symbol_mappings.csv and unavailable_products.csv (exactly as
+# exported from that tab) and tt_exchange_products.csv (TT's product list, as
+# downloaded from TT). Use single quotes so the backslashes stay as typed, e.g.
 #   shared_folder = '\\server\share\Lookout'
 # Empty = no team lists. Lookout only reads this folder; to update the lists, export
 # them from the tab and replace the files there.

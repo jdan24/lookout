@@ -6,15 +6,20 @@ edited here (see that folder's README to refresh it). Each tab loads the app str
 on its own tool. The app runs in the browser only: no TT calls, nothing sent anywhere.
 
 Team lists: when ``[limits] shared_folder`` is set in ``config.toml``, the page reads
-``tt_symbol_mappings.csv`` and ``unavailable_products.csv`` from it (read only) and hands
-them to the app, which uses them under each user's own saved mappings and unavailable
-products. They are read once per session; "Reload team lists" reads them again.
+``tt_symbol_mappings.csv``, ``unavailable_products.csv`` and ``tt_exchange_products.csv``
+(TT's product list, cut down here to futures) from it (read only) and hands them to the
+Account limit upload tab. Each user's own saved mappings, unavailable products and
+dropped TT file sit on top. They are read once per session; "Reload team lists" reads
+them again.
 """
 
 from __future__ import annotations
 
+import csv
+import io
 import json
 from dataclasses import dataclass, field
+from datetime import datetime
 from pathlib import Path
 
 import streamlit as st
@@ -32,6 +37,7 @@ ICON = "📏"
 CATEGORY = "Limits"
 
 APP_FILE = Path(__file__).resolve().parent.parent / "vendor" / "limits_app" / "index.html"
+ACCOUNT_UPLOAD_ROUTE = "/account-upload"
 TOOLS: dict[str, str] = {
     "Account limit upload": "/account-upload",
     "Risk and periodic audit": "/risk-audit",
@@ -43,7 +49,11 @@ HIDE_HOME_LINK = '<style>header a[href="#/"] { display: none; }</style>'
 
 MAPPINGS_FILE = "tt_symbol_mappings.csv"
 UNAVAILABLE_FILE = "unavailable_products.csv"
+TT_FILE = "tt_exchange_products.csv"
 MAX_SHARED_BYTES = 5_000_000  # a team list is a few KB; refuse anything absurd
+MAX_TT_BYTES = 300_000_000  # TT's full product list is tens of MB
+# Columns of TT's ExchangeProducts CSV that the app uses; only these are passed on.
+TT_COLUMNS = ("Exchange", "Product Name", "Product Symbol", "Alternate Symbol", "Product Type")
 SHARED_KEY = "lim_shared"
 
 
@@ -55,6 +65,33 @@ class SharedLists:
     mappings_csv: str | None = None
     unavailable_csv: str | None = None
     problems: tuple[str, ...] = field(default_factory=tuple)
+    # TT's product list, cut down to futures, with its file's last-modified time (ISO).
+    tt_csv: str | None = None
+    tt_modified: str | None = None
+    tt_futures: int = 0
+
+
+def futures_only(text: str) -> tuple[str, int]:
+    """TT's ExchangeProducts CSV cut down to its futures and the columns the app uses.
+
+    Raises ValueError when the file is not TT's product list.
+    """
+    reader = csv.DictReader(io.StringIO(text.lstrip("\ufeff")))
+    fields = [f.strip() for f in reader.fieldnames or []]
+    missing = [c for c in ("Exchange", "Product Symbol", "Product Type") if c not in fields]
+    if missing:
+        raise ValueError(f"not TT's product list (no {', '.join(missing)} column)")
+    out = io.StringIO()
+    writer = csv.writer(out, lineterminator="\r\n")
+    writer.writerow(TT_COLUMNS)
+    count = 0
+    for row in reader:
+        clean = {(k or "").strip(): (v or "").strip() for k, v in row.items() if isinstance(v, str)}
+        if clean.get("Product Type") != "Future" or clean.get("Exchange", "").endswith("_Delayed"):
+            continue
+        writer.writerow([clean.get(c, "") for c in TT_COLUMNS])
+        count += 1
+    return out.getvalue(), count
 
 
 def read_shared(folder: Path | None) -> SharedLists:
@@ -79,7 +116,29 @@ def read_shared(folder: Path | None) -> SharedLists:
             texts[name] = path.read_bytes().decode("utf-8-sig", errors="replace")
         except OSError as exc:
             problems.append(f"Could not read {path}: {exc}")
-    return SharedLists(str(folder), texts[MAPPINGS_FILE], texts[UNAVAILABLE_FILE], tuple(problems))
+    tt_csv, tt_modified, tt_futures = None, None, 0
+    tt_path = folder / TT_FILE
+    try:
+        if tt_path.is_file():
+            stat = tt_path.stat()
+            if stat.st_size > MAX_TT_BYTES:
+                problems.append(f"{tt_path} is too large to be TT's product list; it was skipped.")
+            else:
+                text = tt_path.read_bytes().decode("utf-8-sig", errors="replace")
+                tt_csv, tt_futures = futures_only(text)
+                tt_modified = datetime.fromtimestamp(stat.st_mtime).astimezone().isoformat()
+    except (OSError, ValueError, csv.Error) as exc:
+        tt_csv = None
+        problems.append(f"Could not use {tt_path}: {exc}")
+    return SharedLists(
+        str(folder),
+        texts[MAPPINGS_FILE],
+        texts[UNAVAILABLE_FILE],
+        tuple(problems),
+        tt_csv,
+        tt_modified,
+        tt_futures,
+    )
 
 
 def shared_script(shared: SharedLists) -> str:
@@ -91,6 +150,9 @@ def shared_script(shared: SharedLists) -> str:
         {
             "mappingsCsv": shared.mappings_csv,
             "unavailableCsv": shared.unavailable_csv,
+            "ttCsv": shared.tt_csv,
+            "ttFile": TT_FILE if shared.tt_csv else None,
+            "ttModified": shared.tt_modified,
             "source": shared.folder,
         }
     ).replace("</", "<\\/")
@@ -129,7 +191,9 @@ def render() -> None:
     shared = _team_lists()
     for tab, route in zip(st.tabs(list(TOOLS)), TOOLS.values(), strict=True):
         with tab:
-            st.iframe(app_for(html, route, shared), height=FRAME_HEIGHT)
+            # Only Account limit upload uses the team lists (and the TT list is large).
+            team = shared if route == ACCOUNT_UPLOAD_ROUTE else None
+            st.iframe(app_for(html, route, team), height=FRAME_HEIGHT)
 
 
 def _team_lists() -> SharedLists:
@@ -154,6 +218,8 @@ def _team_lists() -> SharedLists:
         )
         if t
     ]
+    if cached.tt_csv:
+        found.append(f"{TT_FILE} ({cached.tt_futures:,} futures)")
     left.caption(
         f"Team lists from {cached.folder}: "
         + (", ".join(found) if found else "no list files there yet")
