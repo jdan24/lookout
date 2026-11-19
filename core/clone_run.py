@@ -197,38 +197,6 @@ def _new_account_id(
     )
 
 
-def account_description(reader: TTClient, account_id: str) -> str | None:
-    """The account's description as TT holds it, or None when TT's reply has no such field."""
-    body = reader.get("ttaccount", f"account/{account_id}").body
-    found = body.get("account") if isinstance(body, Mapping) else None
-    items = found if isinstance(found, list) else [found]
-    for item in items:
-        if isinstance(item, Mapping) and "description" in item:
-            return str(item.get("description") or "")
-    return None
-
-
-def _check_description(step: CloneStep, new_id: str, reader: TTClient, result: CloneResult) -> None:
-    """Read the new account back and say whether TT kept the description sent with the clone.
-
-    TT's clone reference has no description field, so TT may ignore it. A failed read
-    does not stop the run: the account itself was created.
-    """
-    try:
-        held = account_description(reader, new_id)
-    except (TTApiError, ReadOnlyViolation) as exc:
-        result.rows.append(_row(step, new_id, "Description", "Not checked",
-                                f"{step.description} (could not read it back: {exc})"))  # fmt: skip
-        return
-    if held is not None and held.strip() == step.description:
-        result.rows.append(_row(step, new_id, "Description", "Set", step.description))
-    else:
-        result.rows.append(
-            _row(step, new_id, "Description", "Not kept by TT",
-                 f"{step.description} (set it by hand in TT Setup)")
-        )  # fmt: skip
-
-
 def run_plan(
     plan: ClonePlan,
     writer: TTWriter,
@@ -252,16 +220,11 @@ def run_plan(
             }
             if parent_id:
                 body["parentId"] = int(parent_id)
-            if step.description:
-                # Not in TT's clone reference; sent anyway and checked afterwards.
-                body["description"] = step.description
             reply = writer.post("ttaccount", "account/clone", body, params)
             new_id, how = _new_account_id(reply, step.new_name, parent_id, reader, wait)
             result.created[step.number] = new_id
             detail = f"from {step.source.display}" + (f"; {how}" if how else "")
             result.rows.append(_row(step, new_id, "Account", "Created", detail))
-            if step.description:
-                _check_description(step, new_id, reader, result)
             changes = [c for c in plan.clearing if c.step == step.number]
             if changes:
                 _set_clearing(step, new_id, changes, writer, result)

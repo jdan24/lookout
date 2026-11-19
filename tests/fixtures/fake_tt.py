@@ -46,7 +46,6 @@ class FakeTT:
         self.new_otds: list[dict[str, Any]] = []
         self.new_accounts: list[dict[str, Any]] = []  # listed by GET accounts once cloned
         self.clone_reply_has_id = True  # False: answer like the first real UAT clone did
-        self.clone_keeps_description = True  # False: TT ignores a description on a clone
         self._next_account_id = 5000
         self._next_otd_id = 9000
         self.transport = httpx.MockTransport(self._handle)
@@ -187,8 +186,6 @@ class FakeTT:
             "accountType": 1,
             "revision": 1,
         }
-        if self.clone_keeps_description and "description" in body:
-            account["description"] = body["description"]
         self.new_accounts.append(account)
         if not self.clone_reply_has_id:
             return httpx.Response(200, json={"status": "Ok", "statusCode": 200})

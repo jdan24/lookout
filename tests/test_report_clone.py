@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+import pandas as pd
 import pytest
 from streamlit.testing.v1 import AppTest
 
@@ -108,9 +109,9 @@ def test_create_clones_and_shows_the_result(tt: FakeTT, tmp_path: Path) -> None:
     app.radio(key="cl_clearing_mode").set_value(app.radio(key="cl_clearing_mode").options[1])
     app.run()
     button(app, "cl_next").click().run()
-    clearing = app.dataframe[1].value
+    clearing = app.data_editor[1].value
     assert set(clearing["New value"]) == {"NEW10001AL"} and len(clearing) == 5
-    app.checkbox(key="cl_ok_0").check().run()
+    app.checkbox(key="cl_ok_0_0").check().run()
     button(app, "cl_create").click().run()
     assert not app.exception, app.exception
     assert "Created 1 account(s) in TT UAT." in app.success[0].value
@@ -119,16 +120,41 @@ def test_create_clones_and_shows_the_result(tt: FakeTT, tmp_path: Path) -> None:
     assert json.loads(log.read_text(encoding="utf-8"))["result"][0]["New id"] == "5001"
 
 
-def test_a_pasted_table_carries_descriptions_and_clearing_values(tt: FakeTT) -> None:
-    app = fill(run(), "ABC10001AL", "Account\tDescription\tClearing\nNEW1\tDesk 1\tCLR1\nNEW2\n")
+def test_a_pasted_table_carries_per_exchange_clearing_values(tt: FakeTT) -> None:
+    text = "Account\tExchange\tClearing\nNEW1\tCME\tCLR1\nNEW1\tASX\tCLR-AU\nNEW2\n"
+    app = fill(run(), "ABC10001AL", text)
     assert any("(header row skipped)" in c.value for c in app.caption)
+    assert any("NEW1 (2 exchange value(s))" in c.value for c in app.caption)
     app.checkbox(key="cl_clearing").check().run()
     button(app, "cl_next").click().run()
-    table = app.dataframe[0].value
-    assert list(table["Description"]) == ["Desk 1", ""]
-    clearing = app.dataframe[1].value
-    assert set(clearing[clearing["New account"] == "NEW1"]["New value"]) == {"CLR1"}
+    assert not app.exception, app.exception
+    assert "Description" not in app.data_editor[0].value.columns
+    clearing = app.data_editor[1].value
+    new1 = clearing[clearing["New account"] == "NEW1"]
+    assert dict(zip(new1["Exchange"], new1["New value"], strict=True))["CME"] == "CLR1"
+    assert dict(zip(new1["Exchange"], new1["New value"], strict=True))["ASX"] == "CLR-AU"
+    assert dict(zip(new1["Exchange"], new1["New value"], strict=True))["MX"] == "ABC99999"
     assert set(clearing[clearing["New account"] == "NEW2"]["New value"]) == {"ABC10001", "ABC99999"}
+
+
+def test_editing_the_review_tables_turns_into_plan_edits() -> None:
+    from core.clone import PlanEdits
+    from reports.clone import account_edits, clearing_edits
+
+    frame = pd.DataFrame(
+        {"Step": ["1", "2"], "New account": ["NEW1", "NEW2"]}, index=["k1", "k2"], dtype=str
+    )
+    out = frame.drop(index="k2").copy()
+    out.at["k1", "New account"] = " NEW9 "
+    edits = account_edits(frame, out, PlanEdits())
+    assert edits == PlanEdits(names={"k1": "NEW9"}, removed=frozenset({"k2"}))
+    assert account_edits(frame, frame.copy(), PlanEdits()) is None
+    clr = pd.DataFrame({"New value": ["A", "B"]}, index=["c1", "c2"], dtype=str)
+    out2 = clr.drop(index="c1").copy()
+    out2.at["c2", "New value"] = "Z"
+    assert clearing_edits(clr, out2, PlanEdits()) == PlanEdits(
+        values={"c2": "Z"}, dropped=frozenset({"c1"})
+    )
 
 
 def test_a_bad_row_keeps_next_disabled(tt: FakeTT) -> None:
@@ -149,7 +175,7 @@ def test_errors_keep_create_disabled(tt: FakeTT) -> None:
     button(app, "cl_next").click().run()
     assert "ABC10001IX already exists in TT." in [e.value for e in app.error]
     assert button(app, "cl_create").disabled
-    assert next(c for c in app.checkbox if c.key == "cl_ok_0").disabled
+    assert next(c for c in app.checkbox if c.key == "cl_ok_0_0").disabled
 
 
 def test_changing_the_inputs_drops_the_review(tt: FakeTT) -> None:

@@ -5,9 +5,11 @@ UAT-only write guard in ``core/write_http.py``. The logic is in ``core/clone.py`
 ``core/clone_run.py``.
 
 Flow: enter the source, paste a table or choose a CSV file of new accounts (new account,
-then optional description and clearing account override), press Next. Lookout reads
-the source from TT UAT and shows every account it would create. Nothing is written
-until the list is confirmed and Create is pressed.
+then optional exchange and clearing account override, one row per account and
+exchange), press Next. Lookout reads the source from TT UAT and shows every account
+and clearing value it would create; both tables can be edited (rename, change a value)
+or trimmed (delete rows) there, and the plan is checked again after every edit.
+Nothing is written until the list is confirmed and Create is pressed.
 """
 
 from __future__ import annotations
@@ -15,12 +17,21 @@ from __future__ import annotations
 from collections.abc import Callable
 from typing import Any
 
+import pandas as pd
 import streamlit as st
 
 import core.config as app_config
 from core import credentials
 from core.api_log import ApiLog
-from core.clone import COLUMNS, ClearingMode, ClonePlan, NewAccounts, build_plan, parse_new_accounts
+from core.clone import (
+    COLUMNS,
+    ClearingMode,
+    ClonePlan,
+    NewAccounts,
+    PlanEdits,
+    build_plan,
+    parse_new_accounts,
+)
 from core.clone_run import read_source, run_plan, write_log
 from core.config import AppConfig
 from core.tt_writer import TTWriter
@@ -69,10 +80,11 @@ def _new_accounts() -> NewAccounts:
     pasted = st.text_area(
         "New accounts: paste from Excel or type one per line. Columns: "
         + ", ".join(COLUMNS)
-        + " (the last two are optional)",
+        + " (the last two are optional, and go together: one row per account and "
+        "exchange; use TT's exchange names, e.g. CME, ICE_L, Eurex)",
         height=160,
         key="cl_names",
-        placeholder="NEW10001AL,Desk 1,CLR123\nNEW20001AL",
+        placeholder="NEW10001AL,CME,CLR123\nNEW10001AL,Eurex,CLR456\nNEW20001AL",
     )
     upload = st.file_uploader("...or choose a CSV file", type=["csv"], key="cl_file")
     if upload is not None:
@@ -83,7 +95,10 @@ def _new_accounts() -> NewAccounts:
     if parsed.accounts:
         st.caption(
             f"{len(parsed.accounts)} new account(s): "
-            + ", ".join(a.name for a in parsed.accounts)
+            + ", ".join(
+                a.name + (f" ({len(a.overrides)} exchange value(s))" if a.overrides else "")
+                for a in parsed.accounts
+            )
             + (" (header row skipped)" if parsed.header_skipped else "")
         )
     for error in parsed.errors:
@@ -98,7 +113,8 @@ def _inputs() -> tuple[str, NewAccounts, ClearingMode]:
     mode = ClearingMode.OFF
     if st.checkbox("Clone the clearing account override (Clearing Account)", key="cl_clearing"):
         chosen = st.radio(
-            "Clearing Account where a row gives none (and on accounts below a group)",
+            "Clearing Account on exchanges a row gives no value for (and on accounts below "
+            "a group)",
             list(CLEARING_CHOICES),
             format_func=CLEARING_CHOICES.__getitem__,
             key="cl_clearing_mode",
@@ -127,38 +143,122 @@ def _review(settings: AppConfig, inputs: tuple[Any, ...]) -> None:
         return
     finally:
         close()
-    plan = build_plan(
+    review = {
+        "inputs": inputs,
+        "data": data,
+        "edits": PlanEdits(),
+        "version": 0,
+    }
+    review["plan"] = _plan(review)
+    st.session_state["cl_review"] = review
+
+
+def _plan(review: dict[str, Any]) -> ClonePlan:
+    """The plan from the review's source data, inputs and edits (no TT read)."""
+    source, parsed, mode = review["inputs"]
+    data = review["data"]
+    return build_plan(
         data.tree,
         source,
         parsed.accounts,
         clearing_mode=mode,
         clearing_entries=data.clearing_entries,
         market_names=data.market_names,
+        edits=review["edits"],
     )
-    st.session_state["cl_review"] = {"inputs": inputs, "plan": plan}
 
 
-def _show_plan(plan: ClonePlan) -> None:
+def _show_plan(review: dict[str, Any]) -> None:
+    """The plan, as two editable tables: accounts and Clearing Account values."""
+    plan: ClonePlan = review["plan"]
     st.subheader("Check before creating")
     if plan.source is not None:
         st.write(f"Copying **{plan.source.display}**.")
     for error in plan.errors:
         st.error(error)
+    edited = review["edits"] != PlanEdits()
+    st.caption(
+        "Edit a name or value in place, or select rows and delete them. The plan is "
+        "checked again after every change; nothing is sent to TT until you press Create."
+    )
+    if edited and st.button("Undo all edits", key="cl_undo"):
+        _apply(review, PlanEdits())
+    version = review["version"]
     if plan.steps:
-        components.plain_table(plan.rows(), key="cl_plan", file_name="clone_plan.csv")
-    if any(s.description for s in plan.steps):
-        st.caption(
-            "TT's clone call does not list a description; Lookout sends it anyway and "
-            "reads each new account back to check that TT kept it."
-        )
+        _accounts_editor(review, plan, version)
+    else:
+        st.info("No accounts left to create.")
     if plan.clearing_mode is not ClearingMode.OFF:
         st.markdown("**Clearing Account**")
         if plan.clearing:
-            components.plain_table(
-                plan.clearing_rows(), key="cl_clearing_table", file_name="clone_clearing.csv"
-            )
+            _clearing_editor(review, plan, version)
         else:
-            st.info("The source has no Clearing Account set on its own accounts; none is set.")
+            st.info("No Clearing Account value will be set.")
+
+
+def _accounts_editor(review: dict[str, Any], plan: ClonePlan, version: int) -> None:
+    frame = pd.DataFrame(plan.rows(), index=[s.key for s in plan.steps], dtype=str)
+    out = st.data_editor(
+        frame,
+        key=f"cl_steps_{version}",
+        num_rows="delete",
+        disabled=["Step", "Under", "Copied from"],
+        hide_index=True,
+        width="stretch",
+    )
+    changed = account_edits(frame, out, review["edits"])
+    if changed is not None:
+        _apply(review, changed)
+
+
+def account_edits(frame: pd.DataFrame, out: pd.DataFrame, edits: PlanEdits) -> PlanEdits | None:
+    """The edits after the accounts table went from ``frame`` to ``out`` (None: none)."""
+    removed = set(frame.index) - set(out.index)
+    names = dict(edits.names)
+    for key in out.index:
+        new = str(out.at[key, "New account"] or "").strip()
+        if new != str(frame.at[key, "New account"]):
+            names[key] = new
+    if not removed and names == dict(edits.names):
+        return None
+    return PlanEdits(names, edits.removed | removed, edits.values, edits.dropped)
+
+
+def _clearing_editor(review: dict[str, Any], plan: ClonePlan, version: int) -> None:
+    frame = pd.DataFrame(plan.clearing_rows(), index=[c.key for c in plan.clearing], dtype=str)
+    out = st.data_editor(
+        frame,
+        key=f"cl_clearing_{version}",
+        num_rows="delete",
+        disabled=["Step", "New account", "Exchange", "Source value"],
+        hide_index=True,
+        width="stretch",
+    )
+    changed = clearing_edits(frame, out, review["edits"])
+    if changed is not None:
+        _apply(review, changed)
+
+
+def clearing_edits(frame: pd.DataFrame, out: pd.DataFrame, edits: PlanEdits) -> PlanEdits | None:
+    """The edits after the clearing table went from ``frame`` to ``out`` (None: none)."""
+    dropped = set(frame.index) - set(out.index)
+    values = dict(edits.values)
+    for key in out.index:
+        new = str(out.at[key, "New value"] or "").strip()
+        if new != str(frame.at[key, "New value"]):
+            values[key] = new
+    if not dropped and values == dict(edits.values):
+        return None
+    return PlanEdits(edits.names, edits.removed, values, edits.dropped | dropped)
+
+
+def _apply(review: dict[str, Any], edits: PlanEdits) -> None:
+    """Rebuild the plan with ``edits`` (no TT read) and show it afresh."""
+    review["edits"] = edits
+    review["plan"] = _plan(review)
+    review["version"] += 1  # fresh editors, so an edit is not applied twice
+    st.session_state["cl_review"] = review
+    st.rerun()
 
 
 def _create(settings: AppConfig, review: dict[str, Any]) -> None:
@@ -234,11 +334,15 @@ def render() -> None:
         review = st.session_state.get("cl_review")
 
     if review is not None:
+        _show_plan(review)
         plan: ClonePlan = review["plan"]
-        _show_plan(plan)
         round_key = "cl_round"
         done = st.session_state.get(round_key, 0)
-        agreed = st.checkbox("I have checked this list", key=f"cl_ok_{done}", disabled=not plan.ok)
+        agreed = st.checkbox(
+            "I have checked this list",
+            key=f"cl_ok_{done}_{review['version']}",
+            disabled=not plan.ok,
+        )
         left, right = st.columns([1, 4])
         if left.button("Back", key="cl_back"):
             st.session_state.pop("cl_review", None)

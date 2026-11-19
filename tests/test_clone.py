@@ -9,7 +9,14 @@ from typing import Any
 
 import pytest
 
-from core.clone import ClearingMode, NewAccount, build_plan, clone_params, parse_new_accounts
+from core.clone import (
+    ClearingMode,
+    NewAccount,
+    PlanEdits,
+    build_plan,
+    clone_params,
+    parse_new_accounts,
+)
 from core.clone_run import LOOKUP_TRIES, id_in_reply, read_source, run_plan, write_log
 from core.credentials import parse_secret
 from core.hierarchy import AccountTree
@@ -70,28 +77,31 @@ def test_one_name_per_line_strips_spaces_and_blank_lines() -> None:
     assert parse_new_accounts("") == parse_new_accounts("  \n\n")
 
 
-def test_a_paste_from_excel_splits_on_tabs() -> None:
-    text = "NEW1\t Desk one, London \tCLR1\nNEW2\t\t\nNEW3\tDesk three\n"
+def test_a_paste_from_excel_gives_per_exchange_values() -> None:
+    text = "NEW1\t CME \tCLR1\nNEW1\tEurex\tCLR2\nNEW2\t\t\nNEW3\tICE_L\tCLR3\n"
     parsed = parse_new_accounts(text)
     assert parsed.errors == ()
     assert parsed.accounts == (
-        NewAccount("NEW1", "Desk one, London", "CLR1"),
+        NewAccount("NEW1", (("CME", "CLR1"), ("Eurex", "CLR2"))),
         NewAccount("NEW2"),
-        NewAccount("NEW3", "Desk three"),
+        NewAccount("NEW3", (("ICE_L", "CLR3"),)),
     )
 
 
 def test_a_csv_file_uses_commas_quotes_and_skips_its_header() -> None:
-    text = '\ufeffAccount,Description,Clearing\r\nNEW1,"Desk 1, NY",CLR1\r\nNEW2,,\r\n,,\r\n'
+    text = '\ufeffAccount,Exchange,Clearing\r\nNEW1,CME,"CLR,1"\r\nNEW2,,\r\n,,\r\n'
     parsed = parse_new_accounts(text)
     assert parsed.header_skipped and parsed.errors == ()
-    assert parsed.accounts == (NewAccount("NEW1", "Desk 1, NY", "CLR1"), NewAccount("NEW2"))
+    assert parsed.accounts == (NewAccount("NEW1", (("CME", "CLR,1"),)), NewAccount("NEW2"))
 
 
 @pytest.mark.parametrize(
     ("text", "message"),
     [
-        ("NEW1\n\tDesk only\n", "Row 2 has no new account"),
+        ("NEW1\n\tCME\tCLR\n", "Row 2 has no new account"),
+        ("NEW1\tCME\n", "needs both an exchange and a clearing account override"),
+        ("NEW1\t\tCLR\n", "needs both an exchange and a clearing account override"),
+        ("NEW1\tCME\tA\nNEW1\tcme\tB\n", "NEW1 on cme is listed more than once"),
         ("NEW1,a,b,c\n", "Row 1 has more than 3 columns"),
     ],
 )
@@ -121,8 +131,7 @@ def test_single_account_goes_under_the_same_parent() -> None:
         ("POD8", "1", None),
     ]
     assert plan.rows()[0] == {
-        "Step": "1", "New account": "POD7", "Under": "TOP (1)", "Description": "",
-        "Copied from": "POD2 (20)",
+        "Step": "1", "New account": "POD7", "Under": "TOP (1)", "Copied from": "POD2 (20)",
     }  # fmt: skip
 
 
@@ -190,33 +199,107 @@ def test_clearing_values_from_source_or_new_name() -> None:
     assert off.clearing == ()
 
 
-def test_a_rows_own_clearing_value_wins_on_its_top_account_only() -> None:
+MARKETS = {"7": "CME", "2": "Eurex", "24": "ASX"}
+
+
+def test_a_rows_clearing_value_wins_on_its_exchange_and_top_account_only() -> None:
     entries = {
-        "10": [{"accountId": 10, "marketId": 7, "fieldId": 1859, "value": "OLD"}],
+        "10": [
+            {"accountId": 10, "marketId": 7, "fieldId": 1859, "value": "OLD"},
+            {"accountId": 10, "marketId": 2, "fieldId": 1859, "value": "OLD-EU"},
+        ],
         "11": [{"accountId": 11, "marketId": 7, "fieldId": 1859, "value": "OLD-A"}],
     }
     plan = build_plan(
         GROUP, "POD1",
-        [NewAccount("POD7", "Desk 7", "CLR7"), NewAccount("POD8")],
-        clearing_mode=ClearingMode.SOURCE, clearing_entries=entries,
+        [NewAccount("POD7", (("cme", "CLR7"),)), NewAccount("POD8")],
+        clearing_mode=ClearingMode.SOURCE, clearing_entries=entries, market_names=MARKETS,
     )  # fmt: skip
     assert plan.ok, plan.errors
-    assert [(plan.step(c.step).new_name, c.value) for c in plan.clearing] == [
-        ("POD7", "CLR7"), ("POD7-A", "OLD-A"), ("POD8", "OLD"), ("POD8-A", "OLD-A"),
+    assert [(plan.step(c.step).new_name, c.market, c.value) for c in plan.clearing] == [
+        ("POD7", "CME", "CLR7"), ("POD7", "Eurex", "OLD-EU"), ("POD7-A", "CME", "OLD-A"),
+        ("POD8", "CME", "OLD"), ("POD8", "Eurex", "OLD-EU"), ("POD8-A", "CME", "OLD-A"),
     ]  # fmt: skip
-    assert [s.description for s in plan.steps if s.description] == ["Desk 7"]
+
+
+def test_an_exchange_the_source_lacks_copies_its_entry_with_the_exchange_switched() -> None:
+    entries = {
+        "20": [{"accountId": 20, "marketId": 7, "fieldId": 1859, "value": "OLD", "productId": "0"}]
+    }
+    plan = build_plan(
+        GROUP, "POD2", [NewAccount("POD7", (("ASX", "CLR-ASX"),))],
+        clearing_mode=ClearingMode.NEW_NAME, clearing_entries=entries, market_names=MARKETS,
+    )  # fmt: skip
+    assert plan.ok, plan.errors
+    asx = next(c for c in plan.clearing if c.market == "ASX")
+    assert asx.value == "CLR-ASX" and asx.entry["marketId"] == 24 and asx.entry["fieldId"] == 1859
+    assert plan.clearing_rows()[1]["Source value"] == "(none; entry copied from CME)"
+    assert next(c for c in plan.clearing if c.market == "CME").value == "POD7"
+
+
+@pytest.mark.parametrize(
+    ("accounts", "entries", "message"),
+    [
+        ([NewAccount("POD7", (("NOPE", "X"),))], {"20": [{"marketId": 7, "value": "O"}]}, "NOPE (for POD7) is not one of TT's exchanges"),
+        ([NewAccount("POD7", (("ASX", "X"),))], {}, "POD2 has no Clearing Account set on any exchange"),
+        ([NewAccount("POD7", (("ASX", "X"),))], {"20": [{"marketId": 7, "value": "O", "productId": "123"}]}, "set per product"),
+    ],
+)  # fmt: skip
+def test_clearing_rows_that_cannot_be_planned(
+    accounts: list[NewAccount], entries: dict[str, Any], message: str
+) -> None:
+    plan = build_plan(
+        GROUP, "POD2", accounts, clearing_mode=ClearingMode.SOURCE,
+        clearing_entries=entries, market_names=MARKETS,
+    )  # fmt: skip
+    assert not plan.ok and any(message in e for e in plan.errors), plan.errors
 
 
 def test_clearing_values_without_the_box_ticked_stop_the_plan() -> None:
-    plan = build_plan(GROUP, "POD2", [NewAccount("POD7", clearing="CLR7")])
+    plan = build_plan(GROUP, "POD2", [NewAccount("POD7", (("CME", "CLR7"),))])
     assert not plan.ok and "is not ticked" in plan.errors[0]
 
 
-def test_a_clearing_value_needs_a_source_clearing_account_to_copy() -> None:
-    plan = build_plan(
-        GROUP, "POD2", [NewAccount("POD7", clearing="CLR7")], clearing_mode=ClearingMode.SOURCE
+# --- edits made in the review ------------------------------------------------------
+
+
+def test_review_edits_rename_drop_and_change_values() -> None:
+    entries = {
+        "10": [
+            {"accountId": 10, "marketId": 7, "fieldId": 1859, "value": "OLD"},
+            {"accountId": 10, "marketId": 2, "fieldId": 1859, "value": "OLD-EU"},
+        ],
+    }
+    common: dict[str, Any] = {
+        "clearing_mode": ClearingMode.SOURCE, "clearing_entries": entries, "market_names": MARKETS,
+    }  # fmt: skip
+    accounts = [NewAccount("POD7"), NewAccount("POD8")]
+    first = build_plan(GROUP, "POD1", accounts, **common)
+    keys = {s.new_name: s.key for s in first.steps}
+    clearing = {(first.step(c.step).new_name, c.market): c.key for c in first.clearing}
+    edits = PlanEdits(
+        names={keys["POD7"]: "POD70", keys["POD7-B"]: "POD7-BEE"},
+        removed=frozenset({keys["POD8"], keys["X-POD7-A1"]}),
+        values={clearing[("POD7", "CME")]: "NEWCLR"},
+        dropped=frozenset({clearing[("POD7", "Eurex")]}),
     )
-    assert not plan.ok and "POD2 has no Clearing Account set" in plan.errors[0]
+    plan = build_plan(GROUP, "POD1", accounts, edits=edits, **common)
+    assert plan.ok, plan.errors
+    assert [s.new_name for s in plan.steps] == ["POD70", "POD70-A", "POD7-BEE"]
+    assert [(plan.step(c.step).new_name, c.market, c.value) for c in plan.clearing] == [
+        ("POD70", "CME", "NEWCLR"),
+    ]
+
+
+def test_review_edits_are_checked_again() -> None:
+    first = build_plan(GROUP, "POD2", rows(["POD7", "POD8"]))
+    edits = PlanEdits(names={first.steps[1].key: "POD7"})
+    plan = build_plan(GROUP, "POD2", rows(["POD7", "POD8"]), edits=edits)
+    assert not plan.ok and "POD7 would be created more than once." in plan.errors
+    blank = build_plan(
+        GROUP, "POD2", rows(["POD7"]), edits=PlanEdits(names={first.steps[0].key: " "})
+    )
+    assert any("has no account name" in e for e in blank.errors)
 
 
 # --- reading the source ----------------------------------------------------------
@@ -281,32 +364,17 @@ def test_source_value_without_tt_copy_creates_the_entries(tt: FakeTT) -> None:
     assert sorted(e["value"] for e in created) == ["ABC10001"] * 4 + ["ABC99999"]
 
 
-def test_a_description_is_sent_with_the_clone_and_checked(tt: FakeTT) -> None:
-    plan = _plan(tt, ClearingMode.OFF, NewAccount("NEW10001AL", "Desk 1"))
-    result = _run(tt, plan)
-    assert result.ok and tt.clones[0][1]["description"] == "Desk 1"
-    assert [(r["What"], r["Status"]) for r in result.rows] == [
-        ("Account", "Created"), ("Description", "Set"),
-    ]  # fmt: skip
-    assert tt.paths("GET")[-1].endswith("/account/5001")
-
-
-def test_a_description_tt_drops_is_flagged_and_the_run_goes_on(tt: FakeTT) -> None:
-    tt.clone_keeps_description = False
-    data = read_source(reader(tt), "ABC10001AL", need_clearing=False, max_pages=20)
-    plan = build_plan(data.tree, "ABC10001AL", [NewAccount("N1", "D1"), NewAccount("N2")])
-    result = _run(tt, plan)
-    assert result.ok and result.created == {1: "5001", 2: "5002"}
-    assert result.rows[1]["Status"] == "Not kept by TT"
-    assert "set it by hand" in result.rows[1]["Detail"]
-    assert "description" not in tt.clones[1][1]
-
-
 def test_a_rows_clearing_value_is_created_on_the_new_account(tt: FakeTT) -> None:
-    plan = _plan(tt, ClearingMode.NEW_NAME, NewAccount("NEW10001AL", clearing="CLR9"))
-    _run(tt, plan)
+    plan = _plan(
+        tt, ClearingMode.NEW_NAME, NewAccount("NEW10001AL", (("MX", "CLR9"), ("ASX", "CLR-AU")))
+    )
+    result = _run(tt, plan)
+    assert result.ok, result.stopped
     [(_, created)] = tt.otd_writes
-    assert {(e["accountId"], e["value"]) for e in created} == {(5001, "CLR9")}
+    values = {(e["accountId"], e["marketId"], e["value"]) for e in created}
+    assert (5001, 91, "CLR9") in values and (5001, 24, "CLR-AU") in values
+    assert (5001, 7, "NEW10001AL") in values and len(created) == 6
+    assert "description" not in tt.clones[0][1]
 
 
 def test_group_run_wires_each_new_parent(tt: FakeTT) -> None:
