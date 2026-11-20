@@ -26,6 +26,7 @@ from core.clone import (
     clone_params,
     find_source,
     is_default_entry,
+    is_product_level,
 )
 from core.hierarchy import AccountTree
 from core.normalize import norm_id
@@ -47,19 +48,54 @@ class SourceData:
     clearing_field_ids: frozenset[str] = frozenset()
     clearing_entries: dict[str, list[dict[str, Any]]] = field(default_factory=dict)
     market_names: dict[str, str] = field(default_factory=dict)
+    descriptions: dict[str, str] = field(default_factory=dict)  # account id -> description
+
+    def details(self, source_text: str) -> list[dict[str, str]]:
+        """The source and the accounts below it: description and Clearing Account per exchange."""
+        source, _ = find_source(self.tree, source_text)
+        if source is None:
+            return []
+        accounts = self.tree.subtree(source.id)
+        names = self.market_names
+        markets = sorted(
+            {
+                norm_id(e.get("marketId"))
+                for a in accounts
+                for e in self.clearing_entries.get(a.id, ())
+            },
+            key=lambda mid: names.get(mid, mid).casefold(),
+        )
+        rows = []
+        for account in accounts:
+            row = {"Account": account.name, "Description": self.descriptions.get(account.id, "")}
+            for mid in markets:
+                here = [
+                    e for e in self.clearing_entries.get(account.id, ())
+                    if norm_id(e.get("marketId")) == mid
+                ]  # fmt: skip
+                text = ", ".join(dict.fromkeys(str(e.get("value") or "") for e in here))
+                if any(is_product_level(e) for e in here):
+                    text += " (per product)"
+                row[names.get(mid) or f"market {mid}"] = text
+            rows.append(row)
+        return rows
 
 
-def read_source(
-    tt: TTClient, source_text: str, *, need_clearing: bool, max_pages: int
-) -> SourceData:
-    """The accounts list, and the source's Clearing Account Order Tag Defaults when needed."""
+def read_source(tt: TTClient, source_text: str, *, max_pages: int) -> SourceData:
+    """The accounts list and, for the source and every account below it, its description
+    and its Clearing Account Order Tag Defaults. Reads only (GET)."""
     accounts: list[dict[str, Any]] = []
     for page in tt.pages("ttaccount", "accounts"):
         accounts.extend(page.response.body.get("accounts") or [])
     data = SourceData(tree=AccountTree(accounts))
     source, _ = find_source(data.tree, source_text)
-    if source is None or not need_clearing:
+    if source is None:
         return data
+    for account in data.tree.subtree(source.id):
+        records = tt.get("ttaccount", f"account/{account.id}").body.get("account") or []
+        data.descriptions[account.id] = str(
+            (records[0] if records else {}).get("description") or ""
+        )
 
     fields = tt.get("ttsetup", "ordertagdefaults/fields").body.get("fields") or []
     data.clearing_field_ids = frozenset(

@@ -8,12 +8,14 @@ each of them is cloned too, top down, under its new parent. A copy's name is the
 source account's name with the source's own name swapped for the new one
 (cloning POD1 as POD7 turns POD1-A into POD7-A).
 
-The pasted table has one row per new account and exchange: New account (needed),
-Exchange and Clearing account override. A row's clearing value goes on the new top
-account, for that exchange only; the source's other exchanges, and the accounts below
-a group, get the clearing value the page's choice gives them. A row may name an
-exchange the source has no Clearing Account on: the source's entry is then copied
-with the exchange switched.
+The page offers three choices for the Clearing Account (an Order Tag Default):
+clone the source's values onto every new account, leave it blank, or take it from the
+pasted table. The table has one row per new account and exchange: New account
+(needed), Exchange and Clearing account override. With the table, a row's value goes
+on the new top account for that exchange only; exchanges a row doesn't list, and the
+accounts below a group, get none. A row may name an exchange the source has no
+Clearing Account on: an entry from the source is then copied with the exchange
+switched.
 
 The review can edit the plan before anything is sent (``PlanEdits``): rename or drop
 an account, change or drop a clearing value.
@@ -49,9 +51,9 @@ COLUMNS = ("New account", "Exchange", "Clearing account override")
 
 
 class ClearingMode(StrEnum):
-    OFF = "off"  # the Clearing Account Order Tag Default is not handled separately
-    SOURCE = "source"  # the new account gets the source account's value
-    NEW_NAME = "new_name"  # the new account gets its own name
+    SOURCE = "source"  # every new account gets the value of the account it is copied from
+    OFF = "off"  # no Clearing Account is set (TT's clone copies none)
+    TABLE = "table"  # only the exchanges the pasted table lists, on the new top accounts
 
 
 @dataclass(frozen=True)
@@ -265,11 +267,11 @@ def build_plan(
         seen.add(row.name.casefold())
         rows.append(row)
     given = [row.name for row in rows if row.overrides]
-    if given and clearing_mode is ClearingMode.OFF:
+    if given and clearing_mode is not ClearingMode.TABLE:
         errors.append(
-            "Clearing account overrides are given for " + ", ".join(given) + ", but "
-            "'Clone the clearing account override' is not ticked. Tick it, or remove "
-            "the Exchange and Clearing columns."
+            "Exchange and clearing values are given for " + ", ".join(given) + ", but "
+            "they are only used with 'Use the values from the table'. Choose that, or "
+            "remove the Exchange and Clearing columns."
         )
 
     below = tree.descendants(source.id)
@@ -342,68 +344,11 @@ def build_plan(
     clearing: list[ClearingChange] = []
     if clearing_mode is not ClearingMode.OFF:
         names = market_names or {}
-        by_name = {name.casefold(): mid for mid, name in names.items() if name}
         entries = clearing_entries or {}
         for step in steps:
-            found = list(entries.get(step.source.id, ()))
-            overrides = row_overrides.get(step.number, ())
-            wanted: dict[str, str] = {}  # market id -> the row's clearing value
-            for exchange, value in overrides:
-                mid = by_name.get(exchange.casefold())
-                if mid is None:
-                    errors.append(f"{exchange} (for {step.new_name}) is not one of TT's exchanges.")
-                    continue
-                wanted[mid] = value
-            have = {norm_id(e.get("marketId")) for e in found}
-            missing = [mid for mid in wanted if mid not in have]
-            template = found[0] if found else None
-            if missing and template is None:
-                errors.append(
-                    f"{step.source.name} has no Clearing Account set on any exchange, so "
-                    f"Lookout has no entry to copy for {step.new_name}."
-                )
-            elif missing and _is_product_level(template):
-                errors.append(
-                    f"{step.source.name}'s Clearing Account entries are set per product, so "
-                    f"Lookout can't copy one to another exchange for {step.new_name}."
-                )
-            elif template is not None:
-                for mid in missing:
-                    copy = {**template, "marketId": int(mid) if mid.isdigit() else mid}
-                    found.append(copy)
-            for entry in found:
-                source_value = str(entry.get("value") or "")
-                market_id = norm_id(entry.get("marketId"))
-                copied = market_id not in have
-                key = f"{step.key}|{market_id}"
-                if key in edits.dropped:
-                    continue
-                if market_id in wanted:
-                    value = wanted[market_id]
-                elif clearing_mode is ClearingMode.SOURCE:
-                    value = source_value
-                else:
-                    value = step.new_name
-                value = edits.values.get(key, value)
-                clearing.append(
-                    ClearingChange(
-                        step=step.number,
-                        market_id=market_id,
-                        market=names.get(market_id, f"market {market_id}"),
-                        source_value="" if copied else source_value,
-                        value=value,
-                        entry=entry,
-                        key=key,
-                        copied_from=names.get(norm_id(template.get("marketId")), "")
-                        if copied and template
-                        else "",
-                    )
-                )
-                if not value.strip():
-                    errors.append(
-                        f"The clearing value for {step.new_name} on "
-                        f"{names.get(market_id, market_id)} is blank; set it or remove the row."
-                    )
+            clearing.extend(
+                _step_clearing(step, clearing_mode, row_overrides, entries, names, edits, errors)
+            )
 
     return ClonePlan(
         source=source,
@@ -414,7 +359,81 @@ def build_plan(
     )
 
 
-def _is_product_level(entry: Mapping[str, Any] | None) -> bool:
+def _step_clearing(
+    step: CloneStep,
+    mode: ClearingMode,
+    row_overrides: Mapping[int, tuple[tuple[str, str], ...]],
+    entries: Mapping[str, Sequence[Mapping[str, Any]]],
+    names: Mapping[str, str],
+    edits: PlanEdits,
+    errors: list[str],
+) -> list[ClearingChange]:
+    """The Clearing Account values one new account gets."""
+    own = list(entries.get(step.source.id, ()))
+    wanted: dict[str, str] = {}  # market id -> the table's clearing value
+    if mode is ClearingMode.TABLE:
+        by_name = {name.casefold(): mid for mid, name in names.items() if name}
+        for exchange, value in row_overrides.get(step.number, ()):
+            mid = by_name.get(exchange.casefold())
+            if mid is None:
+                errors.append(f"{exchange} (for {step.new_name}) is not one of TT's exchanges.")
+                continue
+            wanted[mid] = value
+        if not wanted:
+            return []  # exchanges the table doesn't list stay blank
+        found = [e for e in own if norm_id(e.get("marketId")) in wanted]
+    else:
+        found = list(own)
+    have = {norm_id(e.get("marketId")) for e in own}
+    missing = [mid for mid in wanted if mid not in have]
+    # An entry to copy for an exchange the source lacks: the source's own first, else
+    # any from the accounts below it.
+    template = own[0] if own else next((e for es in entries.values() for e in es), None)
+    if missing and template is None:
+        errors.append(
+            f"{step.source.name} has no Clearing Account set on any exchange, so "
+            f"Lookout has no entry to copy for {step.new_name}."
+        )
+    elif missing and is_product_level(template):
+        errors.append(
+            f"{step.source.name}'s Clearing Account entries are set per product, so "
+            f"Lookout can't copy one to another exchange for {step.new_name}."
+        )
+    elif template is not None:
+        for mid in missing:
+            found.append({**template, "marketId": int(mid) if mid.isdigit() else mid})
+    changes: list[ClearingChange] = []
+    for entry in found:
+        source_value = str(entry.get("value") or "")
+        market_id = norm_id(entry.get("marketId"))
+        copied = market_id not in have
+        key = f"{step.key}|{market_id}"
+        if key in edits.dropped:
+            continue
+        value = edits.values.get(key, wanted.get(market_id, source_value))
+        changes.append(
+            ClearingChange(
+                step=step.number,
+                market_id=market_id,
+                market=names.get(market_id, f"market {market_id}"),
+                source_value="" if copied else source_value,
+                value=value,
+                entry=entry,
+                key=key,
+                copied_from=names.get(norm_id(template.get("marketId")), "")
+                if copied and template
+                else "",
+            )
+        )
+        if not value.strip():
+            errors.append(
+                f"The clearing value for {step.new_name} on "
+                f"{names.get(market_id, market_id)} is blank; set it or remove the row."
+            )
+    return changes
+
+
+def is_product_level(entry: Mapping[str, Any] | None) -> bool:
     """An entry tied to one product or product group (not the whole exchange)."""
     if entry is None:
         return False

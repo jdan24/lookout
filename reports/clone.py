@@ -4,12 +4,15 @@ UAT only. This is the only page that changes anything in TT, and only through th
 UAT-only write guard in ``core/write_http.py``. The logic is in ``core/clone.py`` and
 ``core/clone_run.py``.
 
-Flow: enter the source, paste a table or choose a CSV file of new accounts (new account,
-then optional exchange and clearing account override, one row per account and
-exchange), press Next. Lookout reads the source from TT UAT and shows every account
-and clearing value it would create; both tables can be edited (rename, change a value)
-or trimmed (delete rows) there, and the plan is checked again after every edit.
-Nothing is written until the list is confirmed and Create is pressed.
+Flow: enter the source and press Get details. Lookout reads it from TT UAT and shows
+the source and the accounts below it, each with its description and Clearing Account
+per exchange. Then choose what the new accounts get for the Clearing Account: the
+source's values, nothing, or values from a table. Enter the new accounts (with the
+table choice: new account, exchange, clearing account override, one row per account
+and exchange) and press Next. Lookout shows every account and clearing value it would
+create; both tables can be edited (rename, change a value) or trimmed (delete rows)
+there, and the plan is checked again after every edit. Nothing is written until the
+list is confirmed and Create is pressed.
 """
 
 from __future__ import annotations
@@ -30,9 +33,10 @@ from core.clone import (
     NewAccounts,
     PlanEdits,
     build_plan,
+    find_source,
     parse_new_accounts,
 )
-from core.clone_run import read_source, run_plan, write_log
+from core.clone_run import SourceData, read_source, run_plan, write_log
 from core.config import AppConfig
 from core.tt_writer import TTWriter
 from core.write_http import WRITE_ENVIRONMENT, WriteClient
@@ -47,9 +51,13 @@ ICON = "🧬"
 CATEGORY = "Setup"
 
 CLEARING_CHOICES = {
-    ClearingMode.SOURCE: "Same value as the account it is copied from",
-    ClearingMode.NEW_NAME: "The new account's name",
+    ClearingMode.SOURCE: "Clone the clearing account override: each new account gets the "
+    "value of the account it is copied from",
+    ClearingMode.OFF: "Leave the clearing account override blank",
+    ClearingMode.TABLE: "Use the values from a table (below): exchanges a row doesn't list "
+    "stay blank",
 }
+SOURCE_WIDTH = 360  # pixels: room for a 40-character group name
 
 
 def make_tt_writer(settings: AppConfig) -> tuple[TTWriter, Callable[[], None]]:
@@ -76,16 +84,75 @@ def _decode(data: bytes) -> str:
         return data.decode("cp1252", errors="replace")
 
 
-def _new_accounts() -> NewAccounts:
-    pasted = st.text_area(
-        "New accounts: paste from Excel or type one per line. Columns: "
-        + ", ".join(COLUMNS)
-        + " (the last two are optional, and go together: one row per account and "
-        "exchange; use TT's exchange names, e.g. CME, ICE_L, Eurex)",
-        height=160,
-        key="cl_names",
-        placeholder="NEW10001AL,CME,CLR123\nNEW10001AL,Eurex,CLR456\nNEW20001AL",
+def _source() -> str:
+    source = st.text_input(
+        "Account or group to clone (name or id)", key="cl_source", width=SOURCE_WIDTH
     )
+    return source.strip()
+
+
+def _get_details(settings: AppConfig, source: str) -> None:
+    """Read the source from TT UAT (GET only) and keep it for the rest of the page."""
+    try:
+        tt, close = make_tt_client(settings)
+    except Exception as exc:  # noqa: BLE001 - shown to the user; nothing has been read yet
+        st.error(f"Could not prepare the connection to TT: {exc}")
+        return
+    try:
+        with st.spinner("Reading the source from TT UAT..."):
+            data = read_source(tt, source, max_pages=settings.pacing.max_order_tag_default_pages)
+    except Exception as exc:  # noqa: BLE001 - the read stopped; say why instead of a traceback
+        st.error(f"Could not read the source from TT UAT ({type(exc).__name__}: {exc}).")
+        return
+    finally:
+        close()
+    st.session_state["cl_details"] = {"source": source, "data": data}
+
+
+def _show_details(details: dict[str, Any]) -> bool:
+    """The source's accounts, descriptions and Clearing Account values. False: not found."""
+    data: SourceData = details["data"]
+    source, problem = find_source(data.tree, details["source"])
+    if source is None:
+        st.error(problem)
+        return False
+    below = len(data.tree.descendants(source.id))
+    st.subheader("Source details")
+    st.write(
+        f"**{source.display}**"
+        + (f", with {below} account(s) below it" if below else "")
+        + ". Clearing account override per exchange:"
+    )
+    st.dataframe(pd.DataFrame(data.details(details["source"]), dtype=str), hide_index=True)
+    if not data.clearing_entries:
+        st.caption("No Clearing Account is set on any of these accounts.")
+    return True
+
+
+def _mode() -> ClearingMode:
+    st.subheader("What to clone")
+    st.caption("TT copies none of the source's other settings: every clone switch is off.")
+    chosen = st.radio(
+        "Clearing account override on the new accounts",
+        list(CLEARING_CHOICES),
+        format_func=CLEARING_CHOICES.__getitem__,
+        key="cl_clearing_mode",
+    )
+    return ClearingMode(chosen)
+
+
+def _new_accounts(mode: ClearingMode, has_below: bool) -> NewAccounts:
+    if mode is ClearingMode.TABLE:
+        label = (
+            "New accounts: paste from Excel or type one row per account and exchange. "
+            "Columns: " + ", ".join(COLUMNS) + " (use TT's exchange names, e.g. CME, "
+            "ICE_L, Eurex; a row with only the new account sets no clearing value)"
+        )
+        placeholder = "NEW10001AL,CME,CLR123\nNEW10001AL,Eurex,CLR456\nNEW20001AL,CME,CLR789"
+    else:
+        label = "New accounts: one per line, or paste a column from Excel"
+        placeholder = "NEW10001AL\nNEW20001AL"
+    pasted = st.text_area(label, height=160, key="cl_names", placeholder=placeholder)
     upload = st.file_uploader("...or choose a CSV file", type=["csv"], key="cl_file")
     if upload is not None:
         st.caption(f"Using {upload.name}; the box above is ignored while a file is chosen.")
@@ -103,52 +170,19 @@ def _new_accounts() -> NewAccounts:
         )
     for error in parsed.errors:
         st.error(error)
+    if mode is not ClearingMode.TABLE and any(a.overrides for a in parsed.accounts):
+        st.error(
+            "This list has Exchange and clearing columns, which are only used with "
+            "'Use the values from a table'. Choose that above, or list the new accounts only."
+        )
+    if mode is ClearingMode.TABLE and has_below:
+        st.caption("The accounts below the group get no Clearing Account with this choice.")
     return parsed
 
 
-def _inputs() -> tuple[str, NewAccounts, ClearingMode]:
-    source = st.text_input("Account or group to clone (name or id)", key="cl_source")
-    parsed = _new_accounts()
-    st.caption("TT copies none of the source's other settings: every clone switch is off.")
-    mode = ClearingMode.OFF
-    if st.checkbox("Clone the clearing account override (Clearing Account)", key="cl_clearing"):
-        chosen = st.radio(
-            "Clearing Account on exchanges a row gives no value for (and on accounts below "
-            "a group)",
-            list(CLEARING_CHOICES),
-            format_func=CLEARING_CHOICES.__getitem__,
-            key="cl_clearing_mode",
-        )
-        mode = ClearingMode(chosen)
-    return source.strip(), parsed, mode
-
-
-def _review(settings: AppConfig, inputs: tuple[Any, ...]) -> None:
-    source, parsed, mode = inputs
-    try:
-        tt, close = make_tt_client(settings)
-    except Exception as exc:  # noqa: BLE001 - shown to the user; nothing has been read yet
-        st.error(f"Could not prepare the connection to TT: {exc}")
-        return
-    try:
-        with st.spinner("Reading the source account from TT UAT..."):
-            data = read_source(
-                tt,
-                source,
-                need_clearing=mode is not ClearingMode.OFF,
-                max_pages=settings.pacing.max_order_tag_default_pages,
-            )
-    except Exception as exc:  # noqa: BLE001 - the read stopped; say why instead of a traceback
-        st.error(f"Could not read the source from TT UAT ({type(exc).__name__}: {exc}).")
-        return
-    finally:
-        close()
-    review = {
-        "inputs": inputs,
-        "data": data,
-        "edits": PlanEdits(),
-        "version": 0,
-    }
+def _review(details: dict[str, Any], inputs: tuple[Any, ...]) -> None:
+    """The plan for ``inputs``, from the details already read (no TT call)."""
+    review = {"inputs": inputs, "data": details["data"], "edits": PlanEdits(), "version": 0}
     review["plan"] = _plan(review)
     st.session_state["cl_review"] = review
 
@@ -282,6 +316,8 @@ def _create(settings: AppConfig, review: dict[str, Any]) -> None:
         "api_log": str(settings.api_log_dir),
     }
     st.session_state.pop("cl_review", None)
+    st.session_state.pop("cl_details", None)  # TT has changed: read the source again
+    st.rerun()
 
 
 def _show_result() -> None:
@@ -322,33 +358,55 @@ def render() -> None:
         st.warning(HOW_TO_SET_REQUEST_ID)
         return
 
-    inputs = _inputs()
+    source = _source()
+    details = st.session_state.get("cl_details")
+    if details is not None and details["source"] != source:
+        st.session_state.pop("cl_details")
+        st.session_state.pop("cl_review", None)
+        details = None
+    if st.button("Get details", disabled=not source, key="cl_details_button"):
+        st.session_state.pop("cl_result", None)
+        st.session_state.pop("cl_review", None)
+        _get_details(settings, source)
+        details = st.session_state.get("cl_details")
+    if details is not None and _show_details(details):
+        _plan_and_create(settings, details)
+    _show_result()
+
+
+def _plan_and_create(settings: AppConfig, details: dict[str, Any]) -> None:
+    data: SourceData = details["data"]
+    mode = _mode()
+    found, _ = find_source(data.tree, details["source"])
+    has_below = found is not None and bool(data.tree.descendants(found.id))
+    parsed = _new_accounts(mode, has_below)
+    inputs = (details["source"], parsed, mode)
     review = st.session_state.get("cl_review")
     if review is not None and review["inputs"] != inputs:
         st.session_state.pop("cl_review")
         review = None
-    ready = bool(inputs[0] and inputs[1].accounts and not inputs[1].errors)
+    misplaced = mode is not ClearingMode.TABLE and any(a.overrides for a in parsed.accounts)
+    ready = bool(parsed.accounts and not parsed.errors and not misplaced)
     if st.button("Next", type="primary", disabled=not ready, key="cl_next"):
         st.session_state.pop("cl_result", None)
-        _review(settings, inputs)
+        _review(details, inputs)
         review = st.session_state.get("cl_review")
-
-    if review is not None:
-        _show_plan(review)
-        plan: ClonePlan = review["plan"]
-        round_key = "cl_round"
-        done = st.session_state.get(round_key, 0)
-        agreed = st.checkbox(
-            "I have checked this list",
-            key=f"cl_ok_{done}_{review['version']}",
-            disabled=not plan.ok,
-        )
-        left, right = st.columns([1, 4])
-        if left.button("Back", key="cl_back"):
-            st.session_state.pop("cl_review", None)
-            st.rerun()
-        label = f"Create {len(plan.steps)} account(s) in TT UAT"
-        if right.button(label, type="primary", disabled=not (plan.ok and agreed), key="cl_create"):
-            st.session_state[round_key] = done + 1
-            _create(settings, review)
-    _show_result()
+    if review is None:
+        return
+    _show_plan(review)
+    plan: ClonePlan = review["plan"]
+    round_key = "cl_round"
+    done = st.session_state.get(round_key, 0)
+    agreed = st.checkbox(
+        "I have checked this list",
+        key=f"cl_ok_{done}_{review['version']}",
+        disabled=not plan.ok,
+    )
+    left, right = st.columns([1, 4])
+    if left.button("Back", key="cl_back"):
+        st.session_state.pop("cl_review", None)
+        st.rerun()
+    label = f"Create {len(plan.steps)} account(s) in TT UAT"
+    if right.button(label, type="primary", disabled=not (plan.ok and agreed), key="cl_create"):
+        st.session_state[round_key] = done + 1
+        _create(settings, review)

@@ -183,26 +183,24 @@ def test_two_names_by_the_same_name_are_ambiguous() -> None:
     assert "enter the id instead" in plan.errors[0]
 
 
-def test_clearing_values_from_source_or_new_name() -> None:
+def test_clearing_values_cloned_left_blank_or_from_the_table() -> None:
     entry = {"accountId": 11, "marketId": 7, "fieldId": 1859, "value": "OLD"}
     common: dict[str, Any] = {"clearing_entries": {"11": [entry]}, "market_names": {"7": "CME"}}
-    by_name = build_plan(
-        GROUP, "POD1", rows(["POD7"]), clearing_mode=ClearingMode.NEW_NAME, **common
-    )
-    assert by_name.clearing_rows() == [
-        {"Step": "2", "New account": "POD7-A", "Exchange": "CME",
-         "Source value": "OLD", "New value": "POD7-A"},
-    ]  # fmt: skip
     same = build_plan(GROUP, "POD1", rows(["POD7"]), clearing_mode=ClearingMode.SOURCE, **common)
-    assert same.clearing[0].value == "OLD"
-    off = build_plan(GROUP, "POD1", rows(["POD7"]), **common)
-    assert off.clearing == ()
+    assert same.clearing_rows() == [
+        {"Step": "2", "New account": "POD7-A", "Exchange": "CME",
+         "Source value": "OLD", "New value": "OLD"},
+    ]  # fmt: skip
+    off = build_plan(GROUP, "POD1", rows(["POD7"]), clearing_mode=ClearingMode.OFF, **common)
+    assert off.ok and off.clearing == ()
+    table = build_plan(GROUP, "POD1", rows(["POD7"]), clearing_mode=ClearingMode.TABLE, **common)
+    assert table.ok and table.clearing == ()  # no row lists an exchange: all stay blank
 
 
 MARKETS = {"7": "CME", "2": "Eurex", "24": "ASX"}
 
 
-def test_a_rows_clearing_value_wins_on_its_exchange_and_top_account_only() -> None:
+def test_the_table_sets_only_its_exchanges_on_the_top_accounts() -> None:
     entries = {
         "10": [
             {"accountId": 10, "marketId": 7, "fieldId": 1859, "value": "OLD"},
@@ -213,13 +211,13 @@ def test_a_rows_clearing_value_wins_on_its_exchange_and_top_account_only() -> No
     plan = build_plan(
         GROUP, "POD1",
         [NewAccount("POD7", (("cme", "CLR7"),)), NewAccount("POD8")],
-        clearing_mode=ClearingMode.SOURCE, clearing_entries=entries, market_names=MARKETS,
+        clearing_mode=ClearingMode.TABLE, clearing_entries=entries, market_names=MARKETS,
     )  # fmt: skip
     assert plan.ok, plan.errors
     assert [(plan.step(c.step).new_name, c.market, c.value) for c in plan.clearing] == [
-        ("POD7", "CME", "CLR7"), ("POD7", "Eurex", "OLD-EU"), ("POD7-A", "CME", "OLD-A"),
-        ("POD8", "CME", "OLD"), ("POD8", "Eurex", "OLD-EU"), ("POD8-A", "CME", "OLD-A"),
-    ]  # fmt: skip
+        ("POD7", "CME", "CLR7"),
+    ]
+    assert plan.clearing[0].entry["value"] == "OLD"  # the source's own CME entry is used
 
 
 def test_an_exchange_the_source_lacks_copies_its_entry_with_the_exchange_switched() -> None:
@@ -228,13 +226,24 @@ def test_an_exchange_the_source_lacks_copies_its_entry_with_the_exchange_switche
     }
     plan = build_plan(
         GROUP, "POD2", [NewAccount("POD7", (("ASX", "CLR-ASX"),))],
-        clearing_mode=ClearingMode.NEW_NAME, clearing_entries=entries, market_names=MARKETS,
+        clearing_mode=ClearingMode.TABLE, clearing_entries=entries, market_names=MARKETS,
     )  # fmt: skip
     assert plan.ok, plan.errors
-    asx = next(c for c in plan.clearing if c.market == "ASX")
+    [asx] = plan.clearing  # CME isn't listed, so it stays blank
     assert asx.value == "CLR-ASX" and asx.entry["marketId"] == 24 and asx.entry["fieldId"] == 1859
-    assert plan.clearing_rows()[1]["Source value"] == "(none; entry copied from CME)"
-    assert next(c for c in plan.clearing if c.market == "CME").value == "POD7"
+    assert plan.clearing_rows()[0]["Source value"] == "(none; entry copied from CME)"
+
+
+def test_a_group_without_its_own_entry_copies_one_from_below() -> None:
+    entries = {"11": [{"accountId": 11, "marketId": 7, "fieldId": 1859, "value": "OLD-A"}]}
+    plan = build_plan(
+        GROUP, "POD1", [NewAccount("POD7", (("Eurex", "CLR-EU"),))],
+        clearing_mode=ClearingMode.TABLE, clearing_entries=entries, market_names=MARKETS,
+    )  # fmt: skip
+    assert plan.ok, plan.errors
+    assert [(plan.step(c.step).new_name, c.market, c.value) for c in plan.clearing] == [
+        ("POD7", "Eurex", "CLR-EU"),
+    ]
 
 
 @pytest.mark.parametrize(
@@ -249,15 +258,16 @@ def test_clearing_rows_that_cannot_be_planned(
     accounts: list[NewAccount], entries: dict[str, Any], message: str
 ) -> None:
     plan = build_plan(
-        GROUP, "POD2", accounts, clearing_mode=ClearingMode.SOURCE,
+        GROUP, "POD2", accounts, clearing_mode=ClearingMode.TABLE,
         clearing_entries=entries, market_names=MARKETS,
     )  # fmt: skip
     assert not plan.ok and any(message in e for e in plan.errors), plan.errors
 
 
-def test_clearing_values_without_the_box_ticked_stop_the_plan() -> None:
-    plan = build_plan(GROUP, "POD2", [NewAccount("POD7", (("CME", "CLR7"),))])
-    assert not plan.ok and "is not ticked" in plan.errors[0]
+@pytest.mark.parametrize("mode", [ClearingMode.SOURCE, ClearingMode.OFF])
+def test_table_values_with_another_choice_stop_the_plan(mode: ClearingMode) -> None:
+    plan = build_plan(GROUP, "POD2", [NewAccount("POD7", (("CME", "CLR7"),))], clearing_mode=mode)
+    assert not plan.ok and "only used with 'Use the values from the table'" in plan.errors[0]
 
 
 # --- edits made in the review ------------------------------------------------------
@@ -306,7 +316,7 @@ def test_review_edits_are_checked_again() -> None:
 
 
 def test_read_source_finds_the_clearing_account_entries(tt: FakeTT) -> None:
-    data = read_source(reader(tt), "ABC10001AL", need_clearing=True, max_pages=20)
+    data = read_source(reader(tt), "ABC10001AL", max_pages=20)
     assert data.clearing_field_ids == frozenset({"1859"})
     entries = data.clearing_entries["300"]
     assert [e["marketId"] for e in entries] == [2, 7, 30, 91, 107]
@@ -315,17 +325,28 @@ def test_read_source_finds_the_clearing_account_entries(tt: FakeTT) -> None:
     assert all(r.method == "GET" for r in tt.requests if "token" not in r.url.path)
 
 
-def test_read_source_without_clearing_reads_only_the_accounts(tt: FakeTT) -> None:
-    data = read_source(reader(tt), "ABC10001AL", need_clearing=False, max_pages=20)
-    assert data.clearing_entries == {} and len(data.tree) > 10
-    assert {p.split("/")[1] for p in tt.paths("GET")} == {"ttaccount"}
+def test_read_source_details_show_descriptions_and_values_per_exchange(tt: FakeTT) -> None:
+    data = read_source(reader(tt), "ABC10001AL", max_pages=20)
+    [row] = data.details("ABC10001AL")
+    assert row == {
+        "Account": "ABC10001AL", "Description": "Synthetic account ABC10001AL",
+        "CME": "ABC10001", "Eurex": "ABC10001", "Euronext": "ABC10001",
+        "HKEX": "ABC10001", "MX": "ABC99999",
+    }  # fmt: skip
+    assert data.details("NOPE") == []
+
+
+def test_read_source_of_an_unknown_account_reads_only_the_list(tt: FakeTT) -> None:
+    data = read_source(reader(tt), "NOPE", max_pages=20)
+    assert data.clearing_entries == {} and data.descriptions == {}
+    assert set(tt.paths("GET")) == {f"/ttaccount/{UAT}/accounts"}
 
 
 # --- running ---------------------------------------------------------------------
 
 
 def _plan(tt: FakeTT, mode: ClearingMode, new: NewAccount | None = None):  # noqa: ANN202
-    data = read_source(reader(tt), "ABC10001AL", need_clearing=True, max_pages=20)
+    data = read_source(reader(tt), "ABC10001AL", max_pages=20)
     plan = build_plan(
         data.tree, "ABC10001AL", [new or NewAccount("NEW10001AL")], clearing_mode=mode,
         clearing_entries=data.clearing_entries, market_names=data.market_names,
@@ -339,8 +360,8 @@ def _run(tt: FakeTT, plan, waits: list[float] | None = None):  # noqa: ANN001, A
     return run_plan(plan, writer(tt), reader(tt), wait=waits.append)
 
 
-def test_clone_and_create_clearing_entries_with_the_new_name(tt: FakeTT) -> None:
-    plan = _plan(tt, ClearingMode.NEW_NAME)
+def test_clone_and_create_the_cloned_clearing_entries(tt: FakeTT) -> None:
+    plan = _plan(tt, ClearingMode.SOURCE)
     result = _run(tt, plan)
     assert result.ok and result.created == {1: "5001"}
     query, body = tt.clones[0]
@@ -352,28 +373,27 @@ def test_clone_and_create_clearing_entries_with_the_new_name(tt: FakeTT) -> None
     assert query["requestId"].startswith("Lookout-CHANGEME--")
     [(kind, created)] = tt.otd_writes
     assert kind == "create" and len(created) == 5
-    assert {(e["accountId"], e["value"]) for e in created} == {(5001, "NEW10001AL")}
+    assert {e["accountId"] for e in created} == {5001}
+    assert sorted(e["value"] for e in created) == ["ABC10001"] * 4 + ["ABC99999"]
     assert "orderTagDefaultId" not in created[0] and created[0]["fieldId"] == 1859
     assert [r["Status"] for r in result.rows] == ["Created"] * 6
 
 
-def test_source_value_without_tt_copy_creates_the_entries(tt: FakeTT) -> None:
-    plan = _plan(tt, ClearingMode.SOURCE)
-    _run(tt, plan)
-    [(_, created)] = tt.otd_writes
-    assert sorted(e["value"] for e in created) == ["ABC10001"] * 4 + ["ABC99999"]
+def test_leaving_the_clearing_blank_only_clones(tt: FakeTT) -> None:
+    result = _run(tt, _plan(tt, ClearingMode.OFF))
+    assert result.ok and len(tt.clones) == 1 and tt.otd_writes == []
 
 
 def test_a_rows_clearing_value_is_created_on_the_new_account(tt: FakeTT) -> None:
     plan = _plan(
-        tt, ClearingMode.NEW_NAME, NewAccount("NEW10001AL", (("MX", "CLR9"), ("ASX", "CLR-AU")))
+        tt, ClearingMode.TABLE, NewAccount("NEW10001AL", (("MX", "CLR9"), ("ASX", "CLR-AU")))
     )
     result = _run(tt, plan)
     assert result.ok, result.stopped
     [(_, created)] = tt.otd_writes
     values = {(e["accountId"], e["marketId"], e["value"]) for e in created}
     assert (5001, 91, "CLR9") in values and (5001, 24, "CLR-AU") in values
-    assert (5001, 7, "NEW10001AL") in values and len(created) == 6
+    assert len(created) == 2  # the exchanges the table doesn't list stay blank
     assert "description" not in tt.clones[0][1]
 
 
@@ -418,13 +438,13 @@ def test_a_plan_with_errors_sends_nothing(tt: FakeTT) -> None:
 
 
 def test_write_log_records_the_run_without_secrets(tt: FakeTT, tmp_path: Path) -> None:
-    plan = _plan(tt, ClearingMode.NEW_NAME)
+    plan = _plan(tt, ClearingMode.SOURCE)
     w, r = writer(tt), reader(tt)
     result = run_plan(plan, w, r)
     path = write_log(tmp_path / "log", plan, result, [*r.calls, *w.calls],
                      now=datetime(2026, 11, 17, 9, 0))  # fmt: skip
     record = json.loads(path.read_text(encoding="utf-8"))
-    assert record["source"] == "ABC10001AL (300)" and record["clearing_mode"] == "new_name"
+    assert record["source"] == "ABC10001AL (300)" and record["clearing_mode"] == "source"
     assert record["result"][0]["New id"] == "5001"
     text = path.read_text(encoding="utf-8")
     assert SECRET.split(":")[1] not in text and "fake-access-token" not in text

@@ -163,22 +163,28 @@ separate guard that allows only these, and only in `ext_uat_cert`:
 
 How it works:
 
-1. Enter the source account (name or id).
-2. Paste the new accounts (straight from Excel, or one per line), or choose a CSV file.
-   Columns, in order: new account (needed), exchange and clearing account override
-   (optional, but together). An account may have several rows, one per exchange.
-   Exchanges are TT's market names (CME, ICE_L, Eurex...). Spaces around each cell are
-   removed, blank rows are dropped and a header row (`Account`, `Name`...) is skipped.
-3. Optionally tick the clearing account override (the "Clearing Account" Order Tag
-   Default). A row's value is used for its account on its exchange; on the source's
-   other exchanges the value is either the source account's value or the new
-   account's name. A row may name an exchange the source has no Clearing Account
-   on: the source's entry is then copied with the exchange switched (not possible
-   when the source's entries are set per product). Clearing values without the box
-   ticked stop the plan.
-4. Press **Next**. Lookout reads the source from TT UAT and lists every account and
-   Clearing Account value it would create, with any problem (e.g. a name that
-   already exists).
+1. Enter the source account or group (name or id) and press **Get details**. Lookout
+   reads it from TT UAT (reads only) and shows it and every account below it, each
+   with its description and its Clearing Account value per exchange.
+2. Choose what the new accounts get for the clearing account override (the "Clearing
+   Account" Order Tag Default):
+   - **Clone it**: each new account gets the value of the account it is copied from.
+   - **Leave it blank**: no Clearing Account is set.
+   - **Use the values from a table**: only the exchanges the table lists get a value,
+     on the new top account; its other exchanges, and the accounts below a group,
+     stay blank. A row may name an exchange the source has no Clearing Account on:
+     a source entry is then copied with the exchange switched (not possible when the
+     source's entries are set per product).
+3. Paste the new accounts (straight from Excel, or one per line), or choose a CSV file.
+   With the first two choices, list the new accounts only. With the table, the
+   columns are, in order: new account (needed), exchange and clearing account
+   override (together; a row with only the new account sets nothing). An account may
+   have several rows, one per exchange. Exchanges are TT's market names (CME, ICE_L,
+   Eurex...). Spaces around each cell are removed, blank rows are dropped and a header
+   row (`Account`, `Name`...) is skipped.
+4. Press **Next**. Lookout lists every account and Clearing Account value it would
+   create, with any problem (e.g. a name that already exists). It uses the details
+   already read; press Get details again to refresh them.
 5. Edit the two tables in place if needed: rename a new account or change a New
    value, or select rows and delete them (deleting an account also drops the
    accounts cloned below it; deleting a clearing row means that exchange gets no
@@ -188,9 +194,8 @@ How it works:
 
 For a group, Lookout clones each account itself, top down. Each copy's name swaps the
 source's name for the new one: cloning POD1 as POD7 turns POD1-A into POD7-A. An account
-below the source whose name does not contain the source's name stops the plan. A row's
-clearing value goes on the new top account only; the accounts below it get the
-clearing value from the page's choice.
+below the source whose name does not contain the source's name stops the plan. After
+a run the details are cleared, so the next clone starts from a fresh read.
 
 TT copies none of the source's other settings: every switch on the clone call (Order
 Tag Defaults, algo, exchange, credit/SOD, counterparties, connections, FIX sessions,
