@@ -47,7 +47,7 @@ def test_report_is_discovered_with_its_contract() -> None:
     specs, errors = discover_reports(REPORTS_DIR)
     assert errors == []
     spec = next(s for s in specs if s.slug == "setup_verification")
-    assert (spec.title, spec.category) == ("Setup Verification", "Setup")
+    assert (spec.title, spec.category) == ("Client Account Setup Check", "TT Setup Tools")
 
 
 def test_no_profiles(folders: tuple[Path, Path]) -> None:

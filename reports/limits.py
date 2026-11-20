@@ -32,21 +32,21 @@ from core.team_lists import (
     read_shared,
 )
 
-TITLE = "Limits"
+TITLE = "Limit Tools"
 DESCRIPTION = (
-    "Account limit upload: a client limit table matched to TT products (unavailable "
-    "products greyed out), checked against the Risk System Export, with the risk-tool "
-    "upload CSVs. Risk and periodic audit: a client's product universe against the "
-    "risk system's limits, with the risk review and upload."
+    "- **Limit upload tool**: match a client limit table to TT products, check it "
+    "against the Risk System Export and build the risk-tool upload.\n"
+    "- **Client limit review tool**: a client's product universe against the risk "
+    "system's limits, for risk review and upload."
 )
 ICON = "📏"
-CATEGORY = "Limits"
+CATEGORY = "Limit Tools"
 
 APP_FILE = Path(__file__).resolve().parent.parent / "vendor" / "limits_app" / "index.html"
 ACCOUNT_UPLOAD_ROUTE = "/account-upload"
 TOOLS: dict[str, str] = {
-    "Account limit upload": "/account-upload",
-    "Risk and periodic audit": "/risk-audit",
+    "Limit upload tool": "/account-upload",
+    "Client limit review tool": "/risk-audit",
 }
 FRAME_HEIGHT = 1600
 # Hides the app's "← Risk Tools" home link: each tab holds one tool.
@@ -138,7 +138,7 @@ def app_for(
 
 def render() -> None:
     st.title(f"{ICON} {TITLE}")
-    st.caption(DESCRIPTION + " Everything runs in this browser; nothing is sent to TT.")
+    st.caption("Everything runs in this browser; nothing is sent to TT.")
     try:
         html = load_app(APP_FILE)
     except OSError:
@@ -151,7 +151,7 @@ def render() -> None:
     token = _commit_bridge(shared) if shared.folder else None
     for tab, route in zip(st.tabs(list(TOOLS)), TOOLS.values(), strict=True):
         with tab:
-            # Only Account limit upload uses the team lists (and the TT list is large).
+            # Only the Limit upload tool uses the team lists (and the TT list is large).
             team = shared if route == ACCOUNT_UPLOAD_ROUTE else None
             st.iframe(app_for(html, route, team, token if team else None), height=FRAME_HEIGHT)
 

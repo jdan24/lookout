@@ -43,12 +43,12 @@ from core.write_http import WRITE_ENVIRONMENT, WriteClient
 from ui import components
 from ui.pull import HOW_TO_SET_REQUEST_ID, make_tt_client
 
-TITLE = "Clone"
+TITLE = "Account Cloning Tool"
 DESCRIPTION = (
     "Copies an account, or a group and the accounts below it, into new accounts in TT UAT."
 )
 ICON = "🧬"
-CATEGORY = "Setup"
+CATEGORY = "TT Setup Tools"
 
 CLEARING_CHOICES = {
     ClearingMode.SOURCE: "Clone the clearing account override: each new account gets the "
@@ -340,8 +340,8 @@ def render() -> None:
     settings = app_config.load_config()
     if settings.tt.environment != WRITE_ENVIRONMENT:
         st.info(
-            "Clone works in UAT only. Start Lookout with Start-Lookout-UAT.bat to use it. "
-            "Lookout never changes anything in TT Live."
+            "The Account Cloning Tool works in UAT only. Start Lookout with "
+            "Start-Lookout-UAT.bat to use it. Lookout never changes anything in TT Live."
         )
         return
     st.caption(

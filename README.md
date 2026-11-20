@@ -3,7 +3,7 @@
 Read-only verification of Trading Technologies (TT) trading setups. Lookout pulls
 setup data through the TT REST API, saves every pull as a snapshot, and checks the
 snapshot against expected rules. It never writes to TT Live. The one exception is
-the Clone page, which works in TT UAT only (see "Clone" below).
+the Account Cloning Tool, which works in TT UAT only (see "Account Cloning Tool" below).
 
 - Conventions and ground rules: `AGENTS.md`
 - Client profile format: `docs/example_client.toml`
@@ -34,13 +34,13 @@ production pull signed in but TT refused the first data call over the `requestId
 since fixed; no full pull has completed yet.
 
 - Done: read-only guard, TT client, pull -> snapshot -> rebuild, account tree, result
-  model, landing page with report discovery, Setup Verification (profile-driven rules:
+  model, landing page with report discovery, Client Account Setup Check (profile-driven rules:
   levels, Apply Limits / Restrictions, markets, naming, required users on the lowest
   level, Order Tag Defaults (only on markets that have limits), and
-  optional companion-account and legacy-group rules), the Limits page (the Limits
-  app's Account limit upload and Risk and periodic audit tools), credential storage, Windows launcher, and the
-  Clone page (UAT only; not yet run against TT UAT).
-- Pulling: the Setup Verification page has a "Pull a new snapshot from TT" panel. It
+  optional companion-account and legacy-group rules), the Limit Tools page (the Limits
+  app's Limit upload tool and Client limit review tool), credential storage, Windows
+  launcher, and the Account Cloning Tool (UAT only; not yet run against TT UAT).
+- Pulling: the Client Account Setup Check page has a "Pull a new snapshot from TT" panel. It
   needs stored credentials and a ticked confirmation, shows progress, and selects the
   new snapshot when done.
 - Not done: product-family names from `ttpds`.
@@ -73,12 +73,12 @@ UAT needs its own profiles.
 Without a launcher (development), set the mode yourself before starting:
 `LOOKOUT_ENVIRONMENT=ext_uat_cert python -m streamlit run app.py`.
 
-## Limits
+## Limit Tools
 
-The Limits page holds the two tools of the Limits app (`jdan24/limit_compare`), one per
+The Limit Tools page holds the two tools of the Limits app (`jdan24/limit_compare`), one per
 tab:
 
-- **Account limit upload**: paste the Client Limit Table and match each row to a TT
+- **Limit upload tool**: paste the Client Limit Table and match each row to a TT
   exchange and product symbol. The result, "Client Limit Table with TT Symbols", can
   be copied (for Excel / Outlook) or exported as an Excel file.
   - **New setup (no risk system export yet):** type the IsvTeName once in the table's
@@ -142,7 +142,7 @@ tab:
     `history/` (last 30). This is the only file Lookout ever writes in that folder.
   - Unavailable products are still shared by exporting them and replacing
     `unavailable_products.csv`.
-- **Risk and periodic audit**: a client's whole product universe against the limits
+- **Client limit review tool**: a client's whole product universe against the limits
   in place (the risk system's exports), with the risk team's Excel review, approvals
   and the upload CSV back into the risk tool.
 
@@ -151,9 +151,9 @@ edited here; `vendor/limits_app/README.md` says how to refresh it. It runs in th
 browser only: no TT calls. Saved mappings and approvals live in the browser's storage
 for Lookout's address; a loaded risk export is kept for the session only.
 
-## Clone (UAT only)
+## Account Cloning Tool (UAT only)
 
-The Clone page copies an account, or a group with the accounts below it, into new
+The Account Cloning Tool copies an account, or a group with the accounts below it, into new
 accounts. It is the only part of Lookout that changes TT, and only in UAT: in Live the
 page shows a notice and nothing else. Its calls go through `core/write_http.py`, a
 separate guard that allows only these, and only in `ext_uat_cert`:
@@ -200,7 +200,7 @@ a run the details are cleared, so the next clone starts from a fresh read.
 TT copies none of the source's other settings: every switch on the clone call (Order
 Tag Defaults, algo, exchange, credit/SOD, counterparties, connections, FIX sessions,
 limits, users) is sent as off. TT's clone call can't set an account description, so
-the Clone page doesn't take one. A run
+the Account Cloning Tool doesn't take one. A run
 stops at the first failure and never undoes what it created. Every run is recorded in
 `%LOCALAPPDATA%\Lookout\uat\clone_log`.
 
@@ -225,7 +225,7 @@ data, like a snapshot: keep it on the PC.
 
 ## Client profiles
 
-Setup Verification reads one TOML profile per client from the profiles folder
+Client Account Setup Check reads one TOML profile per client from the profiles folder
 (`[clients] directory` in `config.toml`; default `%LOCALAPPDATA%\Lookout\clients`).
 A profile names the accounts each client tree starts from (a path from a top-level
 account), the levels below it by depth, and the expected values at each level. See
@@ -253,7 +253,7 @@ values appear in the repo.
       `python scripts\set_credentials.py`.
 - [ ] On each user's PC, copy the client profiles (`*.toml`) into
       `%LOCALAPPDATA%\Lookout\clients` (they are not in the release).
-- [ ] Run a first supervised pull (Setup Verification → "Pull a new snapshot from TT") and confirm the request conventions in
+- [ ] Run a first supervised pull (Client Account Setup Check → "Pull a new snapshot from TT") and confirm the request conventions in
       `core/tt_client.py`, the `/account/{id}/users` path, and any `start_id` marked
       `id_verified = false` in a profile (then set it to true).
 - [ ] Check `Start-Lookout.bat` on a Windows 11 PC, including behind the corporate proxy.

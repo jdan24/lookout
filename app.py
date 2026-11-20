@@ -28,7 +28,7 @@ def main() -> None:
         st.title("🔭 " + page_title(settings))
         st.caption(
             "Read-only checks of trading setups in TT. Lookout never changes TT Live; "
-            "only the Clone page can change TT, and only in UAT."
+            "only the Account Cloning Tool can change TT, and only in UAT."
         )
         report_tiles(specs, pages)
         report_errors(errors)

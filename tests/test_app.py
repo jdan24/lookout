@@ -113,8 +113,8 @@ def test_real_reports_folder_shows_the_report_tiles() -> None:
     app = AppTest.from_file(str(ROOT / "app.py"), default_timeout=30)
     app.run()
     assert not app.exception, app.exception
-    assert [s.value for s in app.subheader] == ["Limits", "Setup"]
-    assert "Setup Verification" in all_text(app)
+    assert [s.value for s in app.subheader] == ["Limit Tools", "TT Setup Tools"]
+    assert "Client Account Setup Check" in all_text(app)
 
 
 def test_live_mode_is_labelled_on_the_page_and_in_the_sidebar(

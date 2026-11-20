@@ -22,7 +22,7 @@ def test_report_is_discovered_with_its_contract() -> None:
     specs, errors = discover_reports(REPORTS_DIR)
     assert errors == []
     spec = next(s for s in specs if s.slug == "limits")
-    assert (spec.title, spec.category) == ("Limits", "Limits")
+    assert (spec.title, spec.category) == ("Limit Tools", "Limit Tools")
     assert not any(s.slug == "limit_verification" for s in specs)
 
 
@@ -46,7 +46,7 @@ def test_the_page_shows_two_tabs() -> None:
     app = AppTest.from_string(SCRIPT, default_timeout=30)
     app.run()
     assert not app.exception, app.exception
-    assert [t.label for t in app.tabs] == ["Account limit upload", "Risk and periodic audit"]
+    assert [t.label for t in app.tabs] == ["Limit upload tool", "Client limit review tool"]
 
 
 def test_a_missing_app_file_is_explained(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:

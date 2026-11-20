@@ -88,13 +88,13 @@ def test_report_is_discovered_with_its_contract() -> None:
     specs, errors = discover_reports(REPORTS_DIR)
     assert errors == []
     spec = next(s for s in specs if s.slug == "clone")
-    assert (spec.title, spec.category) == ("Clone", "Setup")
+    assert (spec.title, spec.category) == ("Account Cloning Tool", "TT Setup Tools")
 
 
 def test_live_shows_only_a_notice(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(app_config, "load_config", lambda: settings("ext_prod_live"))
     app = run()
-    assert "Clone works in UAT only" in app.info[0].value
+    assert "works in UAT only" in app.info[0].value
     assert not app.button and not app.text_input and not app.text_area
 
 

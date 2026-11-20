@@ -17,10 +17,10 @@ from core.snapshots import SnapshotError, list_snapshots
 from ui import components
 from ui.pull import pull_panel
 
-TITLE = "Setup Verification"
+TITLE = "Client Account Setup Check"
 DESCRIPTION = "Checks a client's account setup in TT against the levels and values in its profile."
 ICON = "🧭"
-CATEGORY = "Setup"
+CATEGORY = "TT Setup Tools"
 
 
 def _pick_profile() -> Profile | None:
